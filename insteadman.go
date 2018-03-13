@@ -23,7 +23,9 @@ type RepositoryType struct {
 }
 
 func main() {
-    file, e := ioutil.ReadFile("./instead-manager-settings.json")
+    configFileName := "./instead-manager-settings.json"
+
+    file, e := ioutil.ReadFile(configFileName)
     if e != nil {
         fmt.Printf("File error: %v\n", e)
         os.Exit(1)
@@ -33,6 +35,16 @@ func main() {
     var config InsteadmanConfigType
     json.Unmarshal(file, &config)
     fmt.Printf("Results: %v\n", config)
+
+    config.Lang = "ru"
+
+    bytes, e := json.MarshalIndent(config, "", "  ")
+    if e != nil {
+        fmt.Printf("Config error: %v\n", e)
+        os.Exit(1)
+    }
+
+    ioutil.WriteFile(configFileName, bytes, 0644)
 }
 
 
