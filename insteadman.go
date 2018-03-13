@@ -3,8 +3,11 @@ package main
 import (
     "encoding/json"
     "fmt"
+    "io"
     "io/ioutil"
     "os"
+    "path/filepath"
+    "net/http"
 )
 
 type InsteadmanConfigType struct {
@@ -22,8 +25,50 @@ type RepositoryType struct {
     Url string `json:"url"`
 }
 
+
 func main() {
-    configFileName := "./instead-manager-settings.json"
+    config := getConfig()
+    fmt.Printf("Config: %v\n", config)
+
+    downloadRepositories(config)
+}
+
+func downloadRepository(fileName, url string) error {
+    // Create the file
+    out, err := os.Create(fileName)
+    if err != nil {
+        return err
+    }
+    defer out.Close()
+
+    // Download the data
+    resp, err := http.Get(url)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+
+    // Write the data to the file
+    _, err = io.Copy(out, resp.Body)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func downloadRepositories(config InsteadmanConfigType) {
+    repositoriesDir := filepath.Join(".", "repositories")
+    os.MkdirAll(repositoriesDir, os.ModePerm)
+
+    for _, repo := range config.Repositories {
+        fmt.Printf("%v %v\n", repo.Name, repo.Url)
+        downloadRepository(filepath.Join(repositoriesDir, repo.Name + ".xml"), repo.Url)
+    }
+}
+
+func getConfig() InsteadmanConfigType {
+    configFileName := filepath.Join(".", "instead-manager-settings.json")
 
     file, e := ioutil.ReadFile(configFileName)
     if e != nil {
@@ -34,21 +79,25 @@ func main() {
 
     var config InsteadmanConfigType
     json.Unmarshal(file, &config)
-    fmt.Printf("Results: %v\n", config)
+    // fmt.Printf("Results: %v\n", config)
 
-    config.Lang = "ru"
+    return config
 
-    bytes, e := json.MarshalIndent(config, "", "  ")
-    if e != nil {
-        fmt.Printf("Config error: %v\n", e)
-        os.Exit(1)
-    }
+    // write config
+    // config.Lang = "ru"
 
-    ioutil.WriteFile(configFileName, bytes, 0644)
+    // bytes, e := json.MarshalIndent(config, "", "  ")
+    // if e != nil {
+    //     fmt.Printf("Config error: %v\n", e)
+    //     os.Exit(1)
+    // }
+
+    // ioutil.WriteFile(configFileName, bytes, 0644)
 }
 
 
-// func cli() {
+// Cli
+// func main() {
 //     argsWithProg := os.Args
 //     argsWithoutProg := os.Args[1:]
 
