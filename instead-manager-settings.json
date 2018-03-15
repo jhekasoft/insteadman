@@ -16,7 +16,7 @@
   "games_path": "~/.instead/games/",
   "interpreter_command": "/Applications/Instead.app/Contents/MacOS/sdl-instead",
   "version": "2.1.0",
-  "use_builtin_interpreter": true,
+  "use_builtin_interpreter": false,
   "lang": "ru",
   "check_update_on_start": true
 }

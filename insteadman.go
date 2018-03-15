@@ -5,6 +5,7 @@ import (
     "os"
     "./configurator"
     "./manager"
+    "./interpreter_finder"
 )
 
 func main() {
@@ -16,10 +17,19 @@ func main() {
 
     fmt.Printf("Config: %v\n", *config)
 
-    manager.DownloadRepositories(config)
+    // manager.DownloadRepositories(config)
 
     games, e := manager.ParseRepositories()
     fmt.Printf("Config: %v\n", games)
+
+    interpreterPath := interpreterFinder.Find()
+    if interpreterPath != nil {
+        fmt.Printf("INSTEAD path: %v\n", *interpreterPath)
+    }
+
+    version, e := interpreterFinder.CheckInterpreter(config)
+    fmt.Printf("INSTEAD error: %v\n", e)
+    fmt.Printf("INSTEAD version: %v\n", version)
 }
 
 // Cli
