@@ -1,37 +1,81 @@
 package configurator
 
 import (
-    "encoding/json"
+    //"encoding/json"
+	"github.com/ghodss/yaml"
     "io/ioutil"
     "path/filepath"
+	"os"
 )
 
-type InsteadmanConfigType struct {
-    Repositories []RepositoryType `json:"repositories"`
-    GamesPath string `json:"games_path"`
-    InterpreterCommand string `json:"interpreter_command"`
-    Version string `json:"version"`
-    UseBuiltinInterpreter bool `json:"use_builtin_interpreter"`
-    Lang string `json:"lang"`
-    CheckUpdateOnStart bool `json:"check_update_on_start"`
+type InsteadmanConfig struct {
+    Repositories          []Repository `json:"repositories"`
+    InterpreterCommand    string       `json:"interpreter_command"`
+    Version               string       `json:"version"`
+    UseBuiltinInterpreter bool         `json:"use_builtin_interpreter"`
+    Lang                  string       `json:"lang"`
+    CheckUpdateOnStart    bool         `json:"check_update_on_start"`
+	GamesPath             string       `json:"games_path"`
+	InsteadManPath        string       `json:"insteadman_path"`
 }
 
-type RepositoryType struct {
+type Repository struct {
     Name string `json:"name"`
     Url string `json:"url"`
 }
 
-func GetConfig() (*InsteadmanConfigType, error) {
-    configFileName := filepath.Join(".", "instead-manager-settings.json")
+const configName = "config.yml"
 
-    file, e := ioutil.ReadFile(configFileName)
+func insteadDir() string {
+	return filepath.Join(userHomeDir(), ".instead")
+}
+
+func insteadManDir() string {
+	localPath := filepath.Join(".",  configName)
+	_, e := os.Stat(localPath)
+	exists := !os.IsNotExist(e)
+
+	if exists && e == nil {
+		return "."
+	}
+
+	return filepath.Join(insteadDir(), "insteadman")
+}
+
+func configFileName() string {
+	return filepath.Join(insteadManDir(), configName)
+}
+
+func gamesDir() string {
+	localPath := filepath.Join(".",  "games")
+
+	_, e := os.Stat(localPath)
+	exists := !os.IsNotExist(e)
+
+	if exists && e == nil {
+		return localPath
+	}
+
+	return filepath.Join(insteadDir(), "games")
+}
+
+func GetConfig() (*InsteadmanConfig, error) {
+    file, e := ioutil.ReadFile(configFileName())
     if e != nil {
         return nil, e
     }
     // fmt.Printf("%s\n", string(file))
 
-    var config *InsteadmanConfigType
-    json.Unmarshal(file, &config)
+    var config *InsteadmanConfig
+    yaml.Unmarshal(file, &config)
+
+    if config.GamesPath == "" {
+		config.GamesPath = gamesDir()
+	}
+
+	if config.InsteadManPath == "" {
+		config.InsteadManPath = insteadManDir()
+	}
 
     return config, nil
 

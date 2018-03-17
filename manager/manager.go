@@ -7,6 +7,7 @@ import (
     "net/http"
     "encoding/xml"
     "io/ioutil"
+    "strings"
     // "fmt"
     "../configurator"
 )
@@ -30,6 +31,45 @@ type RepositoryGame struct {
     Image string `xml:"image"`
     Langs []string `xml:"langs>lang"`
 }
+
+type Game struct {
+    Id string
+    Name string
+    Title string
+    Version string
+    InstalledVersion string
+    Url string
+    Size int
+    Descurl string
+    Author string
+    Description string
+    Image string
+    Langs []string
+    RepositoryName string
+    Installed string
+    OnlyLocal bool
+    IsUpdateExist bool
+}
+
+func (g *Game) HydrateFromRepository(repositoryGame *RepositoryGame, repositoryName string) {
+    g.Id = repositoryName + "/" + repositoryGame.Name
+    g.Name = repositoryGame.Name
+    g.Version = repositoryGame.Version
+    g.Url = repositoryGame.Url
+    g.Descurl = repositoryGame.Descurl
+    g.Description = repositoryGame.Description
+    
+    if len(repositoryGame.Langs) > 0 {
+        g.Langs = repositoryGame.Langs
+    } else {
+        g.Langs = strings.Split(repositoryGame.Lang, ",")
+    }
+
+    g.RepositoryName = repositoryName
+}
+
+const updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
+const repositoriesDirName = "repositories"
 
 func downloadRepository(fileName, url string) error {
     // Create the file
@@ -55,8 +95,8 @@ func downloadRepository(fileName, url string) error {
     return nil
 }
 
-func DownloadRepositories(config *configurator.InsteadmanConfigType) {
-    repositoriesDir := filepath.Join(".", "repositories")
+func DownloadRepositories(config *configurator.InsteadmanConfig) {
+    repositoriesDir := filepath.Join(config.InsteadManPath, repositoriesDirName)
     os.MkdirAll(repositoriesDir, os.ModePerm)
 
     for _, repo := range config.Repositories {
@@ -65,8 +105,8 @@ func DownloadRepositories(config *configurator.InsteadmanConfigType) {
     }
 }
 
-func ParseRepositories() ([]RepositoryGame, error) {
-    repositoriesDir := filepath.Join(".", "repositories")
+func ParseRepositories(config *configurator.InsteadmanConfig) ([]RepositoryGame, error) {
+	repositoriesDir := filepath.Join(config.InsteadManPath, repositoriesDirName)
     files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
     if e != nil {
         return nil, e
@@ -102,3 +142,7 @@ func parseRepository(fileName string) (*RepositoryGameList, error) {
 
     return gameList, nil
 }
+
+// func CheckAppNewVersion() {
+
+// }

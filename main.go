@@ -19,7 +19,7 @@ func main() {
 
     // manager.DownloadRepositories(config)
 
-    games, e := manager.ParseRepositories()
+    games, e := manager.ParseRepositories(config)
     fmt.Printf("Config: %v\n", games)
 
     interpreterPath := interpreterFinder.Find()

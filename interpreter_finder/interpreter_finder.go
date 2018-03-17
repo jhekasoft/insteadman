@@ -6,7 +6,7 @@ import (
     "../configurator"
 )
 
-func CheckInterpreter(config *configurator.InsteadmanConfigType) (string, error) {
+func CheckInterpreter(config *configurator.InsteadmanConfig) (string, error) {
     out, e := exec.Command(config.InterpreterCommand, "-version").Output()
     if e != nil {
         return "", e
