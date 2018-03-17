@@ -11,6 +11,7 @@ import (
     "../configurator"
     "os/exec"
     "path"
+    "sort"
 )
 
 type RepositoryGameList struct {
@@ -34,7 +35,7 @@ type RepositoryGame struct {
     InstalledVersion string   `xml:"-"`
     RepositoryName   string   `xml:"-"`
     Installed        bool     `xml:"-"`
-    OnlyLocal        bool     `xml:"-"`
+    OnlyInstalled    bool     `xml:"-"`
     IsUpdateExist    bool     `xml:"-"`
     Languages        []string `xml:"-"`
     Id               string   `xml:"-"`
@@ -57,7 +58,7 @@ func (g *Game) addGameAdditionalData(repositoryName string) {
 const (
     //updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
     repositoriesDirName = "repositories"
-    tempGamesDirName = "temp_games"
+    tempGamesDirName    = "temp_games"
 )
 
 func downloadRepository(fileName, url string) error {
@@ -155,11 +156,14 @@ func (m *Manager) GetInstalledGames() ([]Game, error) {
             continue
         }
 
-        gameName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+        gameName := file.Name()
+        if !file.IsDir() {
+            gameName = strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+        }
 
-        games = append(games, Game {
-            Name: gameName,
-            Title: gameName,
+        games = append(games, Game{
+            Name:      gameName,
+            Title:     gameName,
             Installed: true,
         })
     }
@@ -179,7 +183,7 @@ func (m *Manager) GetMergedGames() ([]Game, error) {
     }
 
     for i := range installedGames {
-        installedGames[i].OnlyLocal = true
+        installedGames[i].OnlyInstalled = true
     }
 
     for i, game := range games {
@@ -187,18 +191,85 @@ func (m *Manager) GetMergedGames() ([]Game, error) {
             if game.Name == installedGame.Name {
                 games[i].Installed = true
                 // todo: installed version
-                installedGames[j].OnlyLocal = false
+                installedGames[j].OnlyInstalled = false
             }
         }
     }
 
     for _, installedGame := range installedGames {
-        if installedGame.OnlyLocal {
+        if installedGame.OnlyInstalled {
             games = append(games, installedGame)
         }
     }
 
     return games, nil
+}
+
+//type GameTitleSorter []Game
+//
+//func (a GameTitleSorter) Len() int           { return len(a) }
+//func (a GameTitleSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+//func (a GameTitleSorter) Less(i, j int) bool { return a[i].Title < a[j].Title }
+
+func (m *Manager) GetSortedGames() ([]Game, error) {
+    games, e := m.GetMergedGames()
+
+    if e != nil {
+        return nil, e
+    }
+
+    //sort.Sort(GameTitleSorter(games))
+    sort.Slice(games, func(i, j int) bool {
+        return games[i].Title < games[j].Title
+    })
+
+    return games, nil
+}
+
+func FilterGames(games []Game, keyword *string, repository *string, lang *string, onlyInstalled bool) []Game {
+    if onlyInstalled {
+        games = filterGamesBy(games, func(game Game) bool {
+            return game.Installed == true
+        })
+    }
+
+    if repository != nil {
+        games = filterGamesBy(games, func(game Game) bool {
+            return game.RepositoryName == *repository
+        })
+    }
+
+    if lang != nil {
+        games = filterGamesBy(games, func(game Game) bool {
+            for _, l := range game.Languages {
+                if l == *lang {
+                    return true
+                }
+            }
+            return false
+        })
+    }
+
+    if keyword != nil {
+        lowerKeyword := strings.ToLower(*keyword)
+
+        games = filterGamesBy(games, func(game Game) bool {
+            return strings.Contains(strings.ToLower(game.Title), lowerKeyword) ||
+                strings.Contains(strings.ToLower(game.Name), lowerKeyword)
+        })
+    }
+
+    return games
+}
+
+func filterGamesBy(games []Game, f func(Game) bool) []Game {
+    gamesFiltered := make([]Game, 0)
+    for _, game := range games {
+        if f(game) {
+            gamesFiltered = append(gamesFiltered, game)
+        }
+    }
+    return gamesFiltered
 }
 
 func (m *Manager) RunGame(game *Game) error {
