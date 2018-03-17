@@ -15,12 +15,12 @@ func main() {
         os.Exit(1)
     }
 
-    fmt.Printf("Config: %v\n", *config)
+    man := manager.Manager{Config: config}
 
-    // manager.DownloadRepositories(config)
+    //man.DownloadRepositories()
 
-    games, e := manager.ParseRepositories(config)
-    fmt.Printf("Config: %v\n", games)
+    games, e := man.GetMergedGames()
+    fmt.Printf("Games: %v\n", games)
 
     interpreterPath := interpreterFinder.Find()
     if interpreterPath != nil {
@@ -30,6 +30,9 @@ func main() {
     version, e := interpreterFinder.CheckInterpreter(config)
     fmt.Printf("INSTEAD error: %v\n", e)
     fmt.Printf("INSTEAD version: %v\n", version)
+
+    e = man.RunGame("lifter2")
+    fmt.Printf("Run error: %v\n", e)
 }
 
 // Cli

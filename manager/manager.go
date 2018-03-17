@@ -8,8 +8,8 @@ import (
     "encoding/xml"
     "io/ioutil"
     "strings"
-    // "fmt"
     "../configurator"
+    "os/exec"
 )
 
 type RepositoryGameList struct {
@@ -39,8 +39,10 @@ type RepositoryGame struct {
     Id               string   `xml:"-"`
 }
 
-func (g *RepositoryGame) addAdditionalData(repositoryGame *RepositoryGame, repositoryName string) {
-    g.Id = repositoryName + "/" + repositoryGame.Name
+type Game RepositoryGame
+
+func (g *Game) addGameAdditionalData(repositoryName string) {
+    g.Id = repositoryName + "/" + g.Name
 
     if len(g.Langs) > 0 {
         g.Languages = g.Langs
@@ -51,8 +53,10 @@ func (g *RepositoryGame) addAdditionalData(repositoryGame *RepositoryGame, repos
     g.RepositoryName = repositoryName
 }
 
-const updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
-const repositoriesDirName = "repositories"
+const (
+    updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
+    repositoriesDirName = "repositories"
+)
 
 func downloadRepository(fileName, url string) error {
     // Create the file
@@ -78,31 +82,43 @@ func downloadRepository(fileName, url string) error {
     return nil
 }
 
-func DownloadRepositories(config *configurator.InsteadmanConfig) {
-    repositoriesDir := filepath.Join(config.InsteadManPath, repositoriesDirName)
+type Manager struct {
+    Config *configurator.InsteadmanConfig
+}
+
+func (m *Manager) DownloadRepositories() {
+    repositoriesDir := filepath.Join(m.Config.InsteadManPath, repositoriesDirName)
     os.MkdirAll(repositoriesDir, os.ModePerm)
 
-    for _, repo := range config.Repositories {
+    for _, repo := range m.Config.Repositories {
         // fmt.Printf("%v %v\n", repo.Name, repo.Url)
         downloadRepository(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
     }
 }
 
-func ParseRepositories(config *configurator.InsteadmanConfig) ([]RepositoryGame, error) {
-    repositoriesDir := filepath.Join(config.InsteadManPath, repositoriesDirName)
+func (m *Manager) GetRepositoryGames() ([]Game, error) {
+    repositoriesDir := filepath.Join(m.Config.InsteadManPath, repositoriesDirName)
     files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
     if e != nil {
         return nil, e
     }
 
-    games := []RepositoryGame{}
+    var games []Game = nil
     for _, fileName := range files {
         // fmt.Printf("File: %v\n", fileName)
 
         gameList, e := parseRepository(filepath.Join(".", fileName))
         if e == nil {
-            games = append(games, gameList.GameList...)
-            // fmt.Printf("Games: %v\n", *gameList)
+            repositoryFileName := filepath.Base(fileName)
+            repositoryName := strings.TrimSuffix(repositoryFileName, filepath.Ext(repositoryFileName))
+
+            var repositoryGames []Game = nil
+            for _, repositoryGame := range gameList.GameList {
+                game := Game(repositoryGame)
+                game.addGameAdditionalData(repositoryName)
+                repositoryGames = append(repositoryGames, game)
+            }
+            games = append(games, repositoryGames...)
         }
     }
 
@@ -114,16 +130,80 @@ func parseRepository(fileName string) (*RepositoryGameList, error) {
     if e != nil {
         return nil, e
     }
-    // fmt.Printf("File: %v\n", string(file))
 
     var gameList *RepositoryGameList
     e = xml.Unmarshal(file, &gameList)
-    // fmt.Printf("Games: %v\n", *gameList)
+
     if e != nil {
         return nil, e
     }
 
     return gameList, nil
+}
+
+func (m *Manager) GetInstalledGames() ([]Game, error) {
+    files, e := ioutil.ReadDir(m.Config.GamesPath)
+    if e != nil {
+        return nil, e
+    }
+
+    var games []Game = nil
+    for _, file := range files {
+        if strings.HasPrefix(file.Name(), ".") {
+            continue
+        }
+
+        gameName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+
+        games = append(games, Game {
+            Name: gameName,
+            Title: gameName,
+            Installed: true,
+        })
+    }
+
+    return games, nil
+}
+
+func (m *Manager) GetMergedGames() ([]Game, error) {
+    games, e := m.GetRepositoryGames()
+    if e != nil {
+        return nil, e
+    }
+
+    installedGames, e := m.GetInstalledGames()
+    if e != nil {
+        return nil, e
+    }
+
+    for i := range installedGames {
+        installedGames[i].OnlyLocal = true
+    }
+
+    for i, game := range games {
+        for j, installedGame := range installedGames {
+            if game.Name == installedGame.Name {
+                games[i].Installed = true
+                // todo: installed version
+                installedGames[j].OnlyLocal = false
+            }
+        }
+    }
+
+    for _, installedGame := range installedGames {
+        if installedGame.OnlyLocal {
+            games = append(games, installedGame)
+        }
+    }
+
+    return games, nil
+}
+
+func (m *Manager) RunGame(name string) error {
+    // todo: idf
+    e := exec.Command(m.Config.InterpreterCommand, "-game", name).Start()
+
+    return e
 }
 
 // func CheckAppNewVersion() {
