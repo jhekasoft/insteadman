@@ -6,6 +6,7 @@ import (
     "io/ioutil"
     "path/filepath"
     "os"
+    "os/user"
 )
 
 type InsteadmanConfig struct {
@@ -27,7 +28,14 @@ type Repository struct {
 const configName = "config.yml"
 
 func insteadDir() string {
-    return filepath.Join(userHomeDir(), ".instead")
+    homeDir := ""
+
+    u, e := user.Current()
+    if e == nil {
+        homeDir = u.HomeDir
+    }
+
+    return filepath.Join(homeDir, ".instead")
 }
 
 func insteadManDir() string {

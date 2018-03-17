@@ -10,6 +10,7 @@ import (
     "strings"
     "../configurator"
     "os/exec"
+    "path"
 )
 
 type RepositoryGameList struct {
@@ -54,29 +55,30 @@ func (g *Game) addGameAdditionalData(repositoryName string) {
 }
 
 const (
-    updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
+    //updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
     repositoriesDirName = "repositories"
+    tempGamesDirName = "temp_games"
 )
 
 func downloadRepository(fileName, url string) error {
     // Create the file
-    out, err := os.Create(fileName)
-    if err != nil {
-        return err
+    out, e := os.Create(fileName)
+    if e != nil {
+        return e
     }
     defer out.Close()
 
     // Download the data
-    resp, err := http.Get(url)
-    if err != nil {
-        return err
+    resp, e := http.Get(url)
+    if e != nil {
+        return e
     }
     defer resp.Body.Close()
 
     // Write the data to the file
-    _, err = io.Copy(out, resp.Body)
-    if err != nil {
-        return err
+    _, e = io.Copy(out, resp.Body)
+    if e != nil {
+        return e
     }
 
     return nil
@@ -199,9 +201,63 @@ func (m *Manager) GetMergedGames() ([]Game, error) {
     return games, nil
 }
 
-func (m *Manager) RunGame(name string) error {
+func (m *Manager) RunGame(game *Game) error {
+    if game == nil {
+        return nil
+    }
+
     // todo: idf
-    e := exec.Command(m.Config.InterpreterCommand, "-game", name).Start()
+    e := exec.Command(m.Config.InterpreterCommand, "-game", game.Name).Start()
+
+    return e
+}
+
+func (m *Manager) InstallGame(game *Game) error {
+    // todo: idf
+
+    tempGamesDir := filepath.Join(m.Config.InsteadManPath, tempGamesDirName)
+    os.MkdirAll(tempGamesDir, os.ModePerm)
+
+    fileName := filepath.Join(tempGamesDir, path.Base(game.Url))
+    fileNameAbs, e := filepath.Abs(fileName)
+    if e == nil {
+        fileName = fileNameAbs
+    }
+
+    // Create the file
+    out, e := os.Create(fileName)
+    if e != nil {
+        return e
+    }
+    defer out.Close()
+
+    // Download the data
+    resp, e := http.Get(game.Url)
+    if e != nil {
+        return e
+    }
+    defer resp.Body.Close()
+
+    // Write the data to the file
+    _, e = io.Copy(out, resp.Body)
+    if e != nil {
+        return e
+    }
+
+    e = exec.Command(m.Config.InterpreterCommand, "-install", fileName, "-quit").Run()
+    if e != nil {
+        return e
+    }
+
+    return nil
+}
+
+func (m *Manager) RemoveGame(game *Game) error {
+    // todo: idf
+
+    gameDir := filepath.Join(m.Config.GamesPath, game.Name)
+
+    e := os.RemoveAll(gameDir)
 
     return e
 }

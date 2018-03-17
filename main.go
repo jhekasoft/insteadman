@@ -31,8 +31,14 @@ func main() {
     fmt.Printf("INSTEAD error: %v\n", e)
     fmt.Printf("INSTEAD version: %v\n", version)
 
-    e = man.RunGame("lifter2")
+    //e = man.InstallGame(&manager.Game{Name:"lifter2",Url:"http://instead-games.ru//download/instead-lifter2-0.3.zip"})
+    //fmt.Printf("Install error: %v\n", e)
+
+    e = man.RunGame(&manager.Game{Name:"lifter2"})
     fmt.Printf("Run error: %v\n", e)
+
+    //e = man.RemoveGame(&manager.Game{Name:"lifter2"})
+    //fmt.Printf("Remove error: %v\n", e)
 }
 
 // Cli
