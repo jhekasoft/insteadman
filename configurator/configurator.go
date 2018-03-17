@@ -2,10 +2,10 @@ package configurator
 
 import (
     //"encoding/json"
-	"github.com/ghodss/yaml"
+    "github.com/ghodss/yaml"
     "io/ioutil"
     "path/filepath"
-	"os"
+    "os"
 )
 
 type InsteadmanConfig struct {
@@ -15,48 +15,48 @@ type InsteadmanConfig struct {
     UseBuiltinInterpreter bool         `json:"use_builtin_interpreter"`
     Lang                  string       `json:"lang"`
     CheckUpdateOnStart    bool         `json:"check_update_on_start"`
-	GamesPath             string       `json:"games_path"`
-	InsteadManPath        string       `json:"insteadman_path"`
+    GamesPath             string       `json:"games_path"`
+    InsteadManPath        string       `json:"insteadman_path"`
 }
 
 type Repository struct {
     Name string `json:"name"`
-    Url string `json:"url"`
+    Url  string `json:"url"`
 }
 
 const configName = "config.yml"
 
 func insteadDir() string {
-	return filepath.Join(userHomeDir(), ".instead")
+    return filepath.Join(userHomeDir(), ".instead")
 }
 
 func insteadManDir() string {
-	localPath := filepath.Join(".",  configName)
-	_, e := os.Stat(localPath)
-	exists := !os.IsNotExist(e)
+    localPath := filepath.Join(".", configName)
+    _, e := os.Stat(localPath)
+    exists := !os.IsNotExist(e)
 
-	if exists && e == nil {
-		return "."
-	}
+    if exists && e == nil {
+        return "."
+    }
 
-	return filepath.Join(insteadDir(), "insteadman")
+    return filepath.Join(insteadDir(), "insteadman")
 }
 
 func configFileName() string {
-	return filepath.Join(insteadManDir(), configName)
+    return filepath.Join(insteadManDir(), configName)
 }
 
 func gamesDir() string {
-	localPath := filepath.Join(".",  "games")
+    localPath := filepath.Join(".", "games")
 
-	_, e := os.Stat(localPath)
-	exists := !os.IsNotExist(e)
+    _, e := os.Stat(localPath)
+    exists := !os.IsNotExist(e)
 
-	if exists && e == nil {
-		return localPath
-	}
+    if exists && e == nil {
+        return localPath
+    }
 
-	return filepath.Join(insteadDir(), "games")
+    return filepath.Join(insteadDir(), "games")
 }
 
 func GetConfig() (*InsteadmanConfig, error) {
@@ -70,12 +70,12 @@ func GetConfig() (*InsteadmanConfig, error) {
     yaml.Unmarshal(file, &config)
 
     if config.GamesPath == "" {
-		config.GamesPath = gamesDir()
-	}
+        config.GamesPath = gamesDir()
+    }
 
-	if config.InsteadManPath == "" {
-		config.InsteadManPath = insteadManDir()
-	}
+    if config.InsteadManPath == "" {
+        config.InsteadManPath = insteadManDir()
+    }
 
     return config, nil
 

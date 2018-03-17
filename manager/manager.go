@@ -19,50 +19,33 @@ type RepositoryGameList struct {
 
 type RepositoryGame struct {
     // XMLName xml.Name `xml:"game"`
-    Name string `xml:"name"`
-    Title string `xml:"title"`
-    Version string `xml:"version"`
-    Url string `xml:"url"`
-    Size int `xml:"size"`
-    Lang string `xml:"lang"`
-    Descurl string `xml:"descurl"`
-    Author string `xml:"author"`
-    Description string `xml:"description"`
-    Image string `xml:"image"`
-    Langs []string `xml:"langs>lang"`
+    Name             string   `xml:"name"`
+    Title            string   `xml:"title"`
+    Version          string   `xml:"version"`
+    Url              string   `xml:"url"`
+    Size             int      `xml:"size"`
+    Lang             string   `xml:"lang"`
+    Descurl          string   `xml:"descurl"`
+    Author           string   `xml:"author"`
+    Description      string   `xml:"description"`
+    Image            string   `xml:"image"`
+    Langs            []string `xml:"langs>lang"`
+    InstalledVersion string   `xml:"-"`
+    RepositoryName   string   `xml:"-"`
+    Installed        bool     `xml:"-"`
+    OnlyLocal        bool     `xml:"-"`
+    IsUpdateExist    bool     `xml:"-"`
+    Languages        []string `xml:"-"`
+    Id               string   `xml:"-"`
 }
 
-type Game struct {
-    Id string
-    Name string
-    Title string
-    Version string
-    InstalledVersion string
-    Url string
-    Size int
-    Descurl string
-    Author string
-    Description string
-    Image string
-    Langs []string
-    RepositoryName string
-    Installed string
-    OnlyLocal bool
-    IsUpdateExist bool
-}
-
-func (g *Game) HydrateFromRepository(repositoryGame *RepositoryGame, repositoryName string) {
+func (g *RepositoryGame) addAdditionalData(repositoryGame *RepositoryGame, repositoryName string) {
     g.Id = repositoryName + "/" + repositoryGame.Name
-    g.Name = repositoryGame.Name
-    g.Version = repositoryGame.Version
-    g.Url = repositoryGame.Url
-    g.Descurl = repositoryGame.Descurl
-    g.Description = repositoryGame.Description
-    
-    if len(repositoryGame.Langs) > 0 {
-        g.Langs = repositoryGame.Langs
+
+    if len(g.Langs) > 0 {
+        g.Languages = g.Langs
     } else {
-        g.Langs = strings.Split(repositoryGame.Lang, ",")
+        g.Languages = strings.Split(g.Lang, ",")
     }
 
     g.RepositoryName = repositoryName
@@ -101,12 +84,12 @@ func DownloadRepositories(config *configurator.InsteadmanConfig) {
 
     for _, repo := range config.Repositories {
         // fmt.Printf("%v %v\n", repo.Name, repo.Url)
-        downloadRepository(filepath.Join(repositoriesDir, repo.Name + ".xml"), repo.Url)
+        downloadRepository(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
     }
 }
 
 func ParseRepositories(config *configurator.InsteadmanConfig) ([]RepositoryGame, error) {
-	repositoriesDir := filepath.Join(config.InsteadManPath, repositoriesDirName)
+    repositoriesDir := filepath.Join(config.InsteadManPath, repositoriesDirName)
     files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
     if e != nil {
         return nil, e
