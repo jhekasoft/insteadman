@@ -1,15 +1,15 @@
 package interpreterFinder
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"../configurator"
+	"github.com/stretchr/testify/assert"
 	"regexp"
+	"testing"
 )
 
 func TestFindAndCheckInterpreter(t *testing.T) {
 	config := configurator.InsteadmanConfig{}
-	finder := InterpreterFinder{Config:&config}
+	finder := InterpreterFinder{Config: &config}
 
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)

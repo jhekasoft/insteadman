@@ -2,8 +2,8 @@ package interpreterFinder
 
 import (
 	"../configurator"
-	"os/exec"
 	"os"
+	"os/exec"
 	"strings"
 )
 

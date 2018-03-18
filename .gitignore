@@ -1,5 +1,11 @@
+.DS_Store
 /.idea/
 /insteadman
+/insteadman3
 /main
 /repositories
 /temp_games
+/resources/testdata/games
+/resources/testdata/insteadman/temp_games
+/resources/testdata/insteadman/repositories/*
+!/resources/testdata/insteadman/repositories/test.xml

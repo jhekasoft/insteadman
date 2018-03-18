@@ -3,6 +3,7 @@ package manager
 import (
 	"../configurator"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -86,17 +87,25 @@ func downloadRepository(fileName, url string) error {
 }
 
 type Manager struct {
-	Config *configurator.InsteadmanConfig
+	Config            *configurator.InsteadmanConfig
+	CurrentRunningCmd *exec.Cmd
 }
 
-func (m *Manager) DownloadRepositories() {
+func (m *Manager) DownloadRepositories() []error {
 	repositoriesDir := filepath.Join(m.Config.InsteadManPath, repositoriesDirName)
 	os.MkdirAll(repositoriesDir, os.ModePerm)
 
+	var errors []error = nil
 	for _, repo := range m.Config.Repositories {
 		// fmt.Printf("%v %v\n", repo.Name, repo.Url)
-		downloadRepository(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
+		e := downloadRepository(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
+
+		if e != nil {
+			errors = append(errors, e)
+		}
 	}
+
+	return errors
 }
 
 func (m *Manager) GetRepositoryGames() ([]Game, error) {
@@ -277,8 +286,30 @@ func (m *Manager) RunGame(game *Game) error {
 		return nil
 	}
 
+	// Absolute games path
+	gamesPath, e := filepath.Abs(m.Config.GamesPath)
+	if e != nil {
+		return e
+	}
+
 	// todo: idf
-	e := exec.Command(m.Config.InterpreterCommand, "-game", game.Name).Start()
+	cmd := exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-game", game.Name)
+	e = cmd.Start()
+
+	// Current running cmd
+	if e == nil {
+		m.CurrentRunningCmd = cmd
+	}
+
+	return e
+}
+
+func (m *Manager) StopRunningGame() error {
+	if m.CurrentRunningCmd == nil {
+		return nil
+	}
+
+	e := m.CurrentRunningCmd.Process.Kill()
 
 	return e
 }
@@ -289,6 +320,7 @@ func (m *Manager) InstallGame(game *Game) error {
 	tempGamesDir := filepath.Join(m.Config.InsteadManPath, tempGamesDirName)
 	os.MkdirAll(tempGamesDir, os.ModePerm)
 
+	// Absolute filepath
 	fileName := filepath.Join(tempGamesDir, path.Base(game.Url))
 	fileNameAbs, e := filepath.Abs(fileName)
 	if e == nil {
@@ -315,7 +347,21 @@ func (m *Manager) InstallGame(game *Game) error {
 		return e
 	}
 
-	e = exec.Command(m.Config.InterpreterCommand, "-install", fileName, "-quit").Run()
+	// Absolute games path
+	gamesPath, e := filepath.Abs(m.Config.GamesPath)
+	if e != nil {
+		return e
+	}
+
+	fmt.Printf("Path: %v\n", fileName)
+
+	e = exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit").Run()
+	if e != nil {
+		return e
+	}
+
+	// Remove downloaded temp file
+	e = os.Remove(fileName)
 	if e != nil {
 		return e
 	}

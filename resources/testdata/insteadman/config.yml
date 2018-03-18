@@ -13,5 +13,5 @@ version: 3.0.0
 use_builtin_interpreter: false
 lang: ru
 check_update_on_start: true
-games_path: ../games
-insteadman_path: .
+games_path: ../resources/testdata/games/
+insteadman_path: ../resources/testdata/insteadman/
