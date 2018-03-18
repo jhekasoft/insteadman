@@ -2,7 +2,7 @@ package main
 
 import (
 	"./configurator"
-	"./interpreter_finder"
+	//"./interpreter_finder"
 	"./manager"
 	"fmt"
 	"os"
@@ -32,14 +32,14 @@ func main() {
 
 	fmt.Println("-------------------")
 
-	interpreterPath := interpreterFinder.Find()
-	if interpreterPath != nil {
-		fmt.Printf("INSTEAD path: %v\n", *interpreterPath)
-	}
-
-	version, e := interpreterFinder.CheckInterpreter(config)
-	fmt.Printf("INSTEAD error: %v\n", e)
-	fmt.Printf("INSTEAD version: %v\n", version)
+	//interpreterPath := interpreterFinder.Find()
+	//if interpreterPath != nil {
+	//	fmt.Printf("INSTEAD path: %v\n", *interpreterPath)
+	//}
+	//
+	//version, e := interpreterFinder.CheckInterpreter(config)
+	//fmt.Printf("INSTEAD error: %v\n", e)
+	//fmt.Printf("INSTEAD version: %v\n", version)
 
 	//e = man.InstallGame(&manager.Game{Name:"lifter2",Url:"http://instead-games.ru//download/instead-lifter2-0.3.zip"})
 	//fmt.Printf("Install error: %v\n", e)
