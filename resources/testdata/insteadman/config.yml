@@ -1,0 +1,17 @@
+repositories:
+  - name: official
+    url: http://instead.syscall.ru/pool/game_list.xml
+
+  - name: instead-games
+    url: http://instead-games.ru/xml.php
+
+  - name: instead-games-sandbox
+    url: http://instead-games.ru/xml2.php
+
+#interpreter_command: /Applications/Instead.app/Contents/MacOS/sdl-instead
+version: 3.0.0
+use_builtin_interpreter: false
+lang: ru
+check_update_on_start: true
+games_path: ../games
+insteadman_path: .
