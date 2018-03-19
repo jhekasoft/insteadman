@@ -3,7 +3,6 @@ package manager
 import (
 	"../configurator"
 	"encoding/xml"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -352,8 +351,6 @@ func (m *Manager) InstallGame(game *Game) error {
 	if e != nil {
 		return e
 	}
-
-	fmt.Printf("Path: %v\n", fileName)
 
 	e = exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit").Run()
 	if e != nil {
