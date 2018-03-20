@@ -1,9 +1,10 @@
-// +build linux freebsd netbsd openbsd
+// +build !windows,!darwin
 
 package interpreterFinder
 
 import (
 	"os/exec"
+	"strings"
 )
 
 func exactFilePaths() []string {
@@ -16,7 +17,6 @@ func exactFilePaths() []string {
 	}
 
 	path := strings.Replace(string(out), "\n", "", -1)
-
 
 	return []string{path}
 }

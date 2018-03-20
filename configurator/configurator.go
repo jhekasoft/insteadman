@@ -4,21 +4,20 @@ import (
 	"github.com/ghodss/yaml"
 	"io/ioutil"
 	"os"
-	"os/user"
 	"path/filepath"
 )
 
 type InsteadmanConfig struct {
-	Repositories          []Repository `json:"repositories"`
-	InterpreterCommand    string       `json:"interpreter_command"`
-	Version               string       `json:"version"`
-	UseBuiltinInterpreter bool         `json:"use_builtin_interpreter"`
-	Lang                  string       `json:"lang"`
-	CheckUpdateOnStart    bool         `json:"check_update_on_start"`
-	GamesPath             string       `json:"games_path"`
-	InsteadManPath        string       `json:"insteadman_path"`
-	CalculatedGamesPath   string       `json:"-"`
-	CalculatedInsteadManPath   string       `json:"-"`
+	Repositories             []Repository `json:"repositories"`
+	InterpreterCommand       string       `json:"interpreter_command"`
+	Version                  string       `json:"version"`
+	UseBuiltinInterpreter    bool         `json:"use_builtin_interpreter"`
+	Lang                     string       `json:"lang"`
+	CheckUpdateOnStart       bool         `json:"check_update_on_start"`
+	GamesPath                string       `json:"games_path"`
+	InsteadManPath           string       `json:"insteadman_path"`
+	CalculatedGamesPath      string       `json:"-"`
+	CalculatedInsteadManPath string       `json:"-"`
 }
 
 type Repository struct {
@@ -32,17 +31,6 @@ type Configurator struct {
 	FilePath string
 }
 
-func insteadDir() string {
-	homeDir := ""
-
-	u, e := user.Current()
-	if e == nil {
-		homeDir = u.HomeDir
-	}
-
-	return filepath.Join(homeDir, ".instead")
-}
-
 func insteadManDir() string {
 	localPath := filepath.Join(".", configName)
 	_, e := os.Stat(localPath)
@@ -52,7 +40,10 @@ func insteadManDir() string {
 		return "."
 	}
 
-	return filepath.Join(insteadDir(), "insteadman")
+	insteadManDir := filepath.Join(insteadDir(), "insteadman")
+	os.MkdirAll(insteadManDir, os.ModePerm)
+
+	return insteadManDir
 }
 
 func findConfigFileName() string {
@@ -69,7 +60,10 @@ func gamesDir() string {
 		return localPath
 	}
 
-	return filepath.Join(insteadDir(), "games")
+	gamesDir := filepath.Join(insteadDir(), "games")
+	os.MkdirAll(gamesDir, os.ModePerm)
+
+	return gamesDir
 }
 
 func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
@@ -100,10 +94,10 @@ func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 }
 
 func (c *Configurator) SaveConfig(config *InsteadmanConfig) error {
-	 bytes, e := yaml.Marshal(config)
-	 if e != nil {
-	     return e
-	 }
+	bytes, e := yaml.Marshal(config)
+	if e != nil {
+		return e
+	}
 
-	 return ioutil.WriteFile(c.FilePath, bytes, 0644)
+	return ioutil.WriteFile(c.FilePath, bytes, 0644)
 }

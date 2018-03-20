@@ -25,6 +25,5 @@ func exactFilePaths() []string {
 	commandPath := strings.Replace(string(out), "\n", "", -1)
 	paths = append(paths, commandPath)
 
-
 	return paths
 }

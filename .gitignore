@@ -10,3 +10,4 @@
 /resources/testdata/insteadman/temp_games
 /resources/testdata/insteadman/repositories/*
 !/resources/testdata/insteadman/repositories/test.xml
+/build
