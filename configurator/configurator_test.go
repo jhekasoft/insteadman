@@ -12,5 +12,16 @@ func TestGetConfig(t *testing.T) {
 	config, e := configurator.GetConfig()
 
 	assert.NoError(t, e)
-	assert.NotEmpty(t, config.GamesPath)
+	assert.NotEmpty(t, config.CalculatedGamesPath)
+}
+
+func TestSaveConfig(t *testing.T) {
+	configurator := Configurator{FilePath: configFilePath}
+	config, e := configurator.GetConfig()
+
+	assert.NoError(t, e)
+	assert.NotEmpty(t, config.CalculatedGamesPath)
+
+	e = configurator.SaveConfig(config)
+	assert.NoError(t, e)
 }

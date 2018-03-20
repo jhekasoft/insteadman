@@ -12,7 +12,7 @@ type InterpreterFinder struct {
 }
 
 func (f *InterpreterFinder) Find() *string {
-	for _, path := range exactFilePaths {
+	for _, path := range exactFilePaths() {
 		_, e := os.Stat(path)
 		exists := !os.IsNotExist(e)
 
@@ -24,7 +24,7 @@ func (f *InterpreterFinder) Find() *string {
 	return nil
 }
 
-func (f *InterpreterFinder) CheckInterpreter() (string, error) {
+func (f *InterpreterFinder) Check() (string, error) {
 	out, e := exec.Command(f.Config.InterpreterCommand, "-version").Output()
 	if e != nil {
 		return "", e

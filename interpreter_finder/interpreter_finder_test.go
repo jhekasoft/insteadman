@@ -15,7 +15,7 @@ func TestFindAndCheckInterpreter(t *testing.T) {
 	assert.NotNil(t, interpreterPath)
 
 	config.InterpreterCommand = *interpreterPath
-	version, e := finder.CheckInterpreter()
+	version, e := finder.Check()
 
 	assert.NoError(t, e)
 	assert.Regexp(t, regexp.MustCompile("^\\d+.\\d+.\\d+"), version) // like "3.2.0"

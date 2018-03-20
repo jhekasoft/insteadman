@@ -90,8 +90,20 @@ type Manager struct {
 	CurrentRunningCmd *exec.Cmd
 }
 
-func (m *Manager) DownloadRepositories() []error {
-	repositoriesDir := filepath.Join(m.Config.InsteadManPath, repositoriesDirName)
+func (m *Manager) HasDownloadedRepositories() bool {
+	repositoriesDir := filepath.Join(m.Config.CalculatedInsteadManPath, repositoriesDirName)
+	os.MkdirAll(repositoriesDir, os.ModePerm)
+
+	files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
+	if e != nil || files == nil {
+		return false
+	}
+
+	return true
+}
+
+func (m *Manager) UpdateRepositories() []error {
+	repositoriesDir := filepath.Join(m.Config.CalculatedInsteadManPath, repositoriesDirName)
 	os.MkdirAll(repositoriesDir, os.ModePerm)
 
 	var errors []error = nil
@@ -108,7 +120,7 @@ func (m *Manager) DownloadRepositories() []error {
 }
 
 func (m *Manager) GetRepositoryGames() ([]Game, error) {
-	repositoriesDir := filepath.Join(m.Config.InsteadManPath, repositoriesDirName)
+	repositoriesDir := filepath.Join(m.Config.CalculatedInsteadManPath, repositoriesDirName)
 	files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
 	if e != nil {
 		return nil, e
@@ -153,7 +165,7 @@ func parseRepository(fileName string) (*RepositoryGameList, error) {
 }
 
 func (m *Manager) GetInstalledGames() ([]Game, error) {
-	files, e := ioutil.ReadDir(m.Config.GamesPath)
+	files, e := ioutil.ReadDir(m.Config.CalculatedGamesPath)
 	if e != nil {
 		return nil, e
 	}
@@ -249,12 +261,7 @@ func FilterGames(games []Game, keyword *string, repository *string, lang *string
 
 	if lang != nil {
 		games = filterGamesBy(games, func(game Game) bool {
-			for _, l := range game.Languages {
-				if l == *lang {
-					return true
-				}
-			}
-			return false
+			return existsString(game.Languages, *lang)
 		})
 	}
 
@@ -286,7 +293,7 @@ func (m *Manager) RunGame(game *Game) error {
 	}
 
 	// Absolute games path
-	gamesPath, e := filepath.Abs(m.Config.GamesPath)
+	gamesPath, e := filepath.Abs(m.Config.CalculatedGamesPath)
 	if e != nil {
 		return e
 	}
@@ -316,7 +323,7 @@ func (m *Manager) StopRunningGame() error {
 func (m *Manager) InstallGame(game *Game) error {
 	// todo: idf
 
-	tempGamesDir := filepath.Join(m.Config.InsteadManPath, tempGamesDirName)
+	tempGamesDir := filepath.Join(m.Config.CalculatedInsteadManPath, tempGamesDirName)
 	os.MkdirAll(tempGamesDir, os.ModePerm)
 
 	// Absolute filepath
@@ -347,7 +354,7 @@ func (m *Manager) InstallGame(game *Game) error {
 	}
 
 	// Absolute games path
-	gamesPath, e := filepath.Abs(m.Config.GamesPath)
+	gamesPath, e := filepath.Abs(m.Config.CalculatedGamesPath)
 	if e != nil {
 		return e
 	}
@@ -369,11 +376,38 @@ func (m *Manager) InstallGame(game *Game) error {
 func (m *Manager) RemoveGame(game *Game) error {
 	// todo: idf
 
-	gameDir := filepath.Join(m.Config.GamesPath, game.Name)
+	gameDir := filepath.Join(m.Config.CalculatedGamesPath, game.Name)
 
 	e := os.RemoveAll(gameDir)
 
 	return e
+}
+
+func (m *Manager) GetRepositories() []configurator.Repository {
+	return m.Config.Repositories
+}
+
+func (m *Manager) FindLangs(games []Game) []string {
+	var langs []string = nil
+
+	for _, game := range games {
+		for _, gameLang := range game.Languages {
+			if !existsString(langs, gameLang) {
+				langs = append(langs, gameLang)
+			}
+		}
+	}
+
+	return langs
+}
+
+func existsString(stack []string, element string) bool {
+	for _, el := range stack {
+		if el == element {
+			return true
+		}
+	}
+	return false
 }
 
 // func CheckAppNewVersion() {

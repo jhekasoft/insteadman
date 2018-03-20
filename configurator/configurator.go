@@ -17,6 +17,8 @@ type InsteadmanConfig struct {
 	CheckUpdateOnStart    bool         `json:"check_update_on_start"`
 	GamesPath             string       `json:"games_path"`
 	InsteadManPath        string       `json:"insteadman_path"`
+	CalculatedGamesPath   string       `json:"-"`
+	CalculatedInsteadManPath   string       `json:"-"`
 }
 
 type Repository struct {
@@ -84,24 +86,24 @@ func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 	var config *InsteadmanConfig
 	yaml.Unmarshal(file, &config)
 
-	if config.GamesPath == "" {
-		config.GamesPath = gamesDir()
+	config.CalculatedGamesPath = config.GamesPath
+	if config.CalculatedGamesPath == "" {
+		config.CalculatedGamesPath = gamesDir()
 	}
 
-	if config.InsteadManPath == "" {
-		config.InsteadManPath = insteadManDir()
+	config.CalculatedInsteadManPath = config.InsteadManPath
+	if config.CalculatedInsteadManPath == "" {
+		config.CalculatedInsteadManPath = insteadManDir()
 	}
 
 	return config, nil
+}
 
-	// write config
-	// config.Lang = "ru"
+func (c *Configurator) SaveConfig(config *InsteadmanConfig) error {
+	 bytes, e := yaml.Marshal(config)
+	 if e != nil {
+	     return e
+	 }
 
-	// bytes, e := json.MarshalIndent(config, "", "  ")
-	// if e != nil {
-	//     fmt.Printf("Config error: %v\n", e)
-	//     os.Exit(1)
-	// }
-
-	// ioutil.WriteFile(findConfigFileName, bytes, 0644)
+	 return ioutil.WriteFile(c.FilePath, bytes, 0644)
 }

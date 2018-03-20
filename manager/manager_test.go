@@ -13,13 +13,13 @@ const testGameUrl = "http://instead-games.ru/download/instead-crossworlds-0.7.zi
 const filterKeyword = "test"
 const filterWrongKeyword = "878fdfd----fdsfdsftest"
 
-func TestDownloadRepositories(t *testing.T) {
+func TestUpdateRepositories(t *testing.T) {
 	conf := configurator.Configurator{FilePath: configFilePath}
 	config, e := conf.GetConfig()
 	assert.NoError(t, e)
 
 	man := Manager{Config: config}
-	errors := man.DownloadRepositories()
+	errors := man.UpdateRepositories()
 
 	assert.Empty(t, errors)
 }
@@ -96,4 +96,29 @@ func TestRemoveGame(t *testing.T) {
 	e = man.RemoveGame(&Game{Name: testGameName, Url: testGameUrl})
 
 	assert.NoError(t, e)
+}
+
+func TestRepositories(t *testing.T) {
+	conf := configurator.Configurator{FilePath: configFilePath}
+	config, e := conf.GetConfig()
+	assert.NoError(t, e)
+
+	man := Manager{Config: config}
+	repositories := man.GetRepositories()
+
+	assert.NotEmpty(t, repositories)
+}
+
+func TestLangs(t *testing.T) {
+	conf := configurator.Configurator{FilePath: configFilePath}
+	config, e := conf.GetConfig()
+	assert.NoError(t, e)
+
+	man := Manager{Config: config}
+
+	games, e := man.GetSortedGames()
+	assert.NoError(t, e)
+
+	langs := man.FindLangs(games)
+	assert.NotEmpty(t, langs)
 }

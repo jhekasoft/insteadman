@@ -2,7 +2,7 @@ package main
 
 import (
 	"./configurator"
-	//"./interpreter_finder"
+	"./interpreter_finder"
 	"./manager"
 	"fmt"
 	"os"
@@ -12,14 +12,14 @@ import (
 const version = "3.0.1"
 
 func main() {
-	conf := configurator.Configurator{FilePath: ""}
-	config, e := conf.GetConfig()
-	if e != nil {
-		fmt.Printf("Error: %v\n", e)
-		os.Exit(1)
-	}
+	m, c := initManagerAndConfigurator()
 
-	m := manager.Manager{Config: config}
+	needRepositoriesUpdate := !m.HasDownloadedRepositories()
+
+	if m.Config.InterpreterCommand == "" {
+		findInterpreter(&m, &c)
+		m, c = initManagerAndConfigurator()
+	}
 
 	argsWithoutProg := os.Args[1:]
 
@@ -28,9 +28,17 @@ func main() {
 		update(&m)
 
 	case "list":
+		if needRepositoriesUpdate {
+			update(&m)
+		}
+
 		list(&m)
 
 	case "search":
+		if needRepositoriesUpdate {
+			update(&m)
+		}
+
 		keyword := getCommandArg(argsWithoutProg)
 		if keyword == "" {
 			printHelpAndExit()
@@ -62,14 +70,18 @@ func main() {
 
 		remove(&m, &keyword)
 
+	case "findinterpreter":
+		findInterpreter(&m, &c)
+
 	default:
 		printHelpAndExit()
 	}
 }
 
+// -- Commands -----------------------------------
 func update(m *manager.Manager)  {
 	fmt.Println("Updating repositories...")
-	errors := m.DownloadRepositories()
+	errors := m.UpdateRepositories()
 
 	if errors != nil {
 		fmt.Println("There are errors:")
@@ -127,6 +139,8 @@ func run(m *manager.Manager, keyword *string) {
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
 	e = m.RunGame(&game)
+	exitIfError(e)
+
 	if e == nil {
 		fmt.Printf("Running %s game...\n", game.Title)
 	}
@@ -150,6 +164,20 @@ func remove(m *manager.Manager, keyword *string) {
 	}
 }
 
+func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
+	finder := interpreterFinder.InterpreterFinder{Config:m.Config}
+	path := finder.Find()
+	if path != nil {
+		fmt.Printf("INSTEAD has found: %s\n", *path)
+	}
+
+	m.Config.InterpreterCommand = *path
+	e := c.SaveConfig(m.Config)
+	exitIfError(e)
+
+	fmt.Println("Path has saved")
+}
+
 func printHelpAndExit() {
 	fmt.Printf("InsteadMan CLI %s — INSTEAD games manager\n\n" +
 		    "Usage:\n" +
@@ -164,6 +192,17 @@ func printHelpAndExit() {
 			"findInterpreter\n    Find INSTEAD interpreter and save path to the config\n\n" +
 			"More info: https://github.com/jhekasoft/insteadman3\n", version)
 	os.Exit(1)
+}
+// -- Commands -----------------------------------
+
+func initManagerAndConfigurator() (manager.Manager, configurator.Configurator) {
+	c := configurator.Configurator{FilePath: ""}
+	config, e := c.GetConfig()
+	exitIfError(e)
+
+	m := manager.Manager{Config: config}
+
+	return m, c
 }
 
 func getCommand(argsWithoutProg []string) string {
@@ -183,6 +222,8 @@ func getCommandArg(argsWithoutProg []string) string {
 }
 
 func printGames(games []manager.Game) {
+	fmt.Println("Games:")
+
 	for _, game := range games {
 		installed := ""
 		if game.Installed {
