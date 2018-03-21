@@ -345,7 +345,7 @@ func (m *Manager) InstallGame(game *Game) error {
 	cmd := exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit")
 	out, e := cmd.CombinedOutput()
 	if e != nil {
-		return errors.New(strings.Replace(string(out), "\n", "", -1))
+		return errors.New(e.Error() + "; " + strings.Replace(string(out), "\n", "", -1))
 	}
 
 	// Remove downloaded temp file
