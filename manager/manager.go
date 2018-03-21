@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"errors"
 )
 
 type RepositoryGameList struct {
@@ -61,30 +62,6 @@ const (
 	tempGamesDirName    = "temp_games"
 )
 
-func downloadRepository(fileName, url string) error {
-	// Create the file
-	out, e := os.Create(fileName)
-	if e != nil {
-		return e
-	}
-	defer out.Close()
-
-	// Download the data
-	resp, e := http.Get(url)
-	if e != nil {
-		return e
-	}
-	defer resp.Body.Close()
-
-	// Write the data to the file
-	_, e = io.Copy(out, resp.Body)
-	if e != nil {
-		return e
-	}
-
-	return nil
-}
-
 type Manager struct {
 	Config            *configurator.InsteadmanConfig
 	CurrentRunningCmd *exec.Cmd
@@ -109,7 +86,7 @@ func (m *Manager) UpdateRepositories() []error {
 	var errors []error = nil
 	for _, repo := range m.Config.Repositories {
 		// fmt.Printf("%v %v\n", repo.Name, repo.Url)
-		e := downloadRepository(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
+		e := downloadFileSimple(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
 
 		if e != nil {
 			errors = append(errors, e)
@@ -320,6 +297,27 @@ func (m *Manager) StopRunningGame() error {
 	return e
 }
 
+func downloadFileSimple(fileName, url string) error {
+	// Create the file
+	out, e := os.Create(fileName)
+	if e != nil {
+		return e
+	}
+	defer out.Close()
+
+	// Download the data
+	resp, e := http.Get(url)
+	if e != nil {
+		return e
+	}
+	defer resp.Body.Close()
+
+	// Write the data to the file
+	_, e = io.Copy(out, resp.Body)
+
+	return e
+}
+
 func (m *Manager) InstallGame(game *Game) error {
 	// todo: idf
 
@@ -333,22 +331,7 @@ func (m *Manager) InstallGame(game *Game) error {
 		fileName = fileNameAbs
 	}
 
-	// Create the file
-	out, e := os.Create(fileName)
-	if e != nil {
-		return e
-	}
-	defer out.Close()
-
-	// Download the data
-	resp, e := http.Get(game.Url)
-	if e != nil {
-		return e
-	}
-	defer resp.Body.Close()
-
-	// Write the data to the file
-	_, e = io.Copy(out, resp.Body)
+	e = downloadFileSimple(fileName, game.Url)
 	if e != nil {
 		return e
 	}
@@ -359,9 +342,10 @@ func (m *Manager) InstallGame(game *Game) error {
 		return e
 	}
 
-	e = exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit").Run()
+	cmd := exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit")
+	out, e := cmd.CombinedOutput()
 	if e != nil {
-		return e
+		return errors.New(strings.Replace(string(out), "\n", "", -1))
 	}
 
 	// Remove downloaded temp file

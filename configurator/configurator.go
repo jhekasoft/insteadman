@@ -25,7 +25,10 @@ type Repository struct {
 	Url  string `json:"url"`
 }
 
-const configName = "config.yml"
+const (
+	configName  = "config.yml"
+	skeletonDir = "skeleton"
+)
 
 type Configurator struct {
 	FilePath string
@@ -66,9 +69,28 @@ func gamesDir() string {
 	return gamesDir
 }
 
+func writeSkeleton(c *Configurator) error {
+	configData, e := ioutil.ReadFile(filepath.Join(skeletonDir, configName))
+	if e != nil {
+		return e
+	}
+
+	return ioutil.WriteFile(c.FilePath, configData, 0644)
+}
+
 func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 	if c.FilePath == "" {
 		c.FilePath = findConfigFileName()
+	}
+
+	// Write skeleton config if it isn't existing
+	_, e := os.Stat(c.FilePath)
+	exists := !os.IsNotExist(e)
+	if !exists || e != nil {
+		e = writeSkeleton(c)
+		if e != nil {
+			return nil, e
+		}
 	}
 
 	file, e := ioutil.ReadFile(c.FilePath)
