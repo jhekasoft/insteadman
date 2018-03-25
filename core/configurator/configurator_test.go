@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-const configFilePath = "../resources/testdata/insteadman/config.yml"
+const configFilePath = "../../resources/testdata/insteadman/config.yml"
 
 func TestGetConfig(t *testing.T) {
 	configurator := Configurator{FilePath: configFilePath}

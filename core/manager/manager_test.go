@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-const configFilePath = "../resources/testdata/insteadman/config.yml"
+const configFilePath = "../../resources/testdata/insteadman/config.yml"
 const testGameName = "crossworlds"
 const testGameUrl = "http://instead-games.ru/download/instead-crossworlds-0.7.zip"
 const filterKeyword = "test"

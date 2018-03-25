@@ -1,10 +1,7 @@
 .DS_Store
 /.idea/
-/insteadman
-/insteadman3
 /insteadman-cli
 /insteadman-gtk
-/main
 /repositories
 /temp_games
 /resources/testdata/games

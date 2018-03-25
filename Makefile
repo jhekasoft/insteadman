@@ -3,15 +3,20 @@ all:
 	${MAKE} cli gtk
 
 cli:
-	go build -ldflags "-s -w" insteadman-cli.go
+	go build -ldflags "-s -w" -o insteadman-cli ./cli
 
 clicross:
-	./crossbuild-cli.sh
+	./crossbuild.sh ./cli insteadman-cli
 
 gtk:
-	go build -ldflags "-s -w" insteadman-gtk.go
+	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
+
+test:
+	go test ./...
 
 clean:
 	rm -f insteadman-cli
 	rm -f insteadman-gtk
 	rm -rf build/*
+
+.PHONY: cli gtk

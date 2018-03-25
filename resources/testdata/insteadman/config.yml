@@ -1,6 +1,6 @@
 check_update_on_start: true
-games_path: ../resources/testdata/games/
-insteadman_path: ../resources/testdata/insteadman/
+games_path: ../../resources/testdata/games/
+insteadman_path: ../../resources/testdata/insteadman/
 interpreter_command: ""
 lang: ru
 repositories:

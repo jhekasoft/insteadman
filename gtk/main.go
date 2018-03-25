@@ -4,8 +4,8 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"fmt"
 	"os"
-	"./configurator"
-	"./manager"
+	"../core/configurator"
+	"../core/manager"
 )
 
 func main() {
