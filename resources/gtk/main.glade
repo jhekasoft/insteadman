@@ -7,6 +7,16 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-clear</property>
   </object>
+  <object class="GtkImage" id="imagedelete">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-delete</property>
+  </object>
+  <object class="GtkImage" id="imagedown">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-go-down</property>
+  </object>
   <object class="GtkImage" id="imagefind">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -17,6 +27,11 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-save</property>
   </object>
+  <object class="GtkImage" id="imageplay">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-play</property>
+  </object>
   <object class="GtkImage" id="imagepreferences">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -26,6 +41,61 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-refresh</property>
+  </object>
+  <object class="GtkListStore" id="liststore_games">
+    <columns>
+      <!-- column-name Title -->
+      <column type="gchararray"/>
+      <!-- column-name Version -->
+      <column type="gchararray"/>
+      <!-- column-name Size -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">ghghgh</col>
+        <col id="1" translatable="yes">ghghgh</col>
+        <col id="2" translatable="yes">ghghgh</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">yjhjhj</col>
+        <col id="1" translatable="yes">yjhjhj</col>
+        <col id="2" translatable="yes">yjhjhj</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">kjkjkjkj</col>
+        <col id="1" translatable="yes">klkl</col>
+        <col id="2" translatable="yes">jkjkj</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="liststore_lang">
+    <columns>
+      <!-- column-name ID -->
+      <column type="gchararray"/>
+      <!-- column-name Title -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="no">0</col>
+        <col id="1" translatable="yes">Lang</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="liststore_repo">
+    <columns>
+      <!-- column-name ID -->
+      <column type="gchararray"/>
+      <!-- column-name Title -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="no">0</col>
+        <col id="1" translatable="yes">Repo</col>
+      </row>
+    </data>
   </object>
   <object class="GtkWindow" id="window_main">
     <property name="can_focus">False</property>
@@ -117,6 +187,16 @@
                   <object class="GtkComboBox" id="combobox_repo">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="model">liststore_repo</property>
+                    <property name="active">0</property>
+                    <property name="tearoff_title" translatable="yes">Repo</property>
+                    <property name="id_column">0</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -128,6 +208,15 @@
                   <object class="GtkComboBox" id="combobox_lang">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="model">liststore_lang</property>
+                    <property name="active">0</property>
+                    <property name="id_column">0</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -177,8 +266,32 @@
               <object class="GtkTreeView" id="treeview_games">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="model">liststore_games</property>
+                <property name="search_column">0</property>
+                <property name="show_expanders">False</property>
                 <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                  <object class="GtkTreeSelection" id="treeselection_games"/>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="column_game_title">
+                    <property name="resizable">True</property>
+                    <property name="title" translatable="yes">Title</property>
+                    <property name="clickable">True</property>
+                    <property name="sort_indicator">True</property>
+                    <property name="sort_column_id">0</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="column_game_version">
+                    <property name="resizable">True</property>
+                    <property name="title" translatable="yes">Version</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="column_game_size">
+                    <property name="resizable">True</property>
+                    <property name="title" translatable="yes">Size</property>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -215,11 +328,12 @@
               <object class="GtkImage" id="image_game">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="stock">gtk-missing-image</property>
+                <property name="pixbuf">../images/logo.png</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">3</property>
                 <property name="position">1</property>
               </packing>
             </child>
