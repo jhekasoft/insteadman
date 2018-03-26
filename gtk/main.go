@@ -53,6 +53,13 @@ func main() {
 		listStoreLang.Set(iter, []int{0, 1}, []interface{}{lang, lang})
 	}
 
+	obj, e = b.GetObject("liststore_games")
+	listStoreGames, ok := obj.(*gtk.ListStore)
+	for _, game := range games {
+		iter := listStoreGames.Append()
+		listStoreGames.Set(iter, []int{0, 1, 2}, []interface{}{game.Title, game.Version, game.GetHumanSize()})
+	}
+
 
 	window.SetTitle("InsteadMan 3")
 	window.SetDefaultSize(770, 500)

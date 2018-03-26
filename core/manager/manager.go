@@ -13,6 +13,7 @@ import (
 	"sort"
 	"strings"
 	"errors"
+	"github.com/pyk/byten"
 )
 
 type RepositoryGameList struct {
@@ -54,6 +55,14 @@ func (g *Game) addGameAdditionalData(repositoryName string) {
 	}
 
 	g.RepositoryName = repositoryName
+}
+
+func (g *Game) GetHumanSize() string {
+	if g.Size > 0 {
+		return byten.Size(int64(g.Size))
+	}
+
+	return ""
 }
 
 const (

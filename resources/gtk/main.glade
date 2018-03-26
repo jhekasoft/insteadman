@@ -51,23 +51,6 @@
       <!-- column-name Size -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">ghghgh</col>
-        <col id="1" translatable="yes">ghghgh</col>
-        <col id="2" translatable="yes">ghghgh</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">yjhjhj</col>
-        <col id="1" translatable="yes">yjhjhj</col>
-        <col id="2" translatable="yes">yjhjhj</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">kjkjkjkj</col>
-        <col id="1" translatable="yes">klkl</col>
-        <col id="2" translatable="yes">jkjkj</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="liststore_lang">
     <columns>
@@ -78,7 +61,7 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="no">0</col>
+        <col id="0">0</col>
         <col id="1" translatable="yes">Lang</col>
       </row>
     </data>
@@ -92,7 +75,7 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="no">0</col>
+        <col id="0">0</col>
         <col id="1" translatable="yes">Repo</col>
       </row>
     </data>
@@ -263,41 +246,66 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTreeView" id="treeview_games">
+              <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="model">liststore_games</property>
-                <property name="search_column">0</property>
-                <property name="show_expanders">False</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeselection_games"/>
-                </child>
+                <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="column_game_title">
-                    <property name="resizable">True</property>
-                    <property name="title" translatable="yes">Title</property>
-                    <property name="clickable">True</property>
-                    <property name="sort_indicator">True</property>
-                    <property name="sort_column_id">0</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="column_game_version">
-                    <property name="resizable">True</property>
-                    <property name="title" translatable="yes">Version</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="column_game_size">
-                    <property name="resizable">True</property>
-                    <property name="title" translatable="yes">Size</property>
+                  <object class="GtkTreeView" id="treeview_games">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">liststore_games</property>
+                    <property name="search_column">0</property>
+                    <property name="show_expanders">False</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="treeselection_games"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="column_game_title">
+                        <property name="resizable">True</property>
+                        <property name="title" translatable="yes">Title</property>
+                        <property name="clickable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">0</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="column_game_version">
+                        <property name="resizable">True</property>
+                        <property name="title" translatable="yes">Version</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="column_game_size">
+                        <property name="resizable">True</property>
+                        <property name="title" translatable="yes">Size</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>

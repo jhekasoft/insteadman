@@ -23,6 +23,7 @@ Install `go` dependencies.
 
 ```bash
 go get github.com/ghodss/yaml
+go get github.com/pyk/byten
 ```
 
 2. Only for GTK-version (non-released):
