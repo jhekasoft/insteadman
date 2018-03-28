@@ -246,7 +246,6 @@ func checkInterpreterAndReinit(m *manager.Manager, c *configurator.Configurator)
 	return m, c
 }
 
-
 func printGames(games []manager.Game) {
 	fmt.Println("Games:")
 

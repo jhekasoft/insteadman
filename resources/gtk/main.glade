@@ -44,12 +44,16 @@
   </object>
   <object class="GtkListStore" id="liststore_games">
     <columns>
+      <!-- column-name Id -->
+      <column type="gchararray"/>
       <!-- column-name Title -->
       <column type="gchararray"/>
       <!-- column-name Version -->
       <column type="gchararray"/>
       <!-- column-name Size -->
       <column type="gchararray"/>
+      <!-- column-name Font_weight -->
+      <column type="gint"/>
     </columns>
   </object>
   <object class="GtkListStore" id="liststore_lang">
@@ -255,7 +259,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">liststore_games</property>
-                    <property name="search_column">0</property>
+                    <property name="search_column">1</property>
                     <property name="show_expanders">False</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="treeselection_games"/>
@@ -266,11 +270,12 @@
                         <property name="title" translatable="yes">Title</property>
                         <property name="clickable">True</property>
                         <property name="sort_indicator">True</property>
-                        <property name="sort_column_id">0</property>
+                        <property name="sort_column_id">1</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">0</attribute>
+                            <attribute name="text">1</attribute>
+                            <attribute name="weight">4</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -282,7 +287,7 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">1</attribute>
+                            <attribute name="text">2</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -294,7 +299,7 @@
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">2</attribute>
+                            <attribute name="text">3</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -346,9 +351,22 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="button_game_run">
+                <property name="label" translatable="yes">Run</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">imageplay</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="button_game_install">
                 <property name="label" translatable="yes">Install</property>
-                <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="image">imageinstall</property>
@@ -357,7 +375,35 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_game_update">
+                <property name="label" translatable="yes">Update</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">imagedown</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_game_remove">
+                <property name="label" translatable="yes">Remove</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">imagedelete</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>

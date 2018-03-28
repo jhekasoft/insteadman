@@ -65,6 +65,16 @@ func TestInstallGame(t *testing.T) {
 	assert.NoError(t, e)
 }
 
+func TestFindGameById(t *testing.T) {
+	games := []Game{
+		{Id: "official/game1"},
+		{Id: "official/game2"},
+	}
+
+	assert.NotNil(t, FindGameById(games, "official/game2"))
+	assert.Nil(t, FindGameById(games, "fdfdfdfd"))
+}
+
 func TestRunGame(t *testing.T) {
 	conf := configurator.Configurator{FilePath: configFilePath}
 	config, e := conf.GetConfig()

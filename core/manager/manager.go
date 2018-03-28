@@ -3,6 +3,8 @@ package manager
 import (
 	"../configurator"
 	"encoding/xml"
+	"errors"
+	"github.com/pyk/byten"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -12,8 +14,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"errors"
-	"github.com/pyk/byten"
 )
 
 type RepositoryGameList struct {
@@ -45,9 +45,11 @@ type RepositoryGame struct {
 
 type Game RepositoryGame
 
-func (g *Game) addGameAdditionalData(repositoryName string) {
-	g.Id = repositoryName + "/" + g.Name
+func generateGameId(repository string, g *Game) string {
+	return repository + "/" + g.Name + "/" + strings.Join(g.Languages, "_")
+}
 
+func (g *Game) addGameAdditionalData(repositoryName string) {
 	if len(g.Langs) > 0 {
 		g.Languages = g.Langs
 	} else {
@@ -55,6 +57,8 @@ func (g *Game) addGameAdditionalData(repositoryName string) {
 	}
 
 	g.RepositoryName = repositoryName
+
+	g.Id = generateGameId(repositoryName, g)
 }
 
 func (g *Game) GetHumanSize() string {
@@ -167,11 +171,14 @@ func (m *Manager) GetInstalledGames() ([]Game, error) {
 			gameName = strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
 		}
 
-		games = append(games, Game{
+		game := Game{
 			Name:      gameName,
 			Title:     gameName,
 			Installed: true,
-		})
+		}
+		game.addGameAdditionalData("")
+
+		games = append(games, game)
 	}
 
 	return games, nil
@@ -226,7 +233,7 @@ func (m *Manager) GetSortedGames() ([]Game, error) {
 
 	//sort.Sort(GameTitleSorter(games))
 	sort.Slice(games, func(i, j int) bool {
-		return games[i].Title < games[j].Title
+		return strings.ToLower(games[i].Title) < strings.ToLower(games[j].Title)
 	})
 
 	return games, nil
@@ -271,6 +278,16 @@ func filterGamesBy(games []Game, f func(Game) bool) []Game {
 		}
 	}
 	return gamesFiltered
+}
+
+func FindGameById(games []Game, id string) *Game {
+	for _, game := range games {
+		if game.Id == id {
+			return &game
+		}
+	}
+
+	return nil
 }
 
 func (m *Manager) RunGame(game *Game) error {
