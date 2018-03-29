@@ -48,3 +48,25 @@ func GetLabel(b *gtk.Builder, id string) (treeView *gtk.Label) {
 	treeView, _ = obj.(*gtk.Label)
 	return
 }
+
+func GetScrolledWindow(b *gtk.Builder, id string) (treeView *gtk.ScrolledWindow) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Scrolled window error: %s", e)
+		return nil
+	}
+
+	treeView, _ = obj.(*gtk.ScrolledWindow)
+	return
+}
+
+func GetSpinner(b *gtk.Builder, id string) (treeView *gtk.Spinner) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Spinner error: %s", e)
+		return nil
+	}
+
+	treeView, _ = obj.(*gtk.Spinner)
+	return
+}

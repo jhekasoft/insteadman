@@ -4,8 +4,8 @@ import (
 	"../core/configurator"
 	"../core/manager"
 	"github.com/gotk3/gotk3/gtk"
-	"html"
 	"log"
+	"strings"
 )
 
 const (
@@ -23,11 +23,20 @@ const (
 )
 
 var (
-	M              *manager.Manager
-	Games          []manager.Game
-	CurGame        *manager.Game
+	M       *manager.Manager
+	Games   []manager.Game
+	CurGame *manager.Game
+
 	ListStoreGames *gtk.ListStore
+	BtnUpdate      *gtk.Button
+	ScrWndGames    *gtk.ScrolledWindow
+	SpinnerGames   *gtk.Spinner
 	LblGameTitle   *gtk.Label
+	LblGameRepo    *gtk.Label
+	LblGameLang    *gtk.Label
+	LblGameVersion *gtk.Label
+	ScrWndGameDesc *gtk.ScrolledWindow
+	LblGameDesc    *gtk.Label
 	BtnGameRun     *gtk.Button
 	BtnGameInstall *gtk.Button
 	BtnGameUpdate  *gtk.Button
@@ -80,8 +89,6 @@ func main() {
 	for _, game := range Games {
 		iter := ListStoreGames.Append()
 
-		title := html.UnescapeString(game.Title)
-
 		fontWeight := FontWeightNormal
 		if game.Installed {
 			fontWeight = FontWeightBold
@@ -89,8 +96,14 @@ func main() {
 		ListStoreGames.Set(
 			iter,
 			[]int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight},
-			[]interface{}{game.Id, title, game.Version, game.GetHumanSize(), fontWeight})
+			[]interface{}{game.Id, game.Title, game.Version, game.GetHumanSize(), fontWeight})
 	}
+
+	BtnUpdate = GetButton(b, "button_update")
+	BtnUpdate.Connect("clicked", updateClicked)
+
+	ScrWndGames = GetScrolledWindow(b, "scrolledwindow_games")
+	SpinnerGames = GetSpinner(b, "spinner_games")
 
 	treeViewGames := GetTreeView(b, "treeview_games")
 	gamesSelection, e := treeViewGames.GetSelection()
@@ -100,6 +113,12 @@ func main() {
 	gamesSelection.Connect("changed", gameChanged)
 
 	LblGameTitle = GetLabel(b, "label_game_title")
+	LblGameRepo = GetLabel(b, "label_game_repo")
+	LblGameLang = GetLabel(b, "label_game_lang")
+	LblGameVersion = GetLabel(b, "label_game_version")
+
+	ScrWndGameDesc = GetScrolledWindow(b, "scrolledwindow_game_desc")
+	LblGameDesc = GetLabel(b, "label_game_desc")
 
 	BtnGameRun = GetButton(b, "button_game_run")
 	BtnGameRun.Connect("clicked", runGameClicked)
@@ -115,6 +134,17 @@ func main() {
 	window.Show()
 
 	gtk.Main()
+}
+
+func updateClicked() {
+	ScrWndGames.Hide()
+	SpinnerGames.Show()
+	log.Print("Updating repositories...")
+	M.UpdateRepositories()
+	log.Print("Repositories have updated.")
+
+	ScrWndGames.Show()
+	SpinnerGames.Hide()
 }
 
 func gameChanged(s *gtk.TreeSelection) {
@@ -151,6 +181,34 @@ func runGameClicked() {
 
 func updateGameInfo(g *manager.Game) {
 	LblGameTitle.SetText(g.Title)
+
+	if g.Description != "" {
+		LblGameDesc.SetText(g.Description)
+		ScrWndGameDesc.Show()
+	} else {
+		ScrWndGameDesc.Hide()
+	}
+
+	if g.RepositoryName != "" {
+		LblGameRepo.SetText(g.RepositoryName)
+		LblGameRepo.Show()
+	} else {
+		LblGameRepo.Hide()
+	}
+
+	if g.Languages != nil {
+		LblGameLang.SetText(strings.Join(g.Languages, ", "))
+		LblGameLang.Show()
+	} else {
+		LblGameLang.Hide()
+	}
+
+	if g.Version != "" {
+		LblGameVersion.SetText(g.Version)
+		LblGameVersion.Show()
+	} else {
+		LblGameVersion.Hide()
+	}
 
 	if g.Installed {
 		BtnGameRun.Show()

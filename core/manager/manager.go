@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"github.com/pyk/byten"
+	"html"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -57,6 +58,12 @@ func (g *Game) addGameAdditionalData(repositoryName string) {
 	}
 
 	g.RepositoryName = repositoryName
+
+	g.Title = html.UnescapeString(g.Title)
+
+	if g.Description != "" {
+		g.Description = html.UnescapeString(g.Description)
+	}
 
 	g.Id = generateGameId(repositoryName, g)
 }
@@ -404,7 +411,7 @@ func (m *Manager) FindLangs(games []Game) []string {
 
 	for _, game := range games {
 		for _, gameLang := range game.Languages {
-			if !existsString(langs, gameLang) {
+			if !existsString(langs, gameLang) && strings.Trim(gameLang, " ") != "" {
 				langs = append(langs, gameLang)
 			}
 		}
