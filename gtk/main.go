@@ -28,9 +28,19 @@ var (
 	CurGame *manager.Game
 
 	ListStoreGames *gtk.ListStore
-	BtnUpdate      *gtk.Button
-	ScrWndGames    *gtk.ScrolledWindow
-	SpinnerGames   *gtk.Spinner
+	ListStoreRepo  *gtk.ListStore
+	ListStoreLang  *gtk.ListStore
+
+	BtnUpdate        *gtk.Button
+	EntryKeyword     *gtk.Entry
+	CmbBoxRepo       *gtk.ComboBox
+	CmbBoxLang       *gtk.ComboBox
+	ChckBtnInstalled *gtk.CheckButton
+	BtnClear         *gtk.Button
+
+	ScrWndGames  *gtk.ScrolledWindow
+	SpinnerGames *gtk.Spinner
+
 	LblGameTitle   *gtk.Label
 	LblGameRepo    *gtk.Label
 	LblGameLang    *gtk.Label
@@ -39,8 +49,8 @@ var (
 	LblGameDesc    *gtk.Label
 	BtnGameRun     *gtk.Button
 	BtnGameInstall *gtk.Button
-	BtnGameUpdate  *gtk.Button
-	BtnGameRemove  *gtk.Button
+	//BtnGameUpdate  *gtk.Button
+	BtnGameRemove *gtk.Button
 )
 
 func main() {
@@ -69,38 +79,16 @@ func main() {
 
 	M = &manager.Manager{Config: config}
 
-	repositories := M.GetRepositories()
-	Games, e = M.GetSortedGames()
-	langs := M.FindLangs(Games)
-
-	listStoreRepo := GetListStore(b, "liststore_repo")
-	for _, repo := range repositories {
-		iter := listStoreRepo.Append()
-		listStoreRepo.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{repo.Name, repo.Name})
-	}
-
-	listStoreLang := GetListStore(b, "liststore_lang")
-	for _, lang := range langs {
-		iter := listStoreLang.Append()
-		listStoreLang.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{lang, lang})
-	}
-
+	ListStoreRepo = GetListStore(b, "liststore_repo")
+	ListStoreLang = GetListStore(b, "liststore_lang")
 	ListStoreGames = GetListStore(b, "liststore_games")
-	for _, game := range Games {
-		iter := ListStoreGames.Append()
-
-		fontWeight := FontWeightNormal
-		if game.Installed {
-			fontWeight = FontWeightBold
-		}
-		ListStoreGames.Set(
-			iter,
-			[]int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight},
-			[]interface{}{game.Id, game.Title, game.Version, game.GetHumanSize(), fontWeight})
-	}
 
 	BtnUpdate = GetButton(b, "button_update")
-	BtnUpdate.Connect("clicked", updateClicked)
+	EntryKeyword = GetEntry(b, "entry_keyword")
+	CmbBoxRepo = GetComboBox(b, "combobox_repo")
+	CmbBoxLang = GetComboBox(b, "combobox_lang")
+	ChckBtnInstalled = GetCheckButton(b, "checkutton_installed")
+	BtnClear = GetButton(b, "button_clear")
 
 	ScrWndGames = GetScrolledWindow(b, "scrolledwindow_games")
 	SpinnerGames = GetSpinner(b, "spinner_games")
@@ -110,7 +98,6 @@ func main() {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
-	gamesSelection.Connect("changed", gameChanged)
 
 	LblGameTitle = GetLabel(b, "label_game_title")
 	LblGameRepo = GetLabel(b, "label_game_repo")
@@ -127,6 +114,29 @@ func main() {
 
 	BtnGameRemove = GetButton(b, "button_game_remove")
 
+	ClearFilterValues()
+	RefreshGames()
+	RefreshFilterValues()
+
+	BtnUpdate.Connect("clicked", updateClicked)
+	EntryKeyword.Connect("changed", func() {
+		RefreshGames()
+	})
+	CmbBoxRepo.Connect("changed", func() {
+		RefreshGames()
+	})
+	CmbBoxLang.Connect("changed", func() {
+		RefreshGames()
+	})
+	ChckBtnInstalled.Connect("clicked", func() {
+		RefreshGames()
+	})
+	BtnClear.Connect("clicked", func() {
+		ClearFilter()
+	})
+
+	gamesSelection.Connect("changed", gameChanged)
+
 	window.SetTitle("InsteadMan 3")
 	window.SetDefaultSize(770, 500)
 	window.SetPosition(gtk.WIN_POS_CENTER)
@@ -136,6 +146,93 @@ func main() {
 	gtk.Main()
 }
 
+func ClearFilter() {
+	EntryKeyword.SetText("")
+	CmbBoxRepo.SetActiveID("")
+	CmbBoxLang.SetActiveID("")
+	ChckBtnInstalled.SetActive(false)
+}
+
+func ClearFilterValues() {
+	ListStoreRepo.Clear()
+	iter := ListStoreRepo.Append()
+	ListStoreRepo.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{"", "Repository"})
+	CmbBoxRepo.SetActiveID("")
+
+	ListStoreLang.Clear()
+	iter = ListStoreLang.Append()
+	ListStoreLang.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{"", "Language"})
+	CmbBoxLang.SetActiveID("")
+}
+
+func RefreshFilterValues() {
+	repositories := M.GetRepositories()
+	langs := M.FindLangs(Games)
+
+	for _, repo := range repositories {
+		iter := ListStoreRepo.Append()
+		ListStoreRepo.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{repo.Name, repo.Name})
+	}
+
+	for _, lang := range langs {
+		iter := ListStoreLang.Append()
+		ListStoreLang.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{lang, lang})
+	}
+}
+
+func RefreshGames() {
+	var e error
+
+	log.Print("Refreshing games...")
+
+	Games, e = M.GetSortedGames()
+	if e != nil {
+		log.Fatalf("Error: %s", e)
+	}
+
+	keyword, e := EntryKeyword.GetText()
+	if e != nil {
+		log.Fatalf("Error: %s", e)
+	}
+	var keywordP *string
+	if keyword != "" {
+		keywordP = &keyword
+	}
+
+	repo := CmbBoxRepo.GetActiveID()
+	var repoP *string
+	if repo != "" {
+		repoP = &repo
+	}
+
+	log.Print(repo)
+
+	lang := CmbBoxLang.GetActiveID()
+	var langP *string
+	if lang != "" {
+		langP = &lang
+	}
+
+	onlyInstalled := ChckBtnInstalled.GetActive()
+
+	filteredGames := manager.FilterGames(Games, keywordP, repoP, langP, onlyInstalled)
+
+	ListStoreGames.Clear()
+
+	for _, game := range filteredGames {
+		iter := ListStoreGames.Append()
+
+		fontWeight := FontWeightNormal
+		if game.Installed {
+			fontWeight = FontWeightBold
+		}
+		ListStoreGames.Set(
+			iter,
+			[]int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight},
+			[]interface{}{game.Id, game.Title, game.Version, game.GetHumanSize(), fontWeight})
+	}
+}
+
 func updateClicked() {
 	ScrWndGames.Hide()
 	SpinnerGames.Show()
@@ -143,12 +240,19 @@ func updateClicked() {
 	M.UpdateRepositories()
 	log.Print("Repositories have updated.")
 
+	RefreshGames()
+	RefreshFilterValues()
+
 	ScrWndGames.Show()
 	SpinnerGames.Hide()
 }
 
 func gameChanged(s *gtk.TreeSelection) {
 	rows := s.GetSelectedRows(ListStoreGames)
+	if rows.Length() < 1 {
+		return
+	}
+
 	path := rows.Data().(*gtk.TreePath)
 	iter, e := ListStoreGames.GetIter(path)
 	if e != nil {

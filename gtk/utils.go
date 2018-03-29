@@ -70,3 +70,36 @@ func GetSpinner(b *gtk.Builder, id string) (treeView *gtk.Spinner) {
 	treeView, _ = obj.(*gtk.Spinner)
 	return
 }
+
+func GetEntry(b *gtk.Builder, id string) (treeView *gtk.Entry) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Entry error: %s", e)
+		return nil
+	}
+
+	treeView, _ = obj.(*gtk.Entry)
+	return
+}
+
+func GetComboBox(b *gtk.Builder, id string) (combobox *gtk.ComboBox) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("ComboBox error: %s", e)
+		return nil
+	}
+
+	combobox, _ = obj.(*gtk.ComboBox)
+	return
+}
+
+func GetCheckButton(b *gtk.Builder, id string) (el *gtk.CheckButton) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("CheckButton error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.CheckButton)
+	return
+}
