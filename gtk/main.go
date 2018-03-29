@@ -3,6 +3,7 @@ package main
 import (
 	"../core/configurator"
 	"../core/manager"
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"strings"
@@ -237,14 +238,23 @@ func updateClicked() {
 	ScrWndGames.Hide()
 	SpinnerGames.Show()
 	log.Print("Updating repositories...")
-	M.UpdateRepositories()
-	log.Print("Repositories have updated.")
 
-	RefreshGames()
-	RefreshFilterValues()
+	go func() {
+		M.UpdateRepositories()
+		log.Print("Repositories have updated.")
 
-	ScrWndGames.Show()
-	SpinnerGames.Hide()
+		_, e := glib.IdleAdd(func() {
+			RefreshGames()
+			RefreshFilterValues()
+
+			ScrWndGames.Show()
+			SpinnerGames.Hide()
+		})
+
+		if e != nil {
+			log.Fatal("IdleAdd() failed:", e)
+		}
+	}()
 }
 
 func gameChanged(s *gtk.TreeSelection) {
