@@ -2,13 +2,13 @@ package main
 
 import (
 	"../core/configurator"
-	"../core/manager"
 	"../core/interpreter_finder"
+	"../core/manager"
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
-	"strings"
-	"github.com/gotk3/gotk3/glib"
 	"runtime"
+	"strings"
 )
 
 const (
@@ -108,10 +108,7 @@ func main() {
 	LblGameDesc = GetLabel(b, "label_game_desc")
 
 	BtnGameRun = GetButton(b, "button_game_run")
-	BtnGameRun.Connect("clicked", runGameClicked)
-
 	BtnGameInstall = GetButton(b, "button_game_install")
-
 	BtnGameRemove = GetButton(b, "button_game_remove")
 
 	c := configurator.Configurator{FilePath: ""}
@@ -163,6 +160,9 @@ func main() {
 
 	gamesSelection.Connect("changed", gameChanged)
 
+	BtnGameRun.Connect("clicked", runGameClicked)
+	BtnGameInstall.Connect("clicked", installGameClicked)
+
 	window.SetTitle("InsteadMan 3")
 	window.SetDefaultSize(770, 500)
 	window.SetPosition(gtk.WIN_POS_CENTER)
@@ -188,7 +188,6 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	if e != nil {
 		log.Fatalf("Error: %v\n", e)
 	}
-
 
 	log.Print("Path has saved")
 }
@@ -320,7 +319,7 @@ func updateClicked(s *gtk.Button) {
 		})
 
 		if e != nil {
-			log.Fatal("IdleAdd() failed:", e)
+			log.Fatal("Updating repositories. IdleAdd() failed:", e)
 		}
 	}()
 }
@@ -359,6 +358,27 @@ func gameChanged(s *gtk.TreeSelection) {
 func runGameClicked() {
 	M.RunGame(CurGame)
 	log.Printf("Running %s (%s) game...", CurGame.Title, CurGame.Name)
+}
+
+func installGameClicked(s *gtk.Button) {
+	// todo: CurGame as parameter
+
+	s.SetSensitive(false)
+	log.Printf("Installing %s (%s) game...", CurGame.Title, CurGame.Name)
+
+	go func() {
+		M.InstallGame(CurGame)
+		log.Print("Repositories have updated.")
+
+		_, e := glib.IdleAdd(func() {
+			RefreshGames()
+			s.SetSensitive(true)
+		})
+
+		if e != nil {
+			log.Fatal("Installing game. IdleAdd() failed:", e)
+		}
+	}()
 }
 
 func updateGameInfo(g *manager.Game) {
