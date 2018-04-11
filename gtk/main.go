@@ -162,6 +162,7 @@ func main() {
 
 	BtnGameRun.Connect("clicked", runGameClicked)
 	BtnGameInstall.Connect("clicked", installGameClicked)
+	BtnGameRemove.Connect("clicked", removeGameClicked)
 
 	window.SetTitle("InsteadMan 3")
 	window.SetDefaultSize(770, 500)
@@ -368,7 +369,7 @@ func installGameClicked(s *gtk.Button) {
 
 	go func() {
 		M.InstallGame(CurGame)
-		log.Print("Repositories have updated.")
+		log.Print("Game has installed.")
 
 		_, e := glib.IdleAdd(func() {
 			RefreshGames()
@@ -377,6 +378,27 @@ func installGameClicked(s *gtk.Button) {
 
 		if e != nil {
 			log.Fatal("Installing game. IdleAdd() failed:", e)
+		}
+	}()
+}
+
+func removeGameClicked(s *gtk.Button) {
+	// todo: CurGame as parameter
+
+	s.SetSensitive(false)
+	log.Printf("Removing %s (%s) game...", CurGame.Title, CurGame.Name)
+
+	go func() {
+		M.RemoveGame(CurGame)
+		log.Print("Game has removed.")
+
+		_, e := glib.IdleAdd(func() {
+			RefreshGames()
+			s.SetSensitive(true)
+		})
+
+		if e != nil {
+			log.Fatal("Removing game. IdleAdd() failed:", e)
 		}
 	}()
 }
