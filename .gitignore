@@ -2,12 +2,10 @@
 /.idea/
 /insteadman-cli
 /insteadman-gtk
-/repositories
-/temp_games
+/cache
 /resources/testdata/games
-/resources/testdata/insteadman/temp_games
-/resources/testdata/insteadman/repositories/*
-!/resources/testdata/insteadman/repositories/test.xml
+/resources/testdata/insteadman/cache
+!/resources/testdata/insteadman/cache/repositories/test.xml
 /build
 /resources/gtk/*.glade~
 /resources/gtk/*.glade#

@@ -104,6 +104,17 @@ func GetCheckButton(b *gtk.Builder, id string) (el *gtk.CheckButton) {
 	return
 }
 
+func GetImage(b *gtk.Builder, id string) (el *gtk.Image) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Image error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Image)
+	return
+}
+
 func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLang *gtk.ComboBox,
 	chckBtnInstalled *gtk.CheckButton) (keywordP, repoP, langP *string, onlyInstalled bool) {
 	var e error

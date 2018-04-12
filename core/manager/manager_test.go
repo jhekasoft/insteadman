@@ -7,11 +7,15 @@ import (
 	"testing"
 )
 
-const configFilePath = "../../resources/testdata/insteadman/config.yml"
-const testGameName = "crossworlds"
-const testGameUrl = "http://instead-games.ru/download/instead-crossworlds-0.7.zip"
-const filterKeyword = "test"
-const filterWrongKeyword = "878fdfd----fdsfdsftest"
+const (
+	configFilePath     = "../../resources/testdata/insteadman/config.yml"
+	testGameName       = "crossworlds"
+	testGameUrl        = "http://instead-games.ru/download/instead-crossworlds-0.7.zip"
+	testGameId         = "instead-games/crossworlds"
+	testGameImage      = "http://instead-games.ru/games/screenshots/20130204203941245.png"
+	filterKeyword      = "test"
+	filterWrongKeyword = "878fdfd----fdsfdsftest"
+)
 
 func TestUpdateRepositories(t *testing.T) {
 	conf := configurator.Configurator{FilePath: configFilePath}
@@ -131,4 +135,23 @@ func TestLangs(t *testing.T) {
 
 	langs := man.FindLangs(games)
 	assert.NotEmpty(t, langs)
+}
+
+func TestGetGameImage(t *testing.T) {
+	conf := configurator.Configurator{FilePath: configFilePath}
+	config, e := conf.GetConfig()
+	assert.NoError(t, e)
+
+	// Find installed INSTEAD and use it in config
+	finder := interpreterFinder.InterpreterFinder{Config: config}
+	interpreterPath := finder.Find()
+	assert.NotNil(t, interpreterPath)
+	config.InterpreterCommand = *interpreterPath
+
+	man := Manager{Config: config}
+
+	imageFilePath, e := man.GetGameImage(&Game{Id: testGameId, Image: testGameImage})
+
+	assert.NoError(t, e)
+	assert.NotEmpty(t, imageFilePath)
 }

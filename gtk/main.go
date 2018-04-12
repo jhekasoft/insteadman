@@ -4,6 +4,7 @@ import (
 	"../core/configurator"
 	"../core/interpreter_finder"
 	"../core/manager"
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
@@ -12,6 +13,11 @@ import (
 )
 
 const (
+	Title   = "InsteadMan"
+	Version = "3.0.2"
+
+	LogoFilePath = "./resources/images/logo.png"
+
 	ComboBoxColumnId    = 0
 	ComboBoxColumnTitle = 1
 
@@ -45,6 +51,7 @@ var (
 	SpinnerGames *gtk.Spinner
 
 	LblGameTitle   *gtk.Label
+	ImgGame        *gtk.Image
 	LblGameRepo    *gtk.Label
 	LblGameLang    *gtk.Label
 	LblGameVersion *gtk.Label
@@ -54,6 +61,9 @@ var (
 	BtnGameInstall *gtk.Button
 	//BtnGameUpdate  *gtk.Button
 	BtnGameRemove *gtk.Button
+
+	PixBufGameDefaultImage *gdk.Pixbuf
+	PixBufGameImage        *gdk.Pixbuf
 )
 
 func main() {
@@ -100,6 +110,7 @@ func main() {
 	}
 
 	LblGameTitle = GetLabel(b, "label_game_title")
+	ImgGame = GetImage(b, "image_game")
 	LblGameRepo = GetLabel(b, "label_game_repo")
 	LblGameLang = GetLabel(b, "label_game_lang")
 	LblGameVersion = GetLabel(b, "label_game_version")
@@ -127,6 +138,11 @@ func main() {
 	} else {
 		// Update repositories
 		updateClicked(BtnUpdate)
+	}
+
+	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(LogoFilePath, 210, 210, true)
+	if e != nil {
+		log.Printf("Error: %v", e)
 	}
 
 	BtnUpdate.Connect("clicked", updateClicked)
@@ -158,13 +174,15 @@ func main() {
 		ClearFilter()
 	})
 
+	resetGameInfo()
+
 	gamesSelection.Connect("changed", gameChanged)
 
 	BtnGameRun.Connect("clicked", runGameClicked)
 	BtnGameInstall.Connect("clicked", installGameClicked)
 	BtnGameRemove.Connect("clicked", removeGameClicked)
 
-	window.SetTitle("InsteadMan 3")
+	window.SetTitle(Title + " " + Version)
 	window.SetDefaultSize(770, 500)
 	window.SetPosition(gtk.WIN_POS_CENTER)
 	window.Connect("destroy", gtk.MainQuit)
@@ -255,12 +273,6 @@ func RefreshGames() {
 		log.Fatalf("Error: %s", e)
 	}
 
-	// Update current (selected) game info
-	if CurGame != nil {
-		CurGame = manager.FindGameById(Games, CurGame.Id)
-		updateGameInfo(CurGame)
-	}
-
 	keywordP, repoP, langP, onlyInstalled := GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
 	filteredGames := manager.FilterGames(Games, keywordP, repoP, langP, onlyInstalled)
 
@@ -270,6 +282,8 @@ func RefreshGames() {
 		iter := ListStoreGames.Append()
 		setListStoreGamesItem(ListStoreGames, iter, game)
 	}
+
+	resetGameInfo()
 }
 
 func RefreshSeveralGames(upGames []manager.Game) {
@@ -436,6 +450,20 @@ func removeGameClicked(s *gtk.Button) {
 	}()
 }
 
+func resetGameInfo() {
+	LblGameTitle.SetText(Title + " " + Version)
+
+	ImgGame.SetFromPixbuf(PixBufGameDefaultImage)
+
+	ScrWndGameDesc.Hide()
+	LblGameRepo.Hide()
+	LblGameLang.Hide()
+	LblGameVersion.Hide()
+	BtnGameRun.Hide()
+	BtnGameInstall.Hide()
+	BtnGameRemove.Hide()
+}
+
 func updateGameInfo(g *manager.Game) {
 	if g == nil {
 		return
@@ -480,4 +508,31 @@ func updateGameInfo(g *manager.Game) {
 		BtnGameInstall.Show()
 		BtnGameRemove.Hide()
 	}
+
+	// Image
+	go func() {
+		gameImagePath, e := M.GetGameImage(g)
+		if e == nil {
+			PixBufGameImage, e = gdk.PixbufNewFromFileAtScale(gameImagePath, 210, 210, true)
+			if e == nil {
+				_, e := glib.IdleAdd(func() {
+					ImgGame.SetFromPixbuf(PixBufGameImage)
+				})
+
+				if e != nil {
+					log.Fatal("Change game image. IdleAdd() failed:", e)
+				}
+			}
+		}
+
+		if e != nil {
+			_, e := glib.IdleAdd(func() {
+				ImgGame.SetFromPixbuf(PixBufGameDefaultImage)
+			})
+
+			if e != nil {
+				log.Fatal("Change game image. IdleAdd() failed:", e)
+			}
+		}
+	}()
 }

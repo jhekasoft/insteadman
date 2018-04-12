@@ -26,8 +26,10 @@ type Repository struct {
 }
 
 const (
-	configName  = "config.yml"
-	skeletonDir = "skeleton"
+	configName        = "config.yml"
+	skeletonDir       = "skeleton"
+	gamesDirName      = "games"
+	insteadManDirName = "insteadman"
 )
 
 type Configurator struct {
@@ -43,7 +45,7 @@ func insteadManDir() string {
 		return "."
 	}
 
-	insteadManDir := filepath.Join(insteadDir(), "insteadman")
+	insteadManDir := filepath.Join(insteadDir(), insteadManDirName)
 	os.MkdirAll(insteadManDir, os.ModePerm)
 
 	return insteadManDir
@@ -54,7 +56,7 @@ func findConfigFileName() string {
 }
 
 func gamesDir() string {
-	localPath := filepath.Join(".", "games")
+	localPath := filepath.Join(".", gamesDirName)
 
 	_, e := os.Stat(localPath)
 	exists := !os.IsNotExist(e)
@@ -63,7 +65,7 @@ func gamesDir() string {
 		return localPath
 	}
 
-	gamesDir := filepath.Join(insteadDir(), "games")
+	gamesDir := filepath.Join(insteadDir(), gamesDirName)
 	os.MkdirAll(gamesDir, os.ModePerm)
 
 	return gamesDir

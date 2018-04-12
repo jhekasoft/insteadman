@@ -78,8 +78,10 @@ func (g *Game) GetHumanSize() string {
 
 const (
 	//updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
+	cacheDirName        = "cache"
 	repositoriesDirName = "repositories"
 	tempGamesDirName    = "temp_games"
+	gameImagesDirName   = "game_images"
 )
 
 type Manager struct {
@@ -88,7 +90,7 @@ type Manager struct {
 }
 
 func (m *Manager) HasDownloadedRepositories() bool {
-	repositoriesDir := filepath.Join(m.Config.CalculatedInsteadManPath, repositoriesDirName)
+	repositoriesDir := m.repositoriesDir()
 	os.MkdirAll(repositoriesDir, os.ModePerm)
 
 	files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
@@ -100,7 +102,7 @@ func (m *Manager) HasDownloadedRepositories() bool {
 }
 
 func (m *Manager) UpdateRepositories() []error {
-	repositoriesDir := filepath.Join(m.Config.CalculatedInsteadManPath, repositoriesDirName)
+	repositoriesDir := m.repositoriesDir()
 	os.MkdirAll(repositoriesDir, os.ModePerm)
 
 	var errors []error = nil
@@ -117,7 +119,7 @@ func (m *Manager) UpdateRepositories() []error {
 }
 
 func (m *Manager) GetRepositoryGames() ([]Game, error) {
-	repositoriesDir := filepath.Join(m.Config.CalculatedInsteadManPath, repositoriesDirName)
+	repositoriesDir := m.repositoriesDir()
 	files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
 	if e != nil {
 		return nil, e
@@ -143,6 +145,14 @@ func (m *Manager) GetRepositoryGames() ([]Game, error) {
 	}
 
 	return games, nil
+}
+
+func (m *Manager) repositoriesDir() string {
+	return filepath.Join(m.Config.CalculatedInsteadManPath, cacheDirName, repositoriesDirName)
+}
+
+func (m *Manager) gameImagesDir() string {
+	return filepath.Join(m.Config.CalculatedInsteadManPath, cacheDirName, gameImagesDirName)
 }
 
 func parseRepository(fileName string) (*RepositoryGameList, error) {
@@ -360,6 +370,32 @@ func downloadFileSimple(fileName, url string) error {
 	_, e = io.Copy(out, resp.Body)
 
 	return e
+}
+
+func (m *Manager) GetGameImage(game *Game) (imagePath string, e error) {
+	if game == nil || game.Image == "" || game.Id == "" {
+		return
+	}
+
+	gameImagesDir := m.gameImagesDir()
+	os.MkdirAll(gameImagesDir, os.ModePerm)
+
+	fileName := strings.Replace(game.Id, "/", "_", -1) + filepath.Ext(game.Image)
+	imagePath = filepath.Join(gameImagesDir, fileName)
+
+	_, e = os.Stat(imagePath)
+	exists := !os.IsNotExist(e)
+
+	if exists && e == nil {
+		return imagePath, e
+	}
+
+	e = downloadFileSimple(imagePath, game.Image)
+	if e != nil {
+		return "", e
+	}
+
+	return imagePath, e
 }
 
 func (m *Manager) InstallGame(game *Game) error {
