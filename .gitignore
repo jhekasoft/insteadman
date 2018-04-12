@@ -10,3 +10,4 @@
 !/resources/testdata/insteadman/repositories/test.xml
 /build
 /resources/gtk/*.glade~
+/resources/gtk/*.glade#

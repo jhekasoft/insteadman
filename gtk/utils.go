@@ -103,3 +103,30 @@ func GetCheckButton(b *gtk.Builder, id string) (el *gtk.CheckButton) {
 	el, _ = obj.(*gtk.CheckButton)
 	return
 }
+
+func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLang *gtk.ComboBox,
+	chckBtnInstalled *gtk.CheckButton) (keywordP, repoP, langP *string, onlyInstalled bool) {
+	var e error
+
+	keyword, e := entryKeyword.GetText()
+	if e != nil {
+		log.Fatalf("Error: %s", e)
+	}
+	if keyword != "" {
+		keywordP = &keyword
+	}
+
+	repo := cmbBoxRepo.GetActiveID()
+	if repo != "" {
+		repoP = &repo
+	}
+
+	lang := cmbBoxLang.GetActiveID()
+	if lang != "" {
+		langP = &lang
+	}
+
+	onlyInstalled = chckBtnInstalled.GetActive()
+
+	return
+}

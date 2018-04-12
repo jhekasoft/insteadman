@@ -255,47 +255,78 @@ func RefreshGames() {
 		log.Fatalf("Error: %s", e)
 	}
 
-	keyword, e := EntryKeyword.GetText()
-	if e != nil {
-		log.Fatalf("Error: %s", e)
-	}
-	var keywordP *string
-	if keyword != "" {
-		keywordP = &keyword
+	// Update current (selected) game info
+	if CurGame != nil {
+		CurGame = manager.FindGameById(Games, CurGame.Id)
+		updateGameInfo(CurGame)
 	}
 
-	repo := CmbBoxRepo.GetActiveID()
-	var repoP *string
-	if repo != "" {
-		repoP = &repo
-	}
-
-	log.Print(repo)
-
-	lang := CmbBoxLang.GetActiveID()
-	var langP *string
-	if lang != "" {
-		langP = &lang
-	}
-
-	onlyInstalled := ChckBtnInstalled.GetActive()
-
+	keywordP, repoP, langP, onlyInstalled := GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
 	filteredGames := manager.FilterGames(Games, keywordP, repoP, langP, onlyInstalled)
 
 	ListStoreGames.Clear()
 
 	for _, game := range filteredGames {
 		iter := ListStoreGames.Append()
-
-		fontWeight := FontWeightNormal
-		if game.Installed {
-			fontWeight = FontWeightBold
-		}
-		ListStoreGames.Set(
-			iter,
-			[]int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight},
-			[]interface{}{game.Id, game.Title, game.Version, game.GetHumanSize(), fontWeight})
+		setListStoreGamesItem(ListStoreGames, iter, game)
 	}
+}
+
+func RefreshSeveralGames(upGames []manager.Game) {
+	var e error
+
+	log.Print("Refreshing several games...")
+
+	Games, e = M.GetSortedGames()
+	if e != nil {
+		log.Fatalf("Error: %s", e)
+	}
+
+	// Update current (selected) game info
+	if CurGame != nil {
+		CurGame = manager.FindGameById(Games, CurGame.Id)
+		updateGameInfo(CurGame)
+	}
+
+	var foundGames []manager.Game = nil
+	for _, game := range upGames {
+		foundGames = append(foundGames, manager.FindGamesByName(Games, game.Name)...)
+	}
+
+	for _, game := range foundGames {
+		iter, _ := ListStoreGames.GetIterFirst()
+
+		for iter != nil {
+			value, e := ListStoreGames.GetValue(iter, GameColumnId)
+			if e != nil {
+				log.Fatalf("Error: %v", e)
+			}
+
+			id, e := value.GetString()
+			if e != nil {
+				log.Fatalf("Error: %v", e)
+			}
+
+			if id == game.Id {
+				setListStoreGamesItem(ListStoreGames, iter, game)
+			}
+
+			if !ListStoreGames.IterNext(iter) {
+				iter = nil
+			}
+		}
+	}
+}
+
+func setListStoreGamesItem(ls *gtk.ListStore, iter *gtk.TreeIter, game manager.Game) {
+	fontWeight := FontWeightNormal
+	if game.Installed {
+		fontWeight = FontWeightBold
+	}
+	ls.Set(
+		iter,
+		[]int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight},
+		[]interface{}{game.Id, game.Title, game.Version, game.GetHumanSize(), fontWeight})
 }
 
 func updateClicked(s *gtk.Button) {
@@ -342,7 +373,7 @@ func gameChanged(s *gtk.TreeSelection) {
 		log.Fatalf("Error: %v", e)
 	}
 
-	id, _ := value.GetString()
+	id, e := value.GetString()
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
@@ -368,11 +399,12 @@ func installGameClicked(s *gtk.Button) {
 	log.Printf("Installing %s (%s) game...", CurGame.Title, CurGame.Name)
 
 	go func() {
-		M.InstallGame(CurGame)
+		instGame := CurGame
+		M.InstallGame(instGame)
 		log.Print("Game has installed.")
 
 		_, e := glib.IdleAdd(func() {
-			RefreshGames()
+			RefreshSeveralGames([]manager.Game{*instGame})
 			s.SetSensitive(true)
 		})
 
@@ -389,11 +421,12 @@ func removeGameClicked(s *gtk.Button) {
 	log.Printf("Removing %s (%s) game...", CurGame.Title, CurGame.Name)
 
 	go func() {
-		M.RemoveGame(CurGame)
+		rmGame := CurGame
+		M.RemoveGame(rmGame)
 		log.Print("Game has removed.")
 
 		_, e := glib.IdleAdd(func() {
-			RefreshGames()
+			RefreshSeveralGames([]manager.Game{*rmGame})
 			s.SetSensitive(true)
 		})
 
@@ -404,6 +437,10 @@ func removeGameClicked(s *gtk.Button) {
 }
 
 func updateGameInfo(g *manager.Game) {
+	if g == nil {
+		return
+	}
+
 	LblGameTitle.SetText(g.Title)
 
 	if g.Description != "" {

@@ -297,6 +297,16 @@ func FindGameById(games []Game, id string) *Game {
 	return nil
 }
 
+func FindGamesByName(games []Game, name string) (foundGames []Game) {
+	for _, game := range games {
+		if game.Name == name {
+			foundGames = append(foundGames, game)
+		}
+	}
+
+	return
+}
+
 func (m *Manager) RunGame(game *Game) error {
 	if game == nil {
 		return nil
