@@ -9,7 +9,7 @@ This is new version that is writing with go lang
 GUI (GTK+ 3)
 ---
 
-![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/gtk-3_0_2-screenshot "InsteadMan GUI (GTK)")
+![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/gtk-3_0_2-screenshot.png "InsteadMan GUI (GTK)")
 
 
 CLI
