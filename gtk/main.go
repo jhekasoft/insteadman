@@ -516,7 +516,10 @@ func updateGameInfo(g *manager.Game) {
 			PixBufGameImage, e = gdk.PixbufNewFromFileAtScale(gameImagePath, 210, 210, true)
 			if e == nil {
 				_, e := glib.IdleAdd(func() {
-					ImgGame.SetFromPixbuf(PixBufGameImage)
+					// Set image if there is current game (user hasn't changed selected game)
+					if g.Id == CurGame.Id {
+						ImgGame.SetFromPixbuf(PixBufGameImage)
+					}
 				})
 
 				if e != nil {
