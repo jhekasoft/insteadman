@@ -283,6 +283,7 @@ func RefreshGames() {
 		setListStoreGamesItem(ListStoreGames, iter, game)
 	}
 
+	CurGame = nil
 	resetGameInfo()
 }
 
@@ -517,7 +518,7 @@ func updateGameInfo(g *manager.Game) {
 			if e == nil {
 				_, e := glib.IdleAdd(func() {
 					// Set image if there is current game (user hasn't changed selected game)
-					if g.Id == CurGame.Id {
+					if CurGame != nil && g.Id == CurGame.Id {
 						ImgGame.SetFromPixbuf(PixBufGameImage)
 					}
 				})
