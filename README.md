@@ -6,11 +6,16 @@ Stable version: https://github.com/jhekasoft/insteadman
 
 This is new version that is writing with go lang
 
+GUI (GTK+ 3)
+---
+
+![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/gtk-3_0_2-screenshot "InsteadMan GUI (GTK)")
+
 
 CLI
 ---
 
-![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/cli-3_0_1-screenshot.png "InsteadMan GUI")
+![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/cli-3_0_1-screenshot.png "InsteadMan CLI")
 
 Download: https://github.com/jhekasoft/insteadman3/releases.
 
