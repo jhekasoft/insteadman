@@ -176,13 +176,14 @@ func main() {
 		ClearFilter()
 	})
 
-	resetGameInfo()
-
+	treeViewGames.Connect("row_activated", gameRowActivated)
 	GamesSelection.Connect("changed", gameChanged)
 
 	BtnGameRun.Connect("clicked", runGameClicked)
 	BtnGameInstall.Connect("clicked", installGameClicked)
 	BtnGameRemove.Connect("clicked", removeGameClicked)
+
+	resetGameInfo()
 
 	window.SetTitle(Title + " " + Version)
 	window.SetDefaultSize(770, 500)
@@ -402,16 +403,48 @@ func gameChanged(s *gtk.TreeSelection) {
 	updateGameInfo(CurGame)
 }
 
+func gameRowActivated() {
+	if CurGame == nil {
+		return
+	}
+
+	if CurGame.Installed {
+		RunGame(CurGame)
+	} else {
+		InstallGame(CurGame, BtnGameInstall)
+	}
+}
+
 func runGameClicked() {
-	M.RunGame(CurGame)
-	log.Printf("Running %s (%s) game...", CurGame.Title, CurGame.Name)
+	RunGame(CurGame)
+}
+
+func RunGame(g *manager.Game) {
+	if CurGame == nil {
+		log.Print("No running. No game selected.")
+		return
+	}
+
+	M.RunGame(g)
+	log.Printf("Running %s (%s) game...", g.Title, g.Name)
 }
 
 func installGameClicked(s *gtk.Button) {
 	// todo: CurGame as parameter
 
-	s.SetSensitive(false)
-	log.Printf("Installing %s (%s) game...", CurGame.Title, CurGame.Name)
+	InstallGame(CurGame, s)
+}
+
+func InstallGame(g *manager.Game, instBtn *gtk.Button) {
+	if CurGame == nil {
+		log.Print("No installing. No game selected.")
+		return
+	}
+
+	if instBtn != nil {
+		instBtn.SetSensitive(false)
+	}
+	log.Printf("Installing %s (%s) game...", g.Title, g.Name)
 
 	// Set installing status in the list
 	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
@@ -421,13 +454,15 @@ func installGameClicked(s *gtk.Button) {
 	ListStoreGames.SetValue(iter, GameColumnSize, "Installing...")
 
 	go func() {
-		instGame := CurGame
+		instGame := g
 		M.InstallGame(instGame)
 		log.Print("Game has installed.")
 
 		_, e := glib.IdleAdd(func() {
 			RefreshSeveralGames([]manager.Game{*instGame})
-			s.SetSensitive(true)
+			if instBtn != nil {
+				instBtn.SetSensitive(true)
+			}
 		})
 
 		if e != nil {
