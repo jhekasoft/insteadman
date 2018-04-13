@@ -376,7 +376,11 @@ func updateClicked(s *gtk.Button) {
 func gameChanged(s *gtk.TreeSelection) {
 	iter, e := FindFirstIterInTreeSelection(ListStoreGames, s)
 	if e != nil {
-		log.Fatalf("Error: %v", e)
+		log.Printf("Error: %v", e)
+		return
+	}
+	if iter == nil {
+		return
 	}
 
 	value, e := ListStoreGames.GetValue(iter, GameColumnId)

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 )
@@ -146,7 +145,7 @@ func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLa
 func FindFirstIterInTreeSelection(ls *gtk.ListStore, s *gtk.TreeSelection) (*gtk.TreeIter, error) {
 	rows := s.GetSelectedRows(ls)
 	if rows.Length() < 1 {
-		return nil, errors.New("No selected")
+		return nil, nil
 	}
 
 	path := rows.Data().(*gtk.TreePath)
