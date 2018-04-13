@@ -32,9 +32,10 @@ const (
 )
 
 var (
-	M       *manager.Manager
-	Games   []manager.Game
-	CurGame *manager.Game
+	M            *manager.Manager
+	Games        []manager.Game
+	CurGame      *manager.Game
+	IsRefreshing bool
 
 	ListStoreGames *gtk.ListStore
 	ListStoreRepo  *gtk.ListStore
@@ -279,15 +280,18 @@ func RefreshGames() {
 	keywordP, repoP, langP, onlyInstalled := GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
 	filteredGames := manager.FilterGames(Games, keywordP, repoP, langP, onlyInstalled)
 
+	IsRefreshing = true
+
 	ListStoreGames.Clear()
 
 	for _, game := range filteredGames {
-		iter := ListStoreGames.Append()
-		setListStoreGamesItem(ListStoreGames, iter, game)
+		ListStoreGames.InsertWithValues(nil, -1, gameListStoreColumns(), gameListStoreValues(game))
 	}
 
 	CurGame = nil
 	resetGameInfo()
+
+	IsRefreshing = false
 }
 
 func RefreshSeveralGames(upGames []manager.Game) {
@@ -326,7 +330,7 @@ func RefreshSeveralGames(upGames []manager.Game) {
 			}
 
 			if id == game.Id {
-				setListStoreGamesItem(ListStoreGames, iter, game)
+				ListStoreGames.Set(iter, gameListStoreColumns(), gameListStoreValues(game))
 			}
 
 			if !ListStoreGames.IterNext(iter) {
@@ -336,15 +340,17 @@ func RefreshSeveralGames(upGames []manager.Game) {
 	}
 }
 
-func setListStoreGamesItem(ls *gtk.ListStore, iter *gtk.TreeIter, game manager.Game) {
+func gameListStoreColumns() []int {
+	return []int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight}
+}
+
+func gameListStoreValues(g manager.Game) []interface{} {
 	fontWeight := FontWeightNormal
-	if game.Installed {
+	if g.Installed {
 		fontWeight = FontWeightBold
 	}
-	ls.Set(
-		iter,
-		[]int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight},
-		[]interface{}{game.Id, game.Title, game.Version, game.GetHumanSize(), fontWeight})
+
+	return []interface{}{g.Id, g.Title, g.Version, g.GetHumanSize(), fontWeight}
 }
 
 func updateClicked(s *gtk.Button) {
@@ -375,6 +381,10 @@ func updateClicked(s *gtk.Button) {
 }
 
 func gameChanged(s *gtk.TreeSelection) {
+	if IsRefreshing {
+		return
+	}
+
 	iter, e := FindFirstIterInTreeSelection(ListStoreGames, s)
 	if e != nil {
 		log.Printf("Error: %v", e)
@@ -562,7 +572,7 @@ func updateGameInfo(g *manager.Game) {
 	// Image
 	go func() {
 		gameImagePath, e := M.GetGameImage(g)
-		if e == nil {
+		if e == nil && gameImagePath != "" {
 			PixBufGameImage, e = gdk.PixbufNewFromFileAtScale(gameImagePath, 210, 210, true)
 			if e == nil {
 				_, e := glib.IdleAdd(func() {
@@ -579,6 +589,10 @@ func updateGameInfo(g *manager.Game) {
 		}
 
 		if e != nil {
+			log.Printf("Image error: %s", e)
+		}
+
+		if e != nil || gameImagePath == "" {
 			_, e := glib.IdleAdd(func() {
 				ImgGame.SetFromPixbuf(PixBufGameDefaultImage)
 			})

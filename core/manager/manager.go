@@ -377,10 +377,16 @@ func (m *Manager) GetGameImage(game *Game) (imagePath string, e error) {
 		return
 	}
 
+	// Processing image only if URL have extension
+	imageExt := filepath.Ext(game.Image)
+	if imageExt == "" {
+		return
+	}
+
 	gameImagesDir := m.gameImagesDir()
 	os.MkdirAll(gameImagesDir, os.ModePerm)
 
-	fileName := strings.Replace(game.Id, "/", "_", -1) + filepath.Ext(game.Image)
+	fileName := strings.Replace(game.Id, "/", "_", -1) + imageExt
 	imagePath = filepath.Join(gameImagesDir, fileName)
 
 	_, e = os.Stat(imagePath)
