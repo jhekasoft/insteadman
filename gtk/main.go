@@ -451,7 +451,7 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
-	ListStoreGames.SetValue(iter, GameColumnSize, "Installing...")
+	ListStoreGames.SetValue(iter, GameColumnSize, g.GetHumanSize()+" Installing...")
 
 	go func() {
 		instGame := g
@@ -482,7 +482,7 @@ func removeGameClicked(s *gtk.Button) {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
-	ListStoreGames.SetValue(iter, GameColumnSize, "Removing...")
+	ListStoreGames.SetValue(iter, GameColumnSize, CurGame.GetHumanSize()+" Removing...")
 
 	go func() {
 		rmGame := CurGame
