@@ -40,6 +40,8 @@ var (
 	ListStoreRepo  *gtk.ListStore
 	ListStoreLang  *gtk.ListStore
 
+	GamesSelection *gtk.TreeSelection
+
 	BtnUpdate        *gtk.Button
 	EntryKeyword     *gtk.Entry
 	CmbBoxRepo       *gtk.ComboBox
@@ -104,7 +106,7 @@ func main() {
 	SpinnerGames = GetSpinner(b, "spinner_games")
 
 	treeViewGames := GetTreeView(b, "treeview_games")
-	gamesSelection, e := treeViewGames.GetSelection()
+	GamesSelection, e = treeViewGames.GetSelection()
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
@@ -176,7 +178,7 @@ func main() {
 
 	resetGameInfo()
 
-	gamesSelection.Connect("changed", gameChanged)
+	GamesSelection.Connect("changed", gameChanged)
 
 	BtnGameRun.Connect("clicked", runGameClicked)
 	BtnGameInstall.Connect("clicked", installGameClicked)
@@ -372,13 +374,7 @@ func updateClicked(s *gtk.Button) {
 }
 
 func gameChanged(s *gtk.TreeSelection) {
-	rows := s.GetSelectedRows(ListStoreGames)
-	if rows.Length() < 1 {
-		return
-	}
-
-	path := rows.Data().(*gtk.TreePath)
-	iter, e := ListStoreGames.GetIter(path)
+	iter, e := FindFirstIterInTreeSelection(ListStoreGames, s)
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
@@ -413,6 +409,13 @@ func installGameClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	log.Printf("Installing %s (%s) game...", CurGame.Title, CurGame.Name)
 
+	// Set installing status in the list
+	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
+	if e != nil {
+		log.Fatalf("Error: %v", e)
+	}
+	ListStoreGames.SetValue(iter, GameColumnSize, "Installing...")
+
 	go func() {
 		instGame := CurGame
 		M.InstallGame(instGame)
@@ -434,6 +437,13 @@ func removeGameClicked(s *gtk.Button) {
 
 	s.SetSensitive(false)
 	log.Printf("Removing %s (%s) game...", CurGame.Title, CurGame.Name)
+
+	// Set removing status in the list
+	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
+	if e != nil {
+		log.Fatalf("Error: %v", e)
+	}
+	ListStoreGames.SetValue(iter, GameColumnSize, "Removing...")
 
 	go func() {
 		rmGame := CurGame
