@@ -22,34 +22,37 @@ Download: https://github.com/jhekasoft/insteadman3/releases.
 Build
 -----
 
-Install `go` dependencies.
-
-1. Required:
-
-```bash
-go get github.com/ghodss/yaml
-go get github.com/pyk/byten
-```
-
-2. Only for GTK-version (non-released):
-
-```bash
-go get github.com/gotk3/gotk3/gtk
-```
-
-3. Only for tests:
-
-```bash
-go get github.com/stretchr/testify/assert
-```
-
-Then you can build CLI and GTK-versions:
+Build CLI and GTK-versions:
 
 ```bash
 make
 ```
 
-Or only CLI-version:
+Running
+-------
+
+Run GTK (GUI):
+
+```bash
+./insteadman-gtk
+```
+
+
+Run CLI:
+```bash
+./insteadman-cli
+```
+
+Other build variants
+--------------------
+
+If you want to build only CLI or GTK-version, then install Go dependencies:
+
+```bash
+make dep
+```
+
+Then build only CLI-version:
 
 ```bash
 make cli

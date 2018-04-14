@@ -1,6 +1,12 @@
 all:
+	${MAKE} deps
 	${MAKE} clean
 	${MAKE} cli gtk
+
+deps:
+	go get github.com/ghodss/yaml
+	go get github.com/pyk/byten
+	go get github.com/gotk3/gotk3/...
 
 cli:
 	go build -ldflags "-s -w" -o insteadman-cli ./cli
