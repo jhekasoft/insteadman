@@ -129,7 +129,7 @@ func (m *Manager) GetRepositoryGames() ([]Game, error) {
 	for _, fileName := range files {
 		// fmt.Printf("File: %v\n", fileName)
 
-		gameList, e := parseRepository(filepath.Join(".", fileName))
+		gameList, e := parseRepository(fileName)
 		if e == nil {
 			repositoryFileName := filepath.Base(fileName)
 			repositoryName := strings.TrimSuffix(repositoryFileName, filepath.Ext(repositoryFileName))

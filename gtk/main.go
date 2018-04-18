@@ -25,7 +25,7 @@ const (
 	GameColumnSize       = 3
 	GameColumnFontWeight = 4
 
-	FontWeightNormal = 0
+	FontWeightNormal = 400
 	FontWeightBold   = 700
 )
 
