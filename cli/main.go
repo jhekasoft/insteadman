@@ -36,6 +36,9 @@ func main() {
 
 		search(m, argsWithoutProg)
 
+	case "show":
+		show(m, argsWithoutProg)
+
 	case "run":
 		m, _ = checkInterpreterAndReinit(m, c)
 
@@ -134,6 +137,40 @@ func install(m *manager.Manager, args []string) {
 	fmt.Printf("Game %s has installed.\n", game.Title)
 }
 
+func show(m *manager.Manager, args []string) {
+	games, e := m.GetSortedGames()
+	ExitIfError(e)
+
+	keyword := GetCommandArg(args)
+	if keyword == nil {
+		printHelpAndExit()
+	}
+
+	filteredGames := manager.FilterGames(games, keyword, nil, nil, false)
+
+	game := getOrExitIfNoGame(filteredGames, *keyword)
+
+	installedTxt := ""
+	if game.Installed {
+		installedTxt = "[installed]"
+	}
+
+	// Print game information
+	fmt.Printf("%s (%s) %s %s\n", game.Title, game.Name, game.Version, installedTxt)
+	if game.Languages != nil {
+		fmt.Printf("Languages: %s\n", strings.Join(game.Languages, ", "))
+	}
+	if game.RepositoryName != "" {
+		fmt.Printf("Repository: %s\n", game.RepositoryName)
+	}
+	if game.Descurl != "" {
+		fmt.Printf("More: %s\n", game.Descurl)
+	}
+	if game.Description != "" {
+		fmt.Printf("Desctiprion:\n%s\n", game.Description)
+	}
+}
+
 func run(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGames()
 	ExitIfError(e)
@@ -146,6 +183,13 @@ func run(m *manager.Manager, args []string) {
 	filteredGames := manager.FilterGames(games, keyword, nil, nil, false)
 
 	game := getOrExitIfNoGame(filteredGames, *keyword)
+
+	if !game.Installed {
+		fmt.Printf("Game %s isn't installed.\n", game.Title)
+		fmt.Printf("Please run for installation:\n"+
+			"insteadman-cli install %s\n", game.Name)
+		os.Exit(1)
+	}
 
 	e = m.RunGame(&game)
 	ExitIfError(e)
@@ -215,6 +259,7 @@ func printHelpAndExit() {
 		"update\n    Update game's repositories\n"+
 		"list --repo=[name] --lang=[lang] --installed\n    Print list of games with filtering\n"+
 		"search [keyword] --repo=[name] --lang=[lang] --installed\n    Search game by name and title with filtering\n"+
+		"show [keywork]\n    Show information about game by keyword\n"+
 		"install [keyword]\n    Install game by keyword\n"+
 		"run [keywork]\n    Run game by keyword\n"+
 		"remove [keywork]\n    Remove game by keyword\n"+
