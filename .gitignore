@@ -3,7 +3,6 @@
 /insteadman-cli
 /insteadman-gtk
 /cache
-/resources/testdata/games
 /resources/testdata/insteadman/cache
 !/resources/testdata/insteadman/cache/repositories/test.xml
 /build

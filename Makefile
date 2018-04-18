@@ -7,6 +7,7 @@ deps:
 	go get github.com/ghodss/yaml
 	go get github.com/pyk/byten
 	go get github.com/gotk3/gotk3/...
+	go get github.com/stretchr/testify/assert
 
 cli:
 	go build -ldflags "-s -w" -o insteadman-cli ./cli
