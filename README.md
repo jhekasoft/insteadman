@@ -64,7 +64,7 @@ Or only GTK-version:
 make gtk
 ```
 
-Building CLI for all platforms (binaries will be placed to the `build` directory`):
+Building CLI for all platforms (binaries will be placed to the `build` directory):
 
 ```bash
 make clicross
