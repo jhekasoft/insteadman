@@ -125,6 +125,9 @@ func main() {
 
 	c := configurator.Configurator{FilePath: ""}
 	config, e := c.GetConfig()
+	if e != nil {
+		log.Fatalf("Error: %s", e)
+	}
 
 	M = &manager.Manager{Config: config}
 
