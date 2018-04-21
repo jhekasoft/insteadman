@@ -7,6 +7,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
+	"os"
 	"runtime"
 )
 
@@ -76,18 +77,19 @@ func main() {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
+
 	e = b.AddFromFile("./resources/gtk/main.glade")
 	if e != nil {
-		log.Fatalf("Error: %v\n", e)
+		ShowErrorDlg(e.Error())
 	}
 
 	obj, e := b.GetObject("window_main")
 	if e != nil {
-		log.Fatalf("Error: %s", e)
+		ShowErrorDlg(e.Error())
 	}
 	window, ok := obj.(*gtk.Window)
 	if !ok {
-		log.Fatalf("No main window")
+		ShowErrorDlg("No main window")
 	}
 
 	ListStoreRepo = GetListStore(b, "liststore_repo")
@@ -107,7 +109,7 @@ func main() {
 	treeViewGames := GetTreeView(b, "treeview_games")
 	GamesSelection, e = treeViewGames.GetSelection()
 	if e != nil {
-		log.Fatalf("Error: %v", e)
+		ShowErrorDlg(e.Error())
 	}
 
 	LblGameTitle = GetLabel(b, "label_game_title")
@@ -126,7 +128,7 @@ func main() {
 	c := configurator.Configurator{FilePath: ""}
 	config, e := c.GetConfig()
 	if e != nil {
-		log.Fatalf("Error: %s", e)
+		ShowErrorDlg(e.Error())
 	}
 
 	M = &manager.Manager{Config: config}
@@ -146,7 +148,7 @@ func main() {
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(LogoFilePath, 210, 210, true)
 	if e != nil {
-		log.Printf("Error: %v", e)
+		ShowErrorDlg(e.Error())
 	}
 
 	BtnUpdate.Connect("clicked", updateClicked)
@@ -239,17 +241,19 @@ func gameChanged(s *gtk.TreeSelection) {
 
 	value, e := ListStoreGames.GetValue(iter, GameColumnId)
 	if e != nil {
-		log.Fatalf("Error: %v", e)
+		ShowErrorDlg(e.Error())
+		return
 	}
 
 	id, e := value.GetString()
 	if e != nil {
-		log.Fatalf("Error: %v", e)
+		ShowErrorDlg(e.Error())
+		return
 	}
 
 	CurGame = manager.FindGameById(Games, id)
 	if CurGame == nil {
-		log.Printf("Game %s has not found", id)
+		ShowErrorDlg("Game " + id + " has not found")
 		return
 	}
 
@@ -287,7 +291,8 @@ func removeGameClicked(s *gtk.Button) {
 	// Set removing status in the list
 	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
 	if e != nil {
-		log.Fatalf("Error: %v", e)
+		ShowErrorDlg(e.Error())
+		return
 	}
 	ListStoreGames.SetValue(iter, GameColumnSize, CurGame.GetHumanSize()+" Removing...")
 
@@ -305,4 +310,23 @@ func removeGameClicked(s *gtk.Button) {
 			log.Fatal("Removing game. IdleAdd() failed:", e)
 		}
 	}()
+}
+
+func ShowErrorDlg(txt string) {
+	log.Printf("Error: %v", txt)
+
+	dlgWnd, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	lbl, _ := gtk.LabelNew(txt)
+	dlgWnd.Add(lbl)
+	dlgWnd.SetResizable(false)
+	dlgWnd.SetModal(true)
+	dlgWnd.SetTitle(Title + " " + Version)
+	dlgWnd.SetDefaultSize(200, 100)
+	dlgWnd.SetPosition(gtk.WIN_POS_CENTER)
+	dlgWnd.Connect("destroy", func() {
+		os.Exit(1)
+	})
+	dlgWnd.ShowAll()
+	gtk.DialogNew()
+	gtk.Main()
 }
