@@ -2,6 +2,7 @@
 /.idea/
 /insteadman-cli
 /insteadman-gtk
+/insteadman-gtk.exe
 /cache
 /resources/testdata/insteadman/cache
 !/resources/testdata/insteadman/cache/repositories/test.xml

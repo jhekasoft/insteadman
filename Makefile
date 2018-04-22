@@ -18,6 +18,13 @@ clicross:
 gtk:
 	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
 
+gtkcrosswin32:
+	CGO_ENABLED=1 \
+	CC=i686-w64-mingw32-cc \
+	GOOS=windows \
+	GOARCH=386 \
+	go build -ldflags "-H=windowsgui -s -w" -o insteadman-gtk.exe ./gtk
+
 test:
 	go test ./...
 
