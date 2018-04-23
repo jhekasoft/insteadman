@@ -12,6 +12,18 @@ type InterpreterFinder struct {
 }
 
 func (f *InterpreterFinder) Find() *string {
+	// Built-in interpreter
+	if f.Config.UseBuiltinInterpreter {
+		builtInPath := builtinRelativeFilePath
+		_, e := os.Stat(builtInPath)
+		exists := !os.IsNotExist(e)
+
+		if exists && e == nil {
+			return &builtInPath
+		}
+	}
+
+	// External interpreter
 	for _, path := range exactFilePaths() {
 		_, e := os.Stat(path)
 		exists := !os.IsNotExist(e)
@@ -25,7 +37,7 @@ func (f *InterpreterFinder) Find() *string {
 }
 
 func (f *InterpreterFinder) Check() (string, error) {
-	out, e := exec.Command(f.Config.InterpreterCommand, "-version").Output()
+	out, e := exec.Command(f.Config.GetInterpreterCommand(), "-version").Output()
 	if e != nil {
 		return "", e
 	}

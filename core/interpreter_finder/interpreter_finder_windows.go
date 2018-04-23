@@ -6,6 +6,8 @@ import (
 	"syscall"
 )
 
+const builtinRelativeFilePath = "instead\\sdl-instead.exe"
+
 func exactFilePaths() []string {
 	paths := []string{}
 

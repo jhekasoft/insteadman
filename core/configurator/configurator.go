@@ -20,6 +20,15 @@ type InsteadmanConfig struct {
 	CalculatedInsteadManPath string       `json:"-"`
 }
 
+func (c *InsteadmanConfig) GetInterpreterCommand() string {
+	path, e := filepath.Abs(c.InterpreterCommand)
+	if e != nil {
+		return c.InterpreterCommand
+	}
+
+	return path
+}
+
 type Repository struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
@@ -103,6 +112,8 @@ func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 
 	var config *InsteadmanConfig
 	yaml.Unmarshal(file, &config)
+
+	// TODO: make Calculated* fields like GetInterpreterCommand() func, but like "lazy vars"
 
 	config.CalculatedGamesPath = config.GamesPath
 	if config.CalculatedGamesPath == "" {

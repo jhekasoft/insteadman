@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const builtinRelativeFilePath = "instead/sdl-instead"
+
 func exactFilePaths() []string {
 	interpreterCommand := "instead"
 

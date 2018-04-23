@@ -283,7 +283,7 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 }
 
 func checkInterpreterAndReinit(m *manager.Manager, c *configurator.Configurator) (*manager.Manager, *configurator.Configurator) {
-	if m.Config.InterpreterCommand == "" {
+	if m.Config.GetInterpreterCommand() == "" {
 		findInterpreter(m, c)
 		m, c = initManagerAndConfigurator()
 	}

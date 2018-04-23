@@ -133,7 +133,7 @@ func main() {
 
 	M = &manager.Manager{Config: config}
 
-	if M.Config.InterpreterCommand == "" {
+	if M.Config.GetInterpreterCommand() == "" {
 		findInterpreter(M, &c)
 	}
 

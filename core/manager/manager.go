@@ -329,8 +329,8 @@ func (m *Manager) RunGame(game *Game) error {
 	}
 
 	// todo: idf
-	cmd := exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-game", game.Name)
-	cmd.Dir = filepath.Dir(m.Config.InterpreterCommand)
+	cmd := exec.Command(m.Config.GetInterpreterCommand(), "-gamespath", gamesPath, "-game", game.Name)
+	cmd.Dir = filepath.Dir(m.Config.GetInterpreterCommand())
 	e = cmd.Start()
 
 	// Current running cmd
@@ -428,8 +428,8 @@ func (m *Manager) InstallGame(game *Game) error {
 		return e
 	}
 
-	cmd := exec.Command(m.Config.InterpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit")
-	cmd.Dir = filepath.Dir(m.Config.InterpreterCommand)
+	cmd := exec.Command(m.Config.GetInterpreterCommand(), "-gamespath", gamesPath, "-install", fileName, "-quit")
+	cmd.Dir = filepath.Dir(m.Config.GetInterpreterCommand())
 	out, e := cmd.CombinedOutput()
 	if e != nil {
 		return errors.New(e.Error() + "; " + strings.Replace(string(out), "\n", "", -1))

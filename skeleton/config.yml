@@ -10,5 +10,5 @@ repositories:
   url: http://instead-games.ru/xml.php
 - name: instead-games-sandbox
   url: http://instead-games.ru/xml2.php
-use_builtin_interpreter: false
+use_builtin_interpreter: true
 version: 3.0.0
