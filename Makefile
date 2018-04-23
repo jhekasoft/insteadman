@@ -11,21 +11,20 @@ deps:
 	go get github.com/gotk3/gotk3/...
 	go get github.com/stretchr/testify/assert
 
+deps-dev:
+	go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+
 cli:
 	go build -ldflags "-s -w" -o insteadman-cli ./cli
 
-clicross:
-	./clicrossbuild.sh ./cli insteadman-cli ${VERSION}
+cli-cross:
+	./cli-cross-build.sh ./cli insteadman-cli ${VERSION}
 
 gtk:
 	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
 
-gtkcrosswin32:
-	CGO_ENABLED=1 \
-	CC=i686-w64-mingw32-cc \
-	GOOS=windows \
-	GOARCH=386 \
-	go build -ldflags "-H=windowsgui -s -w" -o insteadman-gtk.exe ./gtk
+gtk-linux2win:
+	./gtk-linux2win-build.sh ./gtk insteadman-gtk ${VERSION}
 
 test:
 	go test ./...

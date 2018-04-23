@@ -5,7 +5,7 @@ package_out=$2
 version=$3
 
 if [[ -z "$package" || -z "$package_out" ]]; then
-  echo "usage: $0 <package> <package out>"
+  echo "usage: $0 <package> <package out> <version>"
   exit 1
 fi
 
@@ -33,6 +33,9 @@ do
         exit 1
     fi
 
+    # Copy skeleton
+    cp -r 'skeleton' $output_path
+
     # Add README
     if [ $GOOS = "windows" ]; then
         readme_name='resources/cli/readme/windows/README.txt'
@@ -40,6 +43,9 @@ do
         readme_name='resources/cli/readme/unix/README.txt'
     fi
     cp $readme_name $output_path
+
+    # Add LICENSE
+    cp 'LICENSE' $output_path'/LICENSE.txt'
 
     #Create archives for distributing
     package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
