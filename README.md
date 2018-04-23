@@ -15,7 +15,7 @@ GUI (GTK+ 3)
 CLI
 ---
 
-![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/cli-3_0_1-screenshot.png "InsteadMan CLI")
+![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/cli-3_0_2-screenshot.png "InsteadMan CLI")
 
 Download: https://github.com/jhekasoft/insteadman3/releases.
 
