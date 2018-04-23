@@ -1,3 +1,5 @@
+VERSION=3.0.2
+
 all:
 	${MAKE} deps
 	${MAKE} clean
@@ -13,7 +15,7 @@ cli:
 	go build -ldflags "-s -w" -o insteadman-cli ./cli
 
 clicross:
-	./crossbuild.sh ./cli insteadman-cli
+	./clicrossbuild.sh ./cli insteadman-cli ${VERSION}
 
 gtk:
 	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
@@ -31,6 +33,7 @@ test:
 clean:
 	rm -f insteadman-cli
 	rm -f insteadman-gtk
+	rm -f insteadman-gtk.exe
 	rm -rf build/*
 
 .PHONY: cli gtk
