@@ -10,3 +10,4 @@
 /resources/gtk/*.glade~
 /resources/gtk/*.glade#
 /gtk/resource.syso
+/resources/windows/instead

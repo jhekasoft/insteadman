@@ -47,7 +47,7 @@ do
     # Add LICENSE
     cp 'LICENSE' $output_path'/LICENSE.txt'
 
-    #Create archives for distributing
+    # Create archives for distributing
     package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
     cd $output_base_path
     if [ $GOOS = "windows" ]; then

@@ -11,7 +11,30 @@ if [[ -z "$package" || -z "$package_out" ]]; then
   exit 1
 fi
 
-platform="windows/386"
+mingw_path='/usr/i686-w64-mingw32'
+bin_path=$mingw_path'/bin'
+
+dynamic_libs=('libatk-1.0-0.dll' 'libgdk_pixbuf-2.0-0.dll' 'libjpeg-8.dll'
+          'libbz2-1.dll' 'libgio-2.0-0.dll' 'libpango-1.0-0.dll'
+          'libcairo-2.dll' 'libglib-2.0-0.dll' 'libpangocairo-1.0-0.dll'
+          'libcairo-gobject-2.dll' 'libgmodule-2.0-0.dll' 'libpangoft2-1.0-0.dll'
+          'libepoxy-0.dll' 'libgobject-2.0-0.dll' 'libpangowin32-1.0-0.dll'
+          'libexpat-1.dll' 'libgraphite2.dll' 'libpcre-1.dll'
+          'libffi-6.dll' 'libgtk-3-0.dll' 'libpixman-1-0.dll'
+          'libfontconfig-1.dll' 'libharfbuzz-0.dll' 'libpng16-16.dll'
+          'libfreetype-6.dll' 'libiconv-2.dll' 'libstdc++-6.dll'
+          'libgcc_s_sjlj-1.dll' 'libintl-8.dll' 'libwinpthread-1.dll'
+          'libgdk-3-0.dll' 'libjasper.dll' 'zlib1.dll')
+
+icons=('document-save-symbolic.*' 'pan-down-symbolic.*'
+       'edit-clear-symbolic.*' 'pan-up-symbolic.*'
+       'edit-delete-symbolic.*' 'view-refresh-symbolic.*'
+       'media-playback-start-symbolic.*')
+
+icons_dirs=('16x16' '24x24' '32x32' '512x512' '8x8' 'scalable'
+            '22x22' '256x256' '48x48' '64x64' '96x96')
+
+platform='windows/386'
 platform_split=(${platform//\// })
 GOOS=${platform_split[0]}
 GOARCH=${platform_split[1]}
@@ -38,8 +61,38 @@ cp -r 'skeleton' $output_path
 resources_path=$output_path'/resources'
 images_path=$resources_path'/images'
 mkdir $resources_path
+mkdir $images_path
 cp -r 'resources/gtk' $resources_path
-cp 'resources/images/{logo.png}' $images_path
+cp 'resources/images/logo.png' $images_path
+cp -r resources/windows/gtk/* $output_path
+
+# Copy INSTEAD
+cp -r 'resources/windows/instead' $output_path
 
 # Add LICENSE
 cp 'LICENSE' $output_path'/LICENSE.txt'
+
+# Copy dynamic libs
+for lib in "${dynamic_libs[@]}"
+do
+    cp $bin_path'/'$lib $output_path
+done
+
+# Copy icons
+theme_output_path=$output_path'/share/icons/Adwaita'
+theme_path=$mingw_path'/share/icons/Adwaita'
+for icon_dir in "${icons_dirs[@]}"
+do
+    mkdir -p $theme_output_path'/'$icon_dir'/actions'
+
+    for icon in "${icons[@]}"
+    do
+        cp $theme_path'/'$icon_dir'/actions/'$icon $theme_output_path'/'$icon_dir'/actions'
+    done
+done
+
+# Create archives for distributing
+cd $output_base_path
+package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
+zip -r -9 $package_name'.zip' $package_out
+cd -
