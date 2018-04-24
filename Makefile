@@ -23,6 +23,12 @@ cli-cross:
 gtk:
 	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
 
+gtk-linux64:
+	./gtk-linux-build.sh ./gtk insteadman-gtk ${VERSION} amd64
+
+gtk-linux32:
+	./gtk-linux-build.sh ./gtk insteadman-gtk ${VERSION} 386
+
 gtk-linux2win:
 	./gtk-linux2win-build.sh ./gtk insteadman-gtk ${VERSION}
 

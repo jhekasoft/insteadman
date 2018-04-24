@@ -42,8 +42,6 @@ output_base_path='build/'$GOOS'-'$GOARCH
 output_path=$output_base_path'/'$package_out
 output_name=$output_path'/'$package_out'.exe'
 
-# TODO: copy GTK+ libs + resources
-
 # Generate .syso resouces (executable icon, manifest, info)
 go generate $package
 
@@ -53,6 +51,9 @@ env CGO_ENABLED=1 \
 	GOOS=$GOOS \
 	GOARCH=$GOARCH \
 	go build -ldflags "-H=windowsgui -s -w" -o $output_name $package
+
+# Remove .syso
+rm $package'/resource.syso'
 
 # Copy skeleton
 cp -r 'skeleton' $output_path
