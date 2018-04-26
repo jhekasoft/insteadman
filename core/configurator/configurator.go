@@ -108,7 +108,7 @@ func (c *Configurator) ShareResourcePath(relPath string) string {
 }
 
 func (c *Configurator) writeSkeleton() error {
-	configData, e := ioutil.ReadFile(filepath.Join(skeletonDir, configName))
+	configData, e := ioutil.ReadFile(c.ShareResourcePath(filepath.Join(skeletonDir, configName)))
 	if e != nil {
 		return e
 	}

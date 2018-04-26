@@ -1,4 +1,4 @@
-VERSION=3.0.2
+VERSION=3.0.3
 DESTDIR=
 
 all:
@@ -57,7 +57,7 @@ install:
 
 	install -d -m 0755 $(DESTDIR)/usr/share/pixmaps/
 	install -d -m 0755 $(DESTDIR)/usr/share/applications/
-	install -m 0644 resources/images/logo.png $(DESTDIR)/usr/share/pixmaps/insteadman.png
+	install -m 0644 resources/images/logo128x128.png $(DESTDIR)/usr/share/pixmaps/insteadman.png
 	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)/usr/share/applications/insteadman.desktop
 
 uninstall:

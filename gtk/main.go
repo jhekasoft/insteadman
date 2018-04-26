@@ -16,7 +16,7 @@ import (
 
 const (
 	Title   = "InsteadMan"
-	Version = "3.0.2"
+	Version = "3.0.3"
 
 	LogoFilePath     = "resources/images/logo.png"
 	MainFormFilePath = "resources/gtk/main.glade"
@@ -75,9 +75,16 @@ var (
 func main() {
 	runtime.LockOSThread()
 
-	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
+	gtk.Init(nil)
+
+	b, e := gtk.BuilderNew()
 	if e != nil {
 		log.Fatalf("Error: %v", e)
+	}
+
+	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
+	if e != nil {
+		ShowErrorDlg(e.Error())
 	}
 
 	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
@@ -87,13 +94,6 @@ func main() {
 	}
 
 	M = &manager.Manager{Config: config}
-
-	gtk.Init(nil)
-
-	b, e := gtk.BuilderNew()
-	if e != nil {
-		log.Fatalf("Error: %v", e)
-	}
 
 	e = b.AddFromFile(c.ShareResourcePath(MainFormFilePath))
 	if e != nil {

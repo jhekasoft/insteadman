@@ -39,8 +39,39 @@ Run GTK (GUI):
 
 
 Run CLI:
+
 ```bash
 ./insteadman
+```
+
+Installing
+----------
+
+Install to the system path:
+
+```bash
+make install
+```
+
+Install to the destination dir:
+
+```bash
+make DESTDIR="package" install
+```
+
+Uninstalling
+------------
+
+Uninstall from the system path:
+
+```bash
+make uninstall
+```
+
+Uninstall from the destination dir:
+
+```bash
+make DESTDIR="package" uninstall
 ```
 
 Other build variants
