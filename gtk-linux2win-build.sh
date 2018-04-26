@@ -42,6 +42,8 @@ output_base_path='build/'$GOOS'-'$GOARCH
 output_path=$output_base_path'/'$package_out
 output_name=$output_path'/'$package_out'.exe'
 
+iscc=~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe
+
 # Generate .syso resouces (executable icon, manifest, info)
 go generate $package
 
@@ -97,3 +99,6 @@ cd $output_base_path
 package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
 zip -r -9 $package_name'.zip' $package_out
 cd -
+
+# Create installator
+wine "$iscc" resources/windows/setup.iss
