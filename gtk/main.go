@@ -10,6 +10,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 )
 
@@ -17,7 +18,8 @@ const (
 	Title   = "InsteadMan"
 	Version = "3.0.2"
 
-	LogoFilePath = "./resources/images/logo.png"
+	LogoFilePath     = "resources/images/logo.png"
+	MainFormFilePath = "resources/gtk/main.glade"
 
 	ComboBoxColumnId    = 0
 	ComboBoxColumnTitle = 1
@@ -73,6 +75,19 @@ var (
 func main() {
 	runtime.LockOSThread()
 
+	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
+	if e != nil {
+		log.Fatalf("Error: %v", e)
+	}
+
+	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
+	config, e := c.GetConfig()
+	if e != nil {
+		ShowErrorDlg(e.Error())
+	}
+
+	M = &manager.Manager{Config: config}
+
 	gtk.Init(nil)
 
 	b, e := gtk.BuilderNew()
@@ -80,7 +95,7 @@ func main() {
 		log.Fatalf("Error: %v", e)
 	}
 
-	e = b.AddFromFile("./resources/gtk/main.glade")
+	e = b.AddFromFile(c.ShareResourcePath(MainFormFilePath))
 	if e != nil {
 		ShowErrorDlg(e.Error())
 	}
@@ -127,14 +142,6 @@ func main() {
 	BtnGameInstall = GetButton(b, "button_game_install")
 	BtnGameRemove = GetButton(b, "button_game_remove")
 
-	c := configurator.Configurator{FilePath: ""}
-	config, e := c.GetConfig()
-	if e != nil {
-		ShowErrorDlg(e.Error())
-	}
-
-	M = &manager.Manager{Config: config}
-
 	if M.Config.InterpreterCommand == "" {
 		findInterpreter(M, &c)
 	}
@@ -148,7 +155,9 @@ func main() {
 		updateClicked(BtnUpdate)
 	}
 
-	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(LogoFilePath, 210, 210, true)
+	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
+		c.ShareResourcePath(LogoFilePath), 210, 210, true)
+
 	if e != nil {
 		ShowErrorDlg(e.Error())
 	}

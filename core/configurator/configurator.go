@@ -42,16 +42,17 @@ const (
 )
 
 type Configurator struct {
-	FilePath string
+	FilePath   string
+	CurrentDir string
 }
 
-func insteadManDir() string {
-	localPath := filepath.Join(".", configName)
+func (c *Configurator) insteadManDir() string {
+	localPath := filepath.Join(c.CurrentDir, configName)
 	_, e := os.Stat(localPath)
 	exists := !os.IsNotExist(e)
 
 	if exists && e == nil {
-		return "."
+		return c.CurrentDir
 	}
 
 	insteadManDir := filepath.Join(insteadDir(), insteadManDirName)
@@ -60,12 +61,12 @@ func insteadManDir() string {
 	return insteadManDir
 }
 
-func findConfigFileName() string {
-	return filepath.Join(insteadManDir(), configName)
+func (c *Configurator) findConfigFileName() string {
+	return filepath.Join(c.insteadManDir(), configName)
 }
 
-func gamesDir() string {
-	localPath := filepath.Join(".", gamesDirName)
+func (c *Configurator) gamesDir() string {
+	localPath := filepath.Join(c.CurrentDir, gamesDirName)
 
 	_, e := os.Stat(localPath)
 	exists := !os.IsNotExist(e)
@@ -80,7 +81,33 @@ func gamesDir() string {
 	return gamesDir
 }
 
-func writeSkeleton(c *Configurator) error {
+func (c *Configurator) ShareResourcePath(relPath string) string {
+	// Add curent dir to search
+	sharePathList := []string{c.CurrentDir}
+
+	// Add UNIX-path to search
+	const unixSharePath = "share/insteadman"
+	unixSharedDir, e := filepath.Abs(filepath.Join(c.CurrentDir, "..", unixSharePath))
+	if e == nil {
+		sharePathList = append(sharePathList, unixSharedDir)
+	}
+
+	// Search resource in all the path
+	for _, sharePath := range sharePathList {
+		absPath := filepath.Join(sharePath, relPath)
+
+		_, e := os.Stat(absPath)
+		exists := !os.IsNotExist(e)
+		if exists && e == nil {
+			return absPath
+		}
+	}
+
+	// If resource hasn't found then return relative path of resource
+	return relPath
+}
+
+func (c *Configurator) writeSkeleton() error {
 	configData, e := ioutil.ReadFile(filepath.Join(skeletonDir, configName))
 	if e != nil {
 		return e
@@ -91,14 +118,14 @@ func writeSkeleton(c *Configurator) error {
 
 func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 	if c.FilePath == "" {
-		c.FilePath = findConfigFileName()
+		c.FilePath = c.findConfigFileName()
 	}
 
 	// Write skeleton config if it isn't existing
 	_, e := os.Stat(c.FilePath)
 	exists := !os.IsNotExist(e)
 	if !exists || e != nil {
-		e = writeSkeleton(c)
+		e = c.writeSkeleton()
 		if e != nil {
 			return nil, e
 		}
@@ -117,12 +144,12 @@ func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 
 	config.CalculatedGamesPath = config.GamesPath
 	if config.CalculatedGamesPath == "" {
-		config.CalculatedGamesPath = gamesDir()
+		config.CalculatedGamesPath = c.gamesDir()
 	}
 
 	config.CalculatedInsteadManPath = config.InsteadManPath
 	if config.CalculatedInsteadManPath == "" {
-		config.CalculatedInsteadManPath = insteadManDir()
+		config.CalculatedInsteadManPath = c.insteadManDir()
 	}
 
 	return config, nil

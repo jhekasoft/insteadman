@@ -1,4 +1,5 @@
 VERSION=3.0.2
+DESTDIR=
 
 all:
 	${MAKE} deps
@@ -15,10 +16,10 @@ deps-dev:
 	go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
 
 cli:
-	go build -ldflags "-s -w" -o insteadman-cli ./cli
+	go build -ldflags "-s -w" -o insteadman ./cli
 
 cli-cross:
-	./cli-cross-build.sh ./cli insteadman-cli ${VERSION}
+	./cli-cross-build.sh ./cli insteadman ${VERSION}
 
 gtk:
 	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
@@ -36,9 +37,35 @@ test:
 	go test ./...
 
 clean:
-	rm -f insteadman-cli
+	rm -f insteadman
 	rm -f insteadman-gtk
 	rm -f insteadman-gtk.exe
 	rm -rf build/*
+
+install:
+	install -d -m 0755 $(DESTDIR)/usr/bin/
+	install -m 0755 insteadman $(DESTDIR)/usr/bin/insteadman
+	install -m 0755 insteadman-gtk $(DESTDIR)/usr/bin/insteadman-gtk
+
+	install -d -m 0755 $(DESTDIR)/usr/share/insteadman/skeleton/
+	install -m 0644 skeleton/* $(DESTDIR)/usr/share/insteadman/skeleton/
+
+	install -d -m 0755 $(DESTDIR)/usr/share/insteadman/resources/gtk/
+	install -d -m 0755 $(DESTDIR)/usr/share/insteadman/resources/images/
+	install -m 0644 resources/gtk/*.glade $(DESTDIR)/usr/share/insteadman/resources/gtk/
+	install -m 0644 resources/images/logo.png $(DESTDIR)/usr/share/insteadman/resources/images/
+
+	install -d -m 0755 $(DESTDIR)/usr/share/pixmaps/
+	install -d -m 0755 $(DESTDIR)/usr/share/applications/
+	install -m 0644 resources/images/logo.png $(DESTDIR)/usr/share/pixmaps/insteadman.png
+	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)/usr/share/applications/insteadman.desktop
+
+uninstall:
+	rm $(DESTDIR)/usr/bin/insteadman
+	rm $(DESTDIR)/usr/bin/insteadman-gtk
+	rm -rf $(DESTDIR)/usr/share/insteadman/
+	rm $(DESTDIR)/usr/share/pixmaps/insteadman.png
+	rm $(DESTDIR)/usr/share/applications/insteadman.desktop
+
 
 .PHONY: cli gtk

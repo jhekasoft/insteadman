@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=InsteadMan
+Name[ru]=InsteadMan
+Name[uk]=InsteadMan
+Comment=INSTEAD Manager
+Comment[ru]=INSTEAD менеджер
+Comment[uk]=INSTEAD менеджер
+Exec=/usr/bin/insteadman-gtk
+Icon=/usr/share/pixmaps/insteadman.png
+Terminal=false
+Type=Application
+Categories=Application;Game;

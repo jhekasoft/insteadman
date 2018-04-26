@@ -40,7 +40,7 @@ Run GTK (GUI):
 
 Run CLI:
 ```bash
-./insteadman-cli
+./insteadman
 ```
 
 Other build variants

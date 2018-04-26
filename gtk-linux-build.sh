@@ -35,7 +35,6 @@ mkdir $resources_path
 mkdir $images_path
 cp -r 'resources/gtk' $resources_path
 cp 'resources/images/logo.png' $images_path
-cp -r resources/windows/gtk/* $output_path
 
 # Add README
 readme_name='resources/gtk/readme/windows/README.txt'

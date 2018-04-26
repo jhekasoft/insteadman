@@ -6,6 +6,7 @@ import (
 	"../core/manager"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -187,7 +188,7 @@ func run(m *manager.Manager, args []string) {
 	if !game.Installed {
 		fmt.Printf("Game %s isn't installed.\n", game.Title)
 		fmt.Printf("Please run for installation:\n"+
-			"insteadman-cli install %s\n", game.Name)
+			"insteadman install %s\n", game.Name)
 		os.Exit(1)
 	}
 
@@ -273,7 +274,10 @@ func printHelpAndExit() {
 // -- Commands -----------------------------------
 
 func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator) {
-	c := configurator.Configurator{FilePath: ""}
+	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
+	ExitIfError(e)
+
+	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
 	config, e := c.GetConfig()
 	ExitIfError(e)
 

@@ -1,5 +1,6 @@
 .DS_Store
 /.idea/
+/insteadman
 /insteadman-cli
 /insteadman-gtk
 /insteadman-gtk.exe
