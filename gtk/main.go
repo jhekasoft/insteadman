@@ -5,12 +5,12 @@ package main
 import (
 	"../core/configurator"
 	"../core/manager"
+	"../core/utils"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
-	"path/filepath"
 	"runtime"
 )
 
@@ -82,7 +82,12 @@ func main() {
 		log.Fatalf("Error: %v", e)
 	}
 
-	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
+	executablePath, e := os.Executable()
+	if e != nil {
+		ShowErrorDlg(e.Error())
+	}
+
+	currentDir, e := utils.BinAbsDir(executablePath)
 	if e != nil {
 		ShowErrorDlg(e.Error())
 	}

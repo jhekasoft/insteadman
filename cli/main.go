@@ -4,9 +4,9 @@ import (
 	"../core/configurator"
 	"../core/interpreter_finder"
 	"../core/manager"
+	"../core/utils"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -274,7 +274,10 @@ func printHelpAndExit() {
 // -- Commands -----------------------------------
 
 func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator) {
-	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
+	executablePath, e := os.Executable()
+	ExitIfError(e)
+
+	currentDir, e := utils.BinAbsDir(executablePath)
 	ExitIfError(e)
 
 	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
