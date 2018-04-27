@@ -16,7 +16,7 @@ import (
 
 const (
 	Title   = "InsteadMan"
-	Version = "3.0.3"
+	Version = "3.0.4"
 
 	LogoFilePath     = "resources/images/logo.png"
 	MainFormFilePath = "resources/gtk/main.glade"

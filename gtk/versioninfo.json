@@ -3,13 +3,13 @@
         "FileVersion": {
             "Major": 3,
             "Minor": 0,
-            "Patch": 3,
+            "Patch": 4,
             "Build": 0
         },
         "ProductVersion": {
             "Major": 3,
             "Minor": 0,
-            "Patch": 3,
+            "Patch": 4,
             "Build": 0
         },
         "FileFlagsMask": "3f",
@@ -29,7 +29,7 @@
         "OriginalFilename": "",
         "PrivateBuild": "",
         "ProductName": "InsteadMan",
-        "ProductVersion": "v3.0.2.0",
+        "ProductVersion": "v3.0.4.0",
         "SpecialBuild": ""
     },
     "VarFileInfo": {
