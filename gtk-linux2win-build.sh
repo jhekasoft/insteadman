@@ -11,6 +11,7 @@ if [[ -z "$package" || -z "$package_out" ]]; then
   exit 1
 fi
 
+goversioninfo=~/go/bin/goversioninfo
 mingw_path='/usr/i686-w64-mingw32'
 bin_path=$mingw_path'/bin'
 
@@ -42,19 +43,33 @@ output_base_path='build/'$GOOS'-'$GOARCH
 output_path=$output_base_path'/'$package_out
 output_name=$output_path'/'$package_out'.exe'
 syso_name="resource.syso"
+version_split=(${version//./ })
+version_major=${version_split[0]}
+version_minor=${version_split[1]}
+version_patch=${version_split[2]}
+version_build=0
 
 iscc=~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe
 
 # Generate .syso resouces (executable icon, manifest, info)
-goversioninfo \
+$goversioninfo \
     -company="JhekaSoft" \
     -copyright="JhekaSoft" \
     -description="INSTEAD Manager" \
     -file-version=$version \
-    -manifest="../resources/windows/insteadman.manifest" \
-    -o=$syso_name \
+    -icon="resources/images/logo.ico" \
+    -manifest="resources/windows/insteadman.manifest" \
+    -o=$package"/"$syso_name \
     -product-name="InsteadMan" \
-    -product-version=$version
+    -product-version=$version \
+    -ver-major=$version_major \
+    -ver-minor=$version_minor \
+    -ver-patch=$version_patch \
+    -ver-build=$version_build \
+    -product-ver-major=$version_major \
+    -product-ver-minor=$version_minor \
+    -product-ver-patch=$version_patch \
+    -product-ver-build=$version_build
 
 # Building .exe
 env CGO_ENABLED=1 \
