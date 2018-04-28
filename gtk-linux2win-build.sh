@@ -41,11 +41,20 @@ GOARCH=${platform_split[1]}
 output_base_path='build/'$GOOS'-'$GOARCH
 output_path=$output_base_path'/'$package_out
 output_name=$output_path'/'$package_out'.exe'
+syso_name="resource.syso"
 
 iscc=~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe
 
 # Generate .syso resouces (executable icon, manifest, info)
-go generate $package
+goversioninfo \
+    -company="JhekaSoft" \
+    -copyright="JhekaSoft" \
+    -description="INSTEAD Manager" \
+    -file-version=$version \
+    -manifest="../resources/windows/insteadman.manifest" \
+    -o=$syso_name \
+    -product-name="InsteadMan" \
+    -product-version=$version
 
 # Building .exe
 env CGO_ENABLED=1 \
@@ -55,7 +64,7 @@ env CGO_ENABLED=1 \
 	go build -ldflags "-H=windowsgui -s -w" -o $output_name $package
 
 # Remove .syso
-rm $package'/resource.syso'
+rm $package'/'$syso_name
 
 # Copy skeleton
 cp -r 'skeleton' $output_path
