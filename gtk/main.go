@@ -84,34 +84,34 @@ func main() {
 
 	executablePath, e := os.Executable()
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 
 	currentDir, e := utils.BinAbsDir(executablePath)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 
 	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
 	config, e := c.GetConfig()
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 
 	M = &manager.Manager{Config: config}
 
 	e = b.AddFromFile(c.ShareResourcePath(MainFormFilePath))
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 
 	obj, e := b.GetObject("window_main")
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 	window, ok := obj.(*gtk.Window)
 	if !ok {
-		ShowErrorDlg("No main window")
+		ShowErrorDlgFatal("No main window")
 	}
 
 	ListStoreRepo = GetListStore(b, "liststore_repo")
@@ -131,7 +131,7 @@ func main() {
 	treeViewGames := GetTreeView(b, "treeview_games")
 	GamesSelection, e = treeViewGames.GetSelection()
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 
 	LblGameTitle = GetLabel(b, "label_game_title")
@@ -164,7 +164,7 @@ func main() {
 		c.ShareResourcePath(LogoFilePath), 210, 210, true)
 
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 	}
 
 	BtnUpdate.Connect("clicked", updateClicked)
@@ -257,19 +257,19 @@ func gameChanged(s *gtk.TreeSelection) {
 
 	value, e := ListStoreGames.GetValue(iter, GameColumnId)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 		return
 	}
 
 	id, e := value.GetString()
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 		return
 	}
 
 	CurGame = manager.FindGameById(Games, id)
 	if CurGame == nil {
-		ShowErrorDlg("Game " + id + " has not found")
+		ShowErrorDlgFatal("Game " + id + " has not found")
 		return
 	}
 
@@ -307,7 +307,7 @@ func removeGameClicked(s *gtk.Button) {
 	// Set removing status in the list
 	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlgFatal(e.Error())
 		return
 	}
 	ListStoreGames.SetValue(iter, GameColumnSize, CurGame.GetHumanSize()+" Removing...")
@@ -328,21 +328,44 @@ func removeGameClicked(s *gtk.Button) {
 	}()
 }
 
+func ShowErrorDlgFatal(txt string) {
+	showErrorDlg(txt, true)
+}
+
 func ShowErrorDlg(txt string) {
+	showErrorDlg(txt, false)
+}
+
+func showErrorDlg(txt string, fatal bool) {
 	log.Printf("Error: %v", txt)
 
-	dlgWnd, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	dlg, _ := gtk.DialogNew()
+	dlg.SetTitle(Title + " " + Version)
+	dlg.AddButton("Close" ,gtk.RESPONSE_ACCEPT)
+	dlgBox, _ := dlg.GetContentArea()
+	dlgBox.SetSpacing(6)
+
 	lbl, _ := gtk.LabelNew(txt)
-	dlgWnd.Add(lbl)
-	dlgWnd.SetResizable(false)
-	dlgWnd.SetModal(true)
-	dlgWnd.SetTitle(Title + " " + Version)
-	dlgWnd.SetDefaultSize(200, 100)
-	dlgWnd.SetPosition(gtk.WIN_POS_CENTER)
-	dlgWnd.Connect("destroy", func() {
-		os.Exit(1)
-	})
-	dlgWnd.ShowAll()
-	gtk.DialogNew()
-	gtk.Main()
+	lbl.SetMarginStart(6)
+	lbl.SetMarginEnd(6)
+	dlgBox.Add(lbl)
+	lbl.Show()
+
+	dlg.SetModal(true)
+	dlg.SetPosition(gtk.WIN_POS_CENTER)
+	dlg.SetResizable(false)
+	//dlg.SetTransientFor(window)
+
+	response := dlg.Run()
+	dlg.SetKeepAbove(true)
+	if response == int(gtk.RESPONSE_ACCEPT) {
+		dlg.Destroy()
+		if fatal {
+			os.Exit(1)
+		}
+	}
+
+	if fatal {
+		dlg.Connect("destroy", gtk.MainQuit)
+	}
 }

@@ -12,8 +12,13 @@ import (
 )
 
 func RunGame(g *manager.Game) {
+	if M.Config.GetInterpreterCommand() == "" {
+		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		return
+	}
+
 	if CurGame == nil {
-		log.Print("No running. No game selected.")
+		ShowErrorDlg("No running. No game selected.")
 		return
 	}
 
@@ -22,8 +27,13 @@ func RunGame(g *manager.Game) {
 }
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
+	if M.Config.GetInterpreterCommand() == "" {
+		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		return
+	}
+
 	if CurGame == nil {
-		log.Print("No installing. No game selected.")
+		ShowErrorDlg("No installing. No game selected.")
 		return
 	}
 
@@ -97,7 +107,8 @@ func RefreshGames() {
 
 	Games, e = M.GetSortedGames()
 	if e != nil {
-		log.Fatalf("Error: %s", e)
+		ShowErrorDlgFatal(e.Error())
+		return
 	}
 
 	keywordP, repoP, langP, onlyInstalled := GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
@@ -124,7 +135,8 @@ func RefreshSeveralGames(upGames []manager.Game) {
 
 	Games, e = M.GetSortedGames()
 	if e != nil {
-		log.Fatalf("Error: %s", e)
+		ShowErrorDlgFatal(e.Error())
+		return
 	}
 
 	// Update current (selected) game info
@@ -144,12 +156,14 @@ func RefreshSeveralGames(upGames []manager.Game) {
 		for iter != nil {
 			value, e := ListStoreGames.GetValue(iter, GameColumnId)
 			if e != nil {
-				log.Fatalf("Error: %v", e)
+				ShowErrorDlgFatal(e.Error())
+				return
 			}
 
 			id, e := value.GetString()
 			if e != nil {
-				log.Fatalf("Error: %v", e)
+				ShowErrorDlgFatal(e.Error())
+				return
 			}
 
 			if id == game.Id {
@@ -187,7 +201,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	path := finder.Find()
 
 	if path == nil {
-		log.Print("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
 		return
 	}
 
@@ -196,7 +210,8 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	m.Config.InterpreterCommand = *path
 	e := c.SaveConfig(m.Config)
 	if e != nil {
-		log.Fatalf("Error: %v\n", e)
+		ShowErrorDlgFatal(e.Error())
+		return
 	}
 
 	log.Print("Path has saved")
