@@ -23,7 +23,7 @@ output_name=$output_path'/'$package_out
 # Building binary
 env GOOS=$GOOS \
 	GOARCH=$GOARCH \
-	go build -ldflags "-s -w" -o $output_name $package
+	go build -ldflags "-s -w -X main.version=$version" -o $output_name $package
 
 # Copy skeleton
 cp -r 'skeleton' $output_path

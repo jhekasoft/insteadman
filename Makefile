@@ -1,4 +1,4 @@
-VERSION=3.0.4
+VERSION=3.0.5
 DESTDIR=
 
 all:
@@ -16,13 +16,13 @@ deps-dev:
 	go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
 
 cli:
-	go build -ldflags "-s -w" -o insteadman ./cli
+	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman ./cli
 
 cli-cross:
 	./cli-cross-build.sh ./cli insteadman ${VERSION}
 
 gtk:
-	go build -ldflags "-s -w" -o insteadman-gtk ./gtk
+	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
 
 gtk-linux64:
 	./gtk-linux-build.sh ./gtk insteadman-gtk ${VERSION} amd64

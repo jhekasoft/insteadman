@@ -218,7 +218,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 }
 
 func resetGameInfo() {
-	LblGameTitle.SetText(Title + " " + Version)
+	LblGameTitle.SetText(Title + " " + version)
 
 	ImgGame.SetFromPixbuf(PixBufGameDefaultImage)
 

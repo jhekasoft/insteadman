@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const version = "3.0.4"
+var version string
 
 func main() {
 	m, c := initManagerAndConfigurator()

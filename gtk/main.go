@@ -14,7 +14,6 @@ import (
 
 const (
 	Title   = "InsteadMan"
-	Version = "3.0.4"
 
 	LogoFilePath     = "resources/images/logo.png"
 	MainFormFilePath = "resources/gtk/main.glade"
@@ -33,6 +32,8 @@ const (
 )
 
 var (
+	version string
+
 	M            *manager.Manager
 	Games        []manager.Game
 	CurGame      *manager.Game
@@ -203,7 +204,7 @@ func main() {
 
 	resetGameInfo()
 
-	window.SetTitle(Title + " " + Version)
+	window.SetTitle(Title + " " + version)
 	window.SetDefaultSize(770, 500)
 	window.SetPosition(gtk.WIN_POS_CENTER)
 	window.Connect("destroy", gtk.MainQuit)
@@ -338,7 +339,7 @@ func showErrorDlg(txt string, fatal bool) {
 	log.Printf("Error: %v", txt)
 
 	dlg, _ := gtk.DialogNew()
-	dlg.SetTitle(Title + " " + Version)
+	dlg.SetTitle(Title + " " + version)
 	dlg.AddButton("Close" ,gtk.RESPONSE_ACCEPT)
 	dlgBox, _ := dlg.GetContentArea()
 	dlgBox.SetSpacing(6)
