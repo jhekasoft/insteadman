@@ -1,11 +1,11 @@
 [Setup]
 AppName=InsteadMan
-AppVerName=InsteadMan 3.0.3
+AppVerName=InsteadMan {{version}}
 DefaultDirName={pf}\InsteadMan
 DefaultGroupName=Games
 UninstallDisplayIcon={app}\insteadman-gtk.exe
 OutputDir=..\..\build\windows-386\
-OutputBaseFilename=insteadman-windows-setup-3.0.3
+OutputBaseFilename=insteadman-windows-setup-{{version}}
 AllowNoIcons=true
 SetupIconFile=..\..\resources\images\logo.ico
 ChangesAssociations=yes

@@ -12,3 +12,4 @@
 /resources/gtk/*.glade#
 /gtk/resource.syso
 /resources/windows/instead
+/resources/windows/setup.iss
