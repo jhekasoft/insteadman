@@ -1,5 +1,6 @@
 VERSION=3.0.5
 DESTDIR=
+PREFIX=/usr
 
 all:
 	${MAKE} deps
@@ -25,13 +26,16 @@ gtk:
 	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
 
 gtk-linux64:
-	./gtk-linux-build.sh ./gtk insteadman-gtk ${VERSION} amd64
+	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} linux amd64
 
 gtk-linux32:
-	./gtk-linux-build.sh ./gtk insteadman-gtk ${VERSION} 386
+	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} linux 386
 
 gtk-linux2win:
 	./gtk-linux2win-build.sh ./gtk insteadman-gtk ${VERSION}
+
+gtk-darwin64:
+	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} darwin amd64
 
 test:
 	go test ./...
@@ -42,30 +46,30 @@ clean:
 	rm -f insteadman-gtk.exe
 	rm -rf build/*
 
-install:
-	install -d -m 0755 $(DESTDIR)/usr/bin/
-	install -m 0755 insteadman $(DESTDIR)/usr/bin/insteadman
-	install -m 0755 insteadman-gtk $(DESTDIR)/usr/bin/insteadman-gtk
+install: all
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/bin/
+	install -m 0755 insteadman $(DESTDIR)$(PREFIX)/bin/insteadman
+	install -m 0755 insteadman-gtk $(DESTDIR)$(PREFIX)/bin/insteadman-gtk
 
-	install -d -m 0755 $(DESTDIR)/usr/share/insteadman/skeleton/
-	install -m 0644 skeleton/* $(DESTDIR)/usr/share/insteadman/skeleton/
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/insteadman/skeleton/
+	install -m 0644 skeleton/* $(DESTDIR)$(PREFIX)/share/insteadman/skeleton/
 
-	install -d -m 0755 $(DESTDIR)/usr/share/insteadman/resources/gtk/
-	install -d -m 0755 $(DESTDIR)/usr/share/insteadman/resources/images/
-	install -m 0644 resources/gtk/*.glade $(DESTDIR)/usr/share/insteadman/resources/gtk/
-	install -m 0644 resources/images/logo.png $(DESTDIR)/usr/share/insteadman/resources/images/
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/insteadman/resources/gtk/
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/insteadman/resources/images/
+	install -m 0644 resources/gtk/*.glade $(DESTDIR)$(PREFIX)/share/insteadman/resources/gtk/
+	install -m 0644 resources/images/logo.png $(DESTDIR)$(PREFIX)/share/insteadman/resources/images/
 
-	install -d -m 0755 $(DESTDIR)/usr/share/pixmaps/
-	install -d -m 0755 $(DESTDIR)/usr/share/applications/
-	install -m 0644 resources/images/logo128x128.png $(DESTDIR)/usr/share/pixmaps/insteadman.png
-	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)/usr/share/applications/insteadman.desktop
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/pixmaps/
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/applications/
+	install -m 0644 resources/images/logo128x128.png $(DESTDIR)$(PREFIX)/share/pixmaps/insteadman.png
+	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)$(PREFIX)/share/applications/insteadman.desktop
 
 uninstall:
-	rm $(DESTDIR)/usr/bin/insteadman
-	rm $(DESTDIR)/usr/bin/insteadman-gtk
-	rm -rf $(DESTDIR)/usr/share/insteadman/
-	rm $(DESTDIR)/usr/share/pixmaps/insteadman.png
-	rm $(DESTDIR)/usr/share/applications/insteadman.desktop
+	rm $(DESTDIR)$(PREFIX)/bin/insteadman
+	rm $(DESTDIR)$(PREFIX)/bin/insteadman-gtk
+	rm -rf $(DESTDIR)$(PREFIX)/share/insteadman/
+	rm $(DESTDIR)$(PREFIX)/share/pixmaps/insteadman.png
+	rm $(DESTDIR)$(PREFIX)/share/applications/insteadman.desktop
 
 
 .PHONY: cli gtk

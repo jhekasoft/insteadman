@@ -5,14 +5,15 @@
 package=$1
 package_out=$2
 version=$3
-arch=$4
+os=$4
+arch=$5
 
 if [[ -z "$package" || -z "$package_out" ]]; then
   echo "usage: $0 <package> <package out> <version> <arch>"
   exit 1
 fi
 
-platform='linux/'$arch
+platform=$os'/'$arch
 platform_split=(${platform//\// })
 GOOS=${platform_split[0]}
 GOARCH=${platform_split[1]}
