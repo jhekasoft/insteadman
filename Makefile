@@ -1,4 +1,4 @@
-VERSION=3.0.6
+VERSION=3.0.7
 DESTDIR=
 PREFIX=/usr
 
@@ -47,7 +47,9 @@ clean:
 	rm -rf build/*
 
 install: all
-	install -d -m 0755 $(DESTDIR)$(PREFIX)/bin/
+	if [ ! -d "$(DESTDIR)$(PREFIX)/bin/" ];then \
+		install -d -m 0755 $(DESTDIR)$(PREFIX)/bin/; \
+	fi
 	install -m 0755 insteadman $(DESTDIR)$(PREFIX)/bin/insteadman
 	install -m 0755 insteadman-gtk $(DESTDIR)$(PREFIX)/bin/insteadman-gtk
 
@@ -59,8 +61,12 @@ install: all
 	install -m 0644 resources/gtk/*.glade $(DESTDIR)$(PREFIX)/share/insteadman/resources/gtk/
 	install -m 0644 resources/images/logo.png $(DESTDIR)$(PREFIX)/share/insteadman/resources/images/
 
-	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/pixmaps/
-	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/applications/
+	if [ ! -d "$(DESTDIR)$(PREFIX)/share/pixmaps/" ];then \
+		install -d -m 0755 $(DESTDIR)$(PREFIX)/share/pixmaps/; \
+	fi
+	if [ ! -d " $(DESTDIR)$(PREFIX)/share/applications/" ];then \
+		install -d -m 0755 $(DESTDIR)$(PREFIX)/share/applications/; \
+	fi
 	install -m 0644 resources/images/logo128x128.png $(DESTDIR)$(PREFIX)/share/pixmaps/insteadman.png
 	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)$(PREFIX)/share/applications/insteadman.desktop
 
