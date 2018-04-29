@@ -51,9 +51,9 @@ do
     package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
     cd $output_base_path
     if [ $GOOS = "windows" ]; then
-        zip -r -9 $package_name'.zip' $package_out
+        zip -r -9 '../'$package_name'.zip' $package_out
     else
-        tar -cvzf $package_name'.tar.gz' $package_out
+        tar -cvzf '../'$package_name'.tar.gz' $package_out
     fi
     cd -
 done

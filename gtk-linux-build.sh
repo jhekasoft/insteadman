@@ -46,5 +46,5 @@ cp 'LICENSE' $output_path'/LICENSE.txt'
 # Create archives for distributing
 cd $output_base_path
 package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
-tar -cvzf $package_name'.tar.gz' $package_out
+tar -cvzf '../'$package_name'.tar.gz' $package_out
 cd -

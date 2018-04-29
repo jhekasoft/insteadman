@@ -51,78 +51,78 @@ version_build=0
 
 iscc=~/.wine/drive_c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe
 
-## Generate .syso resouces (executable icon, manifest, info)
-#$goversioninfo \
-#    -company="JhekaSoft" \
-#    -copyright="JhekaSoft" \
-#    -description="INSTEAD Manager" \
-#    -file-version=$version \
-#    -icon="resources/images/logo.ico" \
-#    -manifest="resources/windows/insteadman.manifest" \
-#    -o=$package"/"$syso_name \
-#    -product-name="InsteadMan" \
-#    -product-version=$version \
-#    -ver-major=$version_major \
-#    -ver-minor=$version_minor \
-#    -ver-patch=$version_patch \
-#    -ver-build=$version_build \
-#    -product-ver-major=$version_major \
-#    -product-ver-minor=$version_minor \
-#    -product-ver-patch=$version_patch \
-#    -product-ver-build=$version_build
+# Generate .syso resouces (executable icon, manifest, info)
+$goversioninfo \
+    -company="JhekaSoft" \
+    -copyright="JhekaSoft" \
+    -description="INSTEAD Manager" \
+    -file-version=$version \
+    -icon="resources/images/logo.ico" \
+    -manifest="resources/windows/insteadman.manifest" \
+    -o=$package"/"$syso_name \
+    -product-name="InsteadMan" \
+    -product-version=$version \
+    -ver-major=$version_major \
+    -ver-minor=$version_minor \
+    -ver-patch=$version_patch \
+    -ver-build=$version_build \
+    -product-ver-major=$version_major \
+    -product-ver-minor=$version_minor \
+    -product-ver-patch=$version_patch \
+    -product-ver-build=$version_build
 
-## Building .exe
-#env CGO_ENABLED=1 \
-#	CC=i686-w64-mingw32-cc \
-#	GOOS=$GOOS \
-#	GOARCH=$GOARCH \
-#	go build -ldflags "-H=windowsgui -s -w -X main.version=$version" -o $output_name $package
-#
-## Remove .syso
-#rm $package'/'$syso_name
-#
-## Copy skeleton
-#cp -r 'skeleton' $output_path
-#
-## Copy resources
-#resources_path=$output_path'/resources'
-#images_path=$resources_path'/images'
-#mkdir $resources_path
-#mkdir $images_path
-#cp -r 'resources/gtk' $resources_path
-#cp 'resources/images/logo.png' $images_path
-#cp -r resources/windows/gtk/* $output_path
-#
-## Copy INSTEAD
-#cp -r 'resources/windows/instead' $output_path
-#
-## Add LICENSE
-#cp 'LICENSE' $output_path'/LICENSE.txt'
-#
-## Copy dynamic libs
-#for lib in "${dynamic_libs[@]}"
-#do
-#    cp $bin_path'/'$lib $output_path
-#done
-#
-## Copy icons
-#theme_output_path=$output_path'/share/icons/Adwaita'
-#theme_path=$mingw_path'/share/icons/Adwaita'
-#for icon_dir in "${icons_dirs[@]}"
-#do
-#    mkdir -p $theme_output_path'/'$icon_dir'/actions'
-#
-#    for icon in "${icons[@]}"
-#    do
-#        cp $theme_path'/'$icon_dir'/actions/'$icon $theme_output_path'/'$icon_dir'/actions'
-#    done
-#done
-#
-## Create archives for distributing
-#cd $output_base_path
-#package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
-#zip -r -9 $package_name'.zip' $package_out
-#cd -
+# Building .exe
+env CGO_ENABLED=1 \
+	CC=i686-w64-mingw32-cc \
+	GOOS=$GOOS \
+	GOARCH=$GOARCH \
+	go build -ldflags "-H=windowsgui -s -w -X main.version=$version" -o $output_name $package
+
+# Remove .syso
+rm $package'/'$syso_name
+
+# Copy skeleton
+cp -r 'skeleton' $output_path
+
+# Copy resources
+resources_path=$output_path'/resources'
+images_path=$resources_path'/images'
+mkdir $resources_path
+mkdir $images_path
+cp -r 'resources/gtk' $resources_path
+cp 'resources/images/logo.png' $images_path
+cp -r resources/windows/gtk/* $output_path
+
+# Copy INSTEAD
+cp -r 'resources/windows/instead' $output_path
+
+# Add LICENSE
+cp 'LICENSE' $output_path'/LICENSE.txt'
+
+# Copy dynamic libs
+for lib in "${dynamic_libs[@]}"
+do
+    cp $bin_path'/'$lib $output_path
+done
+
+# Copy icons
+theme_output_path=$output_path'/share/icons/Adwaita'
+theme_path=$mingw_path'/share/icons/Adwaita'
+for icon_dir in "${icons_dirs[@]}"
+do
+    mkdir -p $theme_output_path'/'$icon_dir'/actions'
+
+    for icon in "${icons[@]}"
+    do
+        cp $theme_path'/'$icon_dir'/actions/'$icon $theme_output_path'/'$icon_dir'/actions'
+    done
+done
+
+# Create archives for distributing
+cd $output_base_path
+package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
+zip -r -9 $package_name'.zip' '../'$package_out
+cd -
 
 # Create installator
 setup_script_path='resources/windows/setup.iss'
