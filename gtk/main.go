@@ -32,7 +32,7 @@ const (
 )
 
 var (
-	version string
+	version string = "3"
 
 	M            *manager.Manager
 	Games        []manager.Game

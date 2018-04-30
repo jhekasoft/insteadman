@@ -1,4 +1,4 @@
-VERSION=3.0.7
+VERSION=3.0.8
 DESTDIR=
 PREFIX=/usr
 
@@ -61,12 +61,8 @@ install: all
 	install -m 0644 resources/gtk/*.glade $(DESTDIR)$(PREFIX)/share/insteadman/resources/gtk/
 	install -m 0644 resources/images/logo.png $(DESTDIR)$(PREFIX)/share/insteadman/resources/images/
 
-	if [ ! -d "$(DESTDIR)$(PREFIX)/share/pixmaps/" ];then \
-		install -d -m 0755 $(DESTDIR)$(PREFIX)/share/pixmaps/; \
-	fi
-	if [ ! -d " $(DESTDIR)$(PREFIX)/share/applications/" ];then \
-		install -d -m 0755 $(DESTDIR)$(PREFIX)/share/applications/; \
-	fi
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/pixmaps/; \
+	install -d -m 0755 $(DESTDIR)$(PREFIX)/share/applications/; \
 	install -m 0644 resources/images/logo128x128.png $(DESTDIR)$(PREFIX)/share/pixmaps/insteadman.png
 	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)$(PREFIX)/share/applications/insteadman.desktop
 

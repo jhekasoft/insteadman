@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var version string
+var version string = "3"
 
 func main() {
 	m, c := initManagerAndConfigurator()
@@ -65,6 +65,9 @@ func main() {
 		}
 
 		langs(m)
+
+	case "version":
+		printVersion()
 
 	default:
 		printHelpAndExit()
@@ -250,6 +253,10 @@ func langs(m *manager.Manager) {
 	for _, lang := range m.FindLangs(games) {
 		fmt.Printf("%s\n", lang)
 	}
+}
+
+func printVersion() {
+	fmt.Println(version)
 }
 
 func printHelpAndExit() {
