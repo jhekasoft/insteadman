@@ -273,9 +273,9 @@ func printHelpAndExit() {
 		"remove [keywork]\n    Remove game by keyword\n"+
 		"findInterpreter\n    Find INSTEAD interpreter and save path to the config\n"+
 		"repositories\n    Print available repositories\n"+
-		"langs\n    Print available game languages\n\n"+
-		"version\n    Print current version of app\n\n"+
-		"More info: https://github.com/jhekasoft/insteadman3\n", version)
+		"langs\n    Print available game languages\n"+
+		"version\n    Print current version of the application\n\n"+
+		"More info: http://jhekasoft.github.io/insteadman/\n", version)
 	os.Exit(1)
 }
 
