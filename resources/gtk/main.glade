@@ -78,7 +78,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
-      <object class="GtkCheckMenuItem">
+      <object class="GtkCheckMenuItem" id="checkmenuitem_sidebar">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">Sidebar</property>
@@ -92,7 +92,7 @@
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem">
+      <object class="GtkMenuItem" id="menuitem_settings">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">Settings...</property>
@@ -100,7 +100,7 @@
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem">
+      <object class="GtkMenuItem" id="menuitem_about">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">About...</property>
@@ -153,6 +153,7 @@
                   <object class="GtkEntry" id="entry_keyword">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="width_chars">12</property>
                     <property name="placeholder_text" translatable="yes">Search</property>
                   </object>
                   <packing>

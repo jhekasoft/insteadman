@@ -16,6 +16,7 @@ type InsteadmanConfig struct {
 	CheckUpdateOnStart       bool         `json:"check_update_on_start"`
 	GamesPath                string       `json:"games_path"`
 	InsteadManPath           string       `json:"insteadman_path"`
+	Gtk                      Gtk          `json:"gtk"`
 	CalculatedGamesPath      string       `json:"-"`
 	CalculatedInsteadManPath string       `json:"-"`
 }
@@ -36,6 +37,12 @@ func (c *InsteadmanConfig) GetInterpreterCommand() string {
 type Repository struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
+}
+
+type Gtk struct {
+	HideSidebar bool `json:"hide_sidebar"`
+	MainWidth   int  `json:"main_width"`
+	MainHeight  int  `json:"main_height"`
 }
 
 const (

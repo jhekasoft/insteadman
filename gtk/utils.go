@@ -115,6 +115,50 @@ func GetImage(b *gtk.Builder, id string) (el *gtk.Image) {
 	return
 }
 
+func GetMenuItem(b *gtk.Builder, id string) (el *gtk.MenuItem) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("MenuItem error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.MenuItem)
+	return
+}
+
+func GetCheckMenuItem(b *gtk.Builder, id string) (el *gtk.CheckMenuItem) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("CheckMenuItem error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.CheckMenuItem)
+	return
+}
+
+func GetBox(b *gtk.Builder, id string) (el *gtk.Box) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Box error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Box)
+	return
+}
+
+func GetSeparator(b *gtk.Builder, id string) (el *gtk.Separator) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Separator error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Separator)
+	return
+}
+
 func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLang *gtk.ComboBox,
 	chckBtnInstalled *gtk.CheckButton) (keywordP, repoP, langP *string, onlyInstalled bool) {
 	var e error

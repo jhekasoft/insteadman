@@ -35,9 +35,12 @@ var (
 	version string = "3"
 
 	M            *manager.Manager
+	C            *configurator.Configurator
 	Games        []manager.Game
 	CurGame      *manager.Game
 	IsRefreshing bool
+
+	WndMain *gtk.Window
 
 	ListStoreGames *gtk.ListStore
 	ListStoreRepo  *gtk.ListStore
@@ -67,6 +70,13 @@ var (
 	//BtnGameUpdate  *gtk.Button
 	BtnGameRemove *gtk.Button
 
+	SprtrSideBox *gtk.Separator
+	BxSideBox *gtk.Box
+
+	ChckMenuItmSideBar *gtk.CheckMenuItem
+	MenuItmSettings *gtk.MenuItem
+	MenuItmAbout *gtk.MenuItem
+
 	PixBufGameDefaultImage *gdk.Pixbuf
 	PixBufGameImage        *gdk.Pixbuf
 )
@@ -91,15 +101,15 @@ func main() {
 		ShowErrorDlgFatal(e.Error())
 	}
 
-	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
-	config, e := c.GetConfig()
+	C = &configurator.Configurator{FilePath: "", CurrentDir: currentDir}
+	config, e := C.GetConfig()
 	if e != nil {
 		ShowErrorDlgFatal(e.Error())
 	}
 
 	M = &manager.Manager{Config: config}
 
-	e = b.AddFromFile(c.ShareResourcePath(MainFormFilePath))
+	e = b.AddFromFile(C.ShareResourcePath(MainFormFilePath))
 	if e != nil {
 		ShowErrorDlgFatal(e.Error())
 	}
@@ -108,7 +118,9 @@ func main() {
 	if e != nil {
 		ShowErrorDlgFatal(e.Error())
 	}
-	window, ok := obj.(*gtk.Window)
+
+	var ok bool
+	WndMain, ok = obj.(*gtk.Window)
 	if !ok {
 		ShowErrorDlgFatal("No main window")
 	}
@@ -146,8 +158,15 @@ func main() {
 	BtnGameInstall = GetButton(b, "button_game_install")
 	BtnGameRemove = GetButton(b, "button_game_remove")
 
+	SprtrSideBox = GetSeparator(b,"separator_side")
+	BxSideBox = GetBox(b,"box_side")
+
+	ChckMenuItmSideBar = GetCheckMenuItem(b, "checkmenuitem_sidebar")
+	MenuItmSettings = GetMenuItem(b, "menuitem_settings")
+	MenuItmAbout = GetMenuItem(b, "menuitem_about")
+
 	if M.Config.InterpreterCommand == "" {
-		findInterpreter(M, &c)
+		findInterpreter(M, C)
 	}
 
 	if M.HasDownloadedRepositories() {
@@ -160,11 +179,15 @@ func main() {
 	}
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
-		c.ShareResourcePath(LogoFilePath), 210, 210, true)
+		C.ShareResourcePath(LogoFilePath), 210, 210, true)
 
 	if e != nil {
 		ShowErrorDlgFatal(e.Error())
 	}
+
+	showSideBar := !M.Config.Gtk.HideSidebar
+	ChckMenuItmSideBar.SetActive(showSideBar)
+	ToggleSidebox(showSideBar)
 
 	BtnUpdate.Connect("clicked", updateClicked)
 	EntryKeyword.Connect("changed", func(s *gtk.Entry) {
@@ -202,13 +225,26 @@ func main() {
 	BtnGameInstall.Connect("clicked", installGameClicked)
 	BtnGameRemove.Connect("clicked", removeGameClicked)
 
+	ChckMenuItmSideBar.Connect("toggled", sideBarToggled)
+	MenuItmSettings.Connect("activate", func() {
+		log.Println("Settings...")
+	})
+	MenuItmAbout.Connect("activate", func() {
+		log.Println("About...")
+	})
+
+	WndMain.Connect("destroy", gtk.MainQuit)
+	WndMain.Connect("delete_event", mainDeleted)
+
 	resetGameInfo()
 
-	window.SetTitle(Title + " " + version)
-	window.SetDefaultSize(770, 500)
-	window.SetPosition(gtk.WIN_POS_CENTER)
-	window.Connect("destroy", gtk.MainQuit)
-	window.Show()
+	width, height := GetDefaultWindowSize(M.Config)
+	WndMain.SetDefaultSize(width, height)
+
+	WndMain.SetTitle(Title + " " + version)
+	WndMain.SetPosition(gtk.WIN_POS_CENTER)
+	WndMain.Show()
+
 
 	gtk.Main()
 }
@@ -325,6 +361,21 @@ func removeGameClicked(s *gtk.Button) {
 			log.Fatal("Removing game. IdleAdd() failed:", e)
 		}
 	}()
+}
+
+func sideBarToggled(s *gtk.CheckMenuItem) {
+	showSideBar := s.GetActive()
+	ToggleSidebox(showSideBar)
+	M.Config.Gtk.HideSidebar = !showSideBar
+	C.SaveConfig(M.Config)
+}
+
+func mainDeleted() {
+	width, height := WndMain.GetSize()
+
+	M.Config.Gtk.MainWidth = width
+	M.Config.Gtk.MainHeight = height
+	C.SaveConfig(M.Config)
 }
 
 func ShowErrorDlgFatal(txt string) {

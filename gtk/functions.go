@@ -323,3 +323,25 @@ func gameListStoreValues(g manager.Game) []interface{} {
 
 	return []interface{}{g.Id, g.Title, g.Version, g.GetHumanSize(), fontWeight}
 }
+
+func ToggleSidebox(show bool) {
+	if show {
+		SprtrSideBox.Show()
+		BxSideBox.Show()
+	} else {
+		SprtrSideBox.Hide()
+		BxSideBox.Hide()
+	}
+}
+
+func GetDefaultWindowSize(config *configurator.InsteadmanConfig) (width, height int) {
+	width = config.Gtk.MainWidth
+	height = config.Gtk.MainHeight
+	if width < 1 {
+		width = 770
+	}
+	if height < 1 {
+		height = 500
+	}
+	return
+}
