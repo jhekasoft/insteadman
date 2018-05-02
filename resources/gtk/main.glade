@@ -81,7 +81,7 @@
       <object class="GtkCheckMenuItem">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Side panel</property>
+        <property name="label" translatable="yes">Sidebar</property>
         <property name="use_underline">True</property>
       </object>
     </child>
