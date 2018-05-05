@@ -11,6 +11,17 @@ type InterpreterFinder struct {
 	Config *configurator.InsteadmanConfig
 }
 
+func (f *InterpreterFinder) HaveBuiltIn() bool {
+	_, e := os.Stat(builtinRelativeFilePath)
+	exists := !os.IsNotExist(e)
+
+	if exists && e == nil {
+		return true
+	}
+
+	return false
+}
+
 func (f *InterpreterFinder) Find() *string {
 	// Built-in interpreter
 	if f.Config.UseBuiltinInterpreter {

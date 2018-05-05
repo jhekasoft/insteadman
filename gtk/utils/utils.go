@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"github.com/gotk3/gotk3/gtk"
@@ -24,6 +24,17 @@ func GetButton(b *gtk.Builder, id string) (btn *gtk.Button) {
 	}
 
 	btn, _ = obj.(*gtk.Button)
+	return
+}
+
+func GetToggleButton(b *gtk.Builder, id string) (btn *gtk.ToggleButton) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Toggle button error: %s", e)
+		return nil
+	}
+
+	btn, _ = obj.(*gtk.ToggleButton)
 	return
 }
 

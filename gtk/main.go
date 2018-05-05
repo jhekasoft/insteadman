@@ -4,6 +4,8 @@ import (
 	"../core/configurator"
 	"../core/manager"
 	"../core/utils"
+	gtkutils "./utils"
+	"./ui"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -32,10 +34,10 @@ const (
 )
 
 var (
-	version string = "3"
+	version = "3"
 
 	M            *manager.Manager
-	C            *configurator.Configurator
+	Configurator *configurator.Configurator
 	Games        []manager.Game
 	CurGame      *manager.Game
 	IsRefreshing bool
@@ -93,80 +95,80 @@ func main() {
 
 	executablePath, e := os.Executable()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
 	currentDir, e := utils.BinAbsDir(executablePath)
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
-	C = &configurator.Configurator{FilePath: "", CurrentDir: currentDir}
-	config, e := C.GetConfig()
+	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir}
+	config, e := Configurator.GetConfig()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
 	M = &manager.Manager{Config: config}
 
-	e = b.AddFromFile(C.ShareResourcePath(MainFormFilePath))
+	e = b.AddFromFile(Configurator.ShareResourcePath(MainFormFilePath))
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
 	obj, e := b.GetObject("window_main")
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
 	var ok bool
 	WndMain, ok = obj.(*gtk.Window)
 	if !ok {
-		ShowErrorDlgFatal("No main window")
+		ui.ShowErrorDlgFatal("No main window")
 	}
 
-	ListStoreRepo = GetListStore(b, "liststore_repo")
-	ListStoreLang = GetListStore(b, "liststore_lang")
-	ListStoreGames = GetListStore(b, "liststore_games")
+	ListStoreRepo = gtkutils.GetListStore(b, "liststore_repo")
+	ListStoreLang = gtkutils.GetListStore(b, "liststore_lang")
+	ListStoreGames = gtkutils.GetListStore(b, "liststore_games")
 
-	BtnUpdate = GetButton(b, "button_update")
-	EntryKeyword = GetEntry(b, "entry_keyword")
-	CmbBoxRepo = GetComboBox(b, "combobox_repo")
-	CmbBoxLang = GetComboBox(b, "combobox_lang")
-	ChckBtnInstalled = GetCheckButton(b, "checkutton_installed")
-	BtnClear = GetButton(b, "button_clear")
+	BtnUpdate = gtkutils.GetButton(b, "button_update")
+	EntryKeyword = gtkutils.GetEntry(b, "entry_keyword")
+	CmbBoxRepo = gtkutils.GetComboBox(b, "combobox_repo")
+	CmbBoxLang = gtkutils.GetComboBox(b, "combobox_lang")
+	ChckBtnInstalled = gtkutils.GetCheckButton(b, "checkutton_installed")
+	BtnClear = gtkutils.GetButton(b, "button_clear")
 
-	ScrWndGames = GetScrolledWindow(b, "scrolledwindow_games")
-	SpinnerGames = GetSpinner(b, "spinner_games")
+	ScrWndGames = gtkutils.GetScrolledWindow(b, "scrolledwindow_games")
+	SpinnerGames = gtkutils.GetSpinner(b, "spinner_games")
 
-	treeViewGames := GetTreeView(b, "treeview_games")
+	treeViewGames := gtkutils.GetTreeView(b, "treeview_games")
 	GamesSelection, e = treeViewGames.GetSelection()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
-	LblGameTitle = GetLabel(b, "label_game_title")
-	ImgGame = GetImage(b, "image_game")
-	LblGameRepo = GetLabel(b, "label_game_repo")
-	LblGameLang = GetLabel(b, "label_game_lang")
-	LblGameVersion = GetLabel(b, "label_game_version")
+	LblGameTitle = gtkutils.GetLabel(b, "label_game_title")
+	ImgGame = gtkutils.GetImage(b, "image_game")
+	LblGameRepo = gtkutils.GetLabel(b, "label_game_repo")
+	LblGameLang = gtkutils.GetLabel(b, "label_game_lang")
+	LblGameVersion = gtkutils.GetLabel(b, "label_game_version")
 
-	ScrWndGameDesc = GetScrolledWindow(b, "scrolledwindow_game_desc")
-	LblGameDesc = GetLabel(b, "label_game_desc")
+	ScrWndGameDesc = gtkutils.GetScrolledWindow(b, "scrolledwindow_game_desc")
+	LblGameDesc = gtkutils.GetLabel(b, "label_game_desc")
 
-	BtnGameRun = GetButton(b, "button_game_run")
-	BtnGameInstall = GetButton(b, "button_game_install")
-	BtnGameRemove = GetButton(b, "button_game_remove")
+	BtnGameRun = gtkutils.GetButton(b, "button_game_run")
+	BtnGameInstall = gtkutils.GetButton(b, "button_game_install")
+	BtnGameRemove = gtkutils.GetButton(b, "button_game_remove")
 
-	SprtrSideBox = GetSeparator(b,"separator_side")
-	BxSideBox = GetBox(b,"box_side")
+	SprtrSideBox = gtkutils.GetSeparator(b,"separator_side")
+	BxSideBox = gtkutils.GetBox(b,"box_side")
 
-	ChckMenuItmSideBar = GetCheckMenuItem(b, "checkmenuitem_sidebar")
-	MenuItmSettings = GetMenuItem(b, "menuitem_settings")
-	MenuItmAbout = GetMenuItem(b, "menuitem_about")
+	ChckMenuItmSideBar = gtkutils.GetCheckMenuItem(b, "checkmenuitem_sidebar")
+	MenuItmSettings = gtkutils.GetMenuItem(b, "menuitem_settings")
+	MenuItmAbout = gtkutils.GetMenuItem(b, "menuitem_about")
 
 	if M.Config.InterpreterCommand == "" {
-		findInterpreter(M, C)
+		findInterpreter(M, Configurator)
 	}
 
 	if M.HasDownloadedRepositories() {
@@ -179,10 +181,10 @@ func main() {
 	}
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
-		C.ShareResourcePath(LogoFilePath), 210, 210, true)
+		Configurator.ShareResourcePath(LogoFilePath), 210, 210, true)
 
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 	}
 
 	showSideBar := !M.Config.Gtk.HideSidebar
@@ -227,7 +229,8 @@ func main() {
 
 	ChckMenuItmSideBar.Connect("toggled", sideBarToggled)
 	MenuItmSettings.Connect("activate", func() {
-		log.Println("Settings...")
+		win := ui.SettingsWindowNew(M, Configurator, version)
+		win.Window.Show()
 	})
 	MenuItmAbout.Connect("activate", func() {
 		log.Println("About...")
@@ -241,7 +244,7 @@ func main() {
 	width, height := GetDefaultWindowSize(M.Config)
 	WndMain.SetDefaultSize(width, height)
 
-	WndMain.SetTitle(Title + " " + version)
+	WndMain.SetTitle(Title)
 	WndMain.SetPosition(gtk.WIN_POS_CENTER)
 	WndMain.Show()
 
@@ -281,7 +284,7 @@ func gameChanged(s *gtk.TreeSelection) {
 		return
 	}
 
-	iter, e := FindFirstIterInTreeSelection(ListStoreGames, s)
+	iter, e := gtkutils.FindFirstIterInTreeSelection(ListStoreGames, s)
 	if e != nil {
 		log.Printf("Error: %v", e)
 		return
@@ -292,19 +295,19 @@ func gameChanged(s *gtk.TreeSelection) {
 
 	value, e := ListStoreGames.GetValue(iter, GameColumnId)
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
 	id, e := value.GetString()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
 	CurGame = manager.FindGameById(Games, id)
 	if CurGame == nil {
-		ShowErrorDlgFatal("Game " + id + " has not found")
+		ui.ShowErrorDlgFatal("Game " + id + " has not found")
 		return
 	}
 
@@ -340,9 +343,9 @@ func removeGameClicked(s *gtk.Button) {
 	log.Printf("Removing %s (%s) game...", CurGame.Title, CurGame.Name)
 
 	// Set removing status in the list
-	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
+	iter, e := gtkutils.FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 	ListStoreGames.SetValue(iter, GameColumnSize, CurGame.GetHumanSize()+" Removing...")
@@ -367,7 +370,7 @@ func sideBarToggled(s *gtk.CheckMenuItem) {
 	showSideBar := s.GetActive()
 	ToggleSidebox(showSideBar)
 	M.Config.Gtk.HideSidebar = !showSideBar
-	C.SaveConfig(M.Config)
+	Configurator.SaveConfig(M.Config)
 }
 
 func mainDeleted() {
@@ -375,47 +378,5 @@ func mainDeleted() {
 
 	M.Config.Gtk.MainWidth = width
 	M.Config.Gtk.MainHeight = height
-	C.SaveConfig(M.Config)
-}
-
-func ShowErrorDlgFatal(txt string) {
-	showErrorDlg(txt, true)
-}
-
-func ShowErrorDlg(txt string) {
-	showErrorDlg(txt, false)
-}
-
-func showErrorDlg(txt string, fatal bool) {
-	log.Printf("Error: %v", txt)
-
-	dlg, _ := gtk.DialogNew()
-	dlg.SetTitle(Title + " " + version)
-	dlg.AddButton("Close" ,gtk.RESPONSE_ACCEPT)
-	dlgBox, _ := dlg.GetContentArea()
-	dlgBox.SetSpacing(6)
-
-	lbl, _ := gtk.LabelNew(txt)
-	lbl.SetMarginStart(6)
-	lbl.SetMarginEnd(6)
-	dlgBox.Add(lbl)
-	lbl.Show()
-
-	dlg.SetModal(true)
-	dlg.SetPosition(gtk.WIN_POS_CENTER)
-	dlg.SetResizable(false)
-	//dlg.SetTransientFor(window)
-
-	response := dlg.Run()
-	dlg.SetKeepAbove(true)
-	if response == int(gtk.RESPONSE_ACCEPT) {
-		dlg.Destroy()
-		if fatal {
-			os.Exit(1)
-		}
-	}
-
-	if fatal {
-		dlg.Connect("destroy", gtk.MainQuit)
-	}
+	Configurator.SaveConfig(M.Config)
 }

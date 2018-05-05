@@ -147,6 +147,10 @@ func (m *Manager) GetRepositoryGames() ([]Game, error) {
 	return games, nil
 }
 
+func (m *Manager) CacheDir() string {
+	return filepath.Join(m.Config.CalculatedInsteadManPath, cacheDirName)
+}
+
 func (m *Manager) repositoriesDir() string {
 	return filepath.Join(m.Config.CalculatedInsteadManPath, cacheDirName, repositoriesDirName)
 }

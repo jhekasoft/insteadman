@@ -4,6 +4,8 @@ import (
 	"../core/configurator"
 	"../core/interpreter_finder"
 	"../core/manager"
+	gtkutils "./utils"
+	"./ui"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -13,12 +15,12 @@ import (
 
 func RunGame(g *manager.Game) {
 	if M.Config.GetInterpreterCommand() == "" {
-		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
 		return
 	}
 
 	if CurGame == nil {
-		ShowErrorDlg("No running. No game selected.")
+		ui.ShowErrorDlg("No running. No game selected.")
 		return
 	}
 
@@ -28,12 +30,12 @@ func RunGame(g *manager.Game) {
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if M.Config.GetInterpreterCommand() == "" {
-		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
 		return
 	}
 
 	if CurGame == nil {
-		ShowErrorDlg("No installing. No game selected.")
+		ui.ShowErrorDlg("No installing. No game selected.")
 		return
 	}
 
@@ -43,7 +45,7 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	log.Printf("Installing %s (%s) game...", g.Title, g.Name)
 
 	// Set installing status in the list
-	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
+	iter, e := gtkutils.FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
@@ -107,11 +109,11 @@ func RefreshGames() {
 
 	Games, e = M.GetSortedGames()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
-	keywordP, repoP, langP, onlyInstalled := GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
+	keywordP, repoP, langP, onlyInstalled := gtkutils.GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
 	filteredGames := manager.FilterGames(Games, keywordP, repoP, langP, onlyInstalled)
 
 	IsRefreshing = true
@@ -135,7 +137,7 @@ func RefreshSeveralGames(upGames []manager.Game) {
 
 	Games, e = M.GetSortedGames()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
@@ -156,13 +158,13 @@ func RefreshSeveralGames(upGames []manager.Game) {
 		for iter != nil {
 			value, e := ListStoreGames.GetValue(iter, GameColumnId)
 			if e != nil {
-				ShowErrorDlgFatal(e.Error())
+				ui.ShowErrorDlgFatal(e.Error())
 				return
 			}
 
 			id, e := value.GetString()
 			if e != nil {
-				ShowErrorDlgFatal(e.Error())
+				ui.ShowErrorDlgFatal(e.Error())
 				return
 			}
 
@@ -201,7 +203,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	path := finder.Find()
 
 	if path == nil {
-		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
 		return
 	}
 
@@ -210,7 +212,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	m.Config.InterpreterCommand = *path
 	e := c.SaveConfig(m.Config)
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
