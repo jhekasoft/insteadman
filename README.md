@@ -2,6 +2,8 @@
 InsteadMan 3
 ============
 
+[![goreportcard](https://goreportcard.com/badge/github.com/jhekasoft/insteadman3)](https://goreportcard.com/report/github.com/jhekasoft/insteadman3)
+
 Stable version: https://github.com/jhekasoft/insteadman
 
 This is new version that is writing with go lang
