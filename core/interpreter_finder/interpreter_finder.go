@@ -47,8 +47,8 @@ func (f *InterpreterFinder) Find() *string {
 	return nil
 }
 
-func (f *InterpreterFinder) Check() (string, error) {
-	out, e := exec.Command(f.Config.GetInterpreterCommand(), "-version").Output()
+func (f *InterpreterFinder) Check(command string) (string, error) {
+	out, e := exec.Command(configurator.ExpandInterpreterCommand(command), "-version").Output()
 	if e != nil {
 		return "", e
 	}

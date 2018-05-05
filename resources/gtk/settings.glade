@@ -54,7 +54,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
         <child>
-          <object class="GtkNotebook">
+          <object class="GtkNotebook" id="notebook_categories">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="show_border">False</property>

@@ -170,6 +170,17 @@ func GetSeparator(b *gtk.Builder, id string) (el *gtk.Separator) {
 	return
 }
 
+func GetNotebook(b *gtk.Builder, id string) (el *gtk.Notebook) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Notebook error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Notebook)
+	return
+}
+
 func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLang *gtk.ComboBox,
 	chckBtnInstalled *gtk.CheckButton) (keywordP, repoP, langP *string, onlyInstalled bool) {
 	var e error

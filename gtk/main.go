@@ -4,8 +4,8 @@ import (
 	"../core/configurator"
 	"../core/manager"
 	"../core/utils"
-	gtkutils "./utils"
 	"./ui"
+	gtkutils "./utils"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Title   = "InsteadMan"
+	Title = "InsteadMan"
 
 	LogoFilePath     = "resources/images/logo.png"
 	MainFormFilePath = "resources/gtk/main.glade"
@@ -73,11 +73,11 @@ var (
 	BtnGameRemove *gtk.Button
 
 	SprtrSideBox *gtk.Separator
-	BxSideBox *gtk.Box
+	BxSideBox    *gtk.Box
 
 	ChckMenuItmSideBar *gtk.CheckMenuItem
-	MenuItmSettings *gtk.MenuItem
-	MenuItmAbout *gtk.MenuItem
+	MenuItmSettings    *gtk.MenuItem
+	MenuItmAbout       *gtk.MenuItem
 
 	PixBufGameDefaultImage *gdk.Pixbuf
 	PixBufGameImage        *gdk.Pixbuf
@@ -160,8 +160,8 @@ func main() {
 	BtnGameInstall = gtkutils.GetButton(b, "button_game_install")
 	BtnGameRemove = gtkutils.GetButton(b, "button_game_remove")
 
-	SprtrSideBox = gtkutils.GetSeparator(b,"separator_side")
-	BxSideBox = gtkutils.GetBox(b,"box_side")
+	SprtrSideBox = gtkutils.GetSeparator(b, "separator_side")
+	BxSideBox = gtkutils.GetBox(b, "box_side")
 
 	ChckMenuItmSideBar = gtkutils.GetCheckMenuItem(b, "checkmenuitem_sidebar")
 	MenuItmSettings = gtkutils.GetMenuItem(b, "menuitem_settings")
@@ -229,11 +229,11 @@ func main() {
 
 	ChckMenuItmSideBar.Connect("toggled", sideBarToggled)
 	MenuItmSettings.Connect("activate", func() {
-		win := ui.SettingsWindowNew(M, Configurator, version)
-		win.Window.Show()
+		ui.ShowSettingWin(M, Configurator, version)
 	})
 	MenuItmAbout.Connect("activate", func() {
-		log.Println("About...")
+		ui.ShowAboutWin(M, Configurator, version)
+
 	})
 
 	WndMain.Connect("destroy", gtk.MainQuit)
@@ -247,7 +247,6 @@ func main() {
 	WndMain.SetTitle(Title)
 	WndMain.SetPosition(gtk.WIN_POS_CENTER)
 	WndMain.Show()
-
 
 	gtk.Main()
 }

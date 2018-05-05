@@ -1,9 +1,9 @@
 package ui
 
 import (
-	"os"
-	"log"
 	"github.com/gotk3/gotk3/gtk"
+	"log"
+	"os"
 )
 
 func ShowErrorDlgFatal(txt string) {
@@ -19,7 +19,7 @@ func showErrorDlg(txt string, fatal bool) {
 
 	dlg, _ := gtk.DialogNew()
 	dlg.SetTitle("InsteadMan error")
-	dlg.AddButton("Close" ,gtk.RESPONSE_ACCEPT)
+	dlg.AddButton("Close", gtk.RESPONSE_ACCEPT)
 	dlgBox, _ := dlg.GetContentArea()
 	dlgBox.SetSpacing(6)
 

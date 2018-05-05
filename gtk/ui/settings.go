@@ -1,19 +1,49 @@
 package ui
 
 import (
-	gtkutils "../utils"
-	"../../core/manager"
 	"../../core/configurator"
 	"../../core/interpreter_finder"
+	"../../core/manager"
+	gtkutils "../utils"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 )
 
-const settingsFormFilePath = "resources/gtk/settings.glade"
+const (
+	settingsFormFilePath = "resources/gtk/settings.glade"
+	aboutTabNum          = 2
+)
+
+var (
+	SettingsWin *SettingsWindow
+)
+
+func GetSettings(manager *manager.Manager, configurator *configurator.Configurator, version string) *SettingsWindow {
+	if SettingsWin != nil && SettingsWin.Window.IsVisible() {
+		return SettingsWin
+	}
+	return SettingsWindowNew(manager, configurator, version)
+}
+
+func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configurator, version string) {
+	SettingsWin = GetSettings(manager, configurator, version)
+	SettingsWin.Window.Show()
+	SettingsWin.Window.Present()
+}
+
+func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configurator, version string) {
+	SettingsWin = GetSettings(manager, configurator, version)
+	SettingsWin.Window.Show()
+	SettingsWin.Window.Present()
+
+	SettingsWin.NtbkCategories.SetCurrentPage(aboutTabNum)
+}
 
 type SettingsWindow struct {
 	Window *gtk.Window
-	e error
+	e      error
+
+	NtbkCategories *gtk.Notebook
 
 	LblVersion *gtk.Label
 
@@ -25,11 +55,11 @@ type SettingsWindow struct {
 	LblInsteadInf        *gtk.Label
 
 	BtnCacheClear *gtk.Button
-	LblCacheInf *gtk.Label
+	LblCacheInf   *gtk.Label
 
 	LblConfigPath *gtk.Label
 
-	Manager *manager.Manager
+	Manager      *manager.Manager
 	Configurator *configurator.Configurator
 }
 
@@ -59,6 +89,8 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	win.Manager = manager
 	win.Configurator = configurator
+
+	win.NtbkCategories = gtkutils.GetNotebook(b, "notebook_categories")
 
 	win.LblVersion = gtkutils.GetLabel(b, "label_version")
 	win.LblVersion.SetText(version)

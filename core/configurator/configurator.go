@@ -22,13 +22,17 @@ type InsteadmanConfig struct {
 }
 
 func (c *InsteadmanConfig) GetInterpreterCommand() string {
-	if c.InterpreterCommand == "" {
+	return ExpandInterpreterCommand(c.InterpreterCommand)
+}
+
+func ExpandInterpreterCommand(command string) string {
+	if command == "" {
 		return ""
 	}
 
-	path, e := filepath.Abs(c.InterpreterCommand)
+	path, e := filepath.Abs(command)
 	if e != nil {
-		return c.InterpreterCommand
+		return command
 	}
 
 	return path
