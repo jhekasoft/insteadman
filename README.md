@@ -2,9 +2,11 @@
 InsteadMan 3
 ============
 
-Stable version: https://github.com/jhekasoft/insteadman
+[![goreportcard](https://goreportcard.com/badge/github.com/jhekasoft/insteadman3)](https://goreportcard.com/report/github.com/jhekasoft/insteadman3)
 
 This is new version that is writing with go lang
+
+Old version: https://github.com/jhekasoft/insteadman
 
 GUI (GTK+ 3)
 ---
