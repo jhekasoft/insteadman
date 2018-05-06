@@ -5,6 +5,7 @@ import (
 	"../../core/interpreter_finder"
 	"../../core/manager"
 	gtkutils "../utils"
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 )
@@ -59,8 +60,11 @@ type SettingsWindow struct {
 
 	LblConfigPath *gtk.Label
 
+	BtnClose *gtk.Button
+
 	Manager      *manager.Manager
 	Configurator *configurator.Configurator
+	Finder       *interpreterFinder.InterpreterFinder
 }
 
 func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Configurator, version string) *SettingsWindow {
@@ -107,7 +111,18 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	win.LblConfigPath = gtkutils.GetLabel(b, "label_config_path")
 
+	win.BtnClose = gtkutils.GetButton(b, "button_close")
+
+	win.Finder = &interpreterFinder.InterpreterFinder{Config: win.Manager.Config}
 	win.readSettings()
+
+	// Handlers
+	handlers := &SettingWindowHandlers{win: win}
+	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
+	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
+	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
+	win.BtnClose.Connect("clicked", handlers.closeClicked)
+	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
 	win.Window.SetTitle("Settings")
 	win.Window.SetPosition(gtk.WIN_POS_CENTER)
@@ -116,12 +131,11 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 }
 
 func (win *SettingsWindow) readSettings() {
-	finder := interpreterFinder.InterpreterFinder{Config: win.Manager.Config}
 	config := win.Manager.Config
 
 	// INSTEAD
 	win.EntryInstead.SetText(config.InterpreterCommand)
-	win.TglBtnInsteadBuiltin.SetSensitive(finder.HaveBuiltIn())
+	win.TglBtnInsteadBuiltin.SetSensitive(win.Finder.HaveBuiltIn())
 	win.TglBtnInsteadBuiltin.SetActive(config.UseBuiltinInterpreter)
 
 	// Cache
@@ -129,4 +143,110 @@ func (win *SettingsWindow) readSettings() {
 
 	// Config path
 	win.LblConfigPath.SetText(win.Configurator.FilePath)
+}
+
+type SettingWindowHandlers struct {
+	win *SettingsWindow
+}
+
+func (h *SettingWindowHandlers) insteadDetectClicked() {
+	h.win.LblInsteadInf.Hide()
+
+	go func() {
+		_, e := glib.IdleAdd(func() {
+			command := h.win.Finder.Find()
+			if command == nil {
+				h.win.LblInsteadInf.SetText("INSTEAD hasn't detected!")
+				h.win.LblInsteadInf.Show()
+				return
+			}
+
+			h.win.Manager.Config.InterpreterCommand = *command
+			e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
+			if e != nil {
+				ShowErrorDlg(e.Error())
+				return
+			}
+
+			h.win.readSettings()
+			h.win.LblInsteadInf.SetText("INSTEAD has detected!")
+			h.win.LblInsteadInf.Show()
+		})
+
+		if e != nil {
+			log.Fatal("INSTEAD detect. IdleAdd() failed:", e)
+		}
+	}()
+}
+
+func (h *SettingWindowHandlers) insteadCheckClicked() {
+	h.win.LblInsteadInf.Hide()
+
+	go func() {
+		_, e := glib.IdleAdd(func() {
+			command, e := h.win.EntryInstead.GetText()
+			if e != nil {
+				ShowErrorDlg(e.Error())
+				return
+			}
+
+			version, e := h.win.Finder.Check(command)
+			if e != nil {
+				h.win.LblInsteadInf.SetText("INSTEAD check failed!")
+				h.win.LblInsteadInf.Show()
+				return
+			}
+
+			h.win.LblInsteadInf.SetText("INSTEAD " + version + " has found!")
+			h.win.LblInsteadInf.Show()
+		})
+
+		if e != nil {
+			log.Fatal("INSTEAD check. IdleAdd() failed:", e)
+		}
+	}()
+}
+
+func (h *SettingWindowHandlers) cacheClearClicked() {
+	h.win.LblCacheInf.Hide()
+
+	go func() {
+		_, e := glib.IdleAdd(func() {
+			e := h.win.Manager.ClearCache()
+			if e != nil {
+				ShowErrorDlg(e.Error())
+				return
+			}
+
+			h.win.LblCacheInf.SetText("Cache has been cleared!")
+			h.win.LblCacheInf.Show()
+		})
+
+		if e != nil {
+			log.Fatal("Cache clear. IdleAdd() failed:", e)
+		}
+	}()
+}
+
+func (h *SettingWindowHandlers) closeClicked() {
+	h.win.Window.Close()
+}
+
+func (h *SettingWindowHandlers) settingsDeleted() {
+	needSave := false
+
+	interpreteNewValue, _ := h.win.EntryInstead.GetText()
+	if interpreteNewValue != "" && interpreteNewValue != h.win.Manager.Config.InterpreterCommand {
+		h.win.Manager.Config.InterpreterCommand = interpreteNewValue
+		needSave = true
+	}
+
+	// Autosave
+	if needSave {
+		e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
+		if e != nil {
+			ShowErrorDlg(e.Error())
+			return
+		}
+	}
 }

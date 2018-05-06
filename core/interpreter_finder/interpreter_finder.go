@@ -47,13 +47,13 @@ func (f *InterpreterFinder) Find() *string {
 	return nil
 }
 
-func (f *InterpreterFinder) Check(command string) (string, error) {
+func (f *InterpreterFinder) Check(command string) (version string, e error) {
 	out, e := exec.Command(configurator.ExpandInterpreterCommand(command), "-version").Output()
 	if e != nil {
 		return "", e
 	}
 
-	version := strings.Replace(string(out), "\n", "", -1)
+	version = strings.Replace(string(out), "\n", "", -1)
 
-	return version, nil
+	return
 }

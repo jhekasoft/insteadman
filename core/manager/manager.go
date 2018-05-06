@@ -476,6 +476,10 @@ func (m *Manager) FindLangs(games []Game) []string {
 	return langs
 }
 
+func (m *Manager) ClearCache() error {
+	return os.RemoveAll(m.CacheDir())
+}
+
 func existsString(stack []string, element string) bool {
 	for _, el := range stack {
 		if el == element {
