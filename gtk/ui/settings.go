@@ -149,7 +149,8 @@ type SettingWindowHandlers struct {
 	win *SettingsWindow
 }
 
-func (h *SettingWindowHandlers) insteadDetectClicked() {
+func (h *SettingWindowHandlers) insteadDetectClicked(s *gtk.Button) {
+	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
 	go func() {
@@ -158,6 +159,7 @@ func (h *SettingWindowHandlers) insteadDetectClicked() {
 			if command == nil {
 				h.win.LblInsteadInf.SetText("INSTEAD hasn't detected!")
 				h.win.LblInsteadInf.Show()
+				s.SetSensitive(true)
 				return
 			}
 
@@ -165,12 +167,14 @@ func (h *SettingWindowHandlers) insteadDetectClicked() {
 			e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
 			if e != nil {
 				ShowErrorDlg(e.Error())
+				s.SetSensitive(true)
 				return
 			}
 
 			h.win.readSettings()
 			h.win.LblInsteadInf.SetText("INSTEAD has detected!")
 			h.win.LblInsteadInf.Show()
+			s.SetSensitive(true)
 		})
 
 		if e != nil {
@@ -179,7 +183,8 @@ func (h *SettingWindowHandlers) insteadDetectClicked() {
 	}()
 }
 
-func (h *SettingWindowHandlers) insteadCheckClicked() {
+func (h *SettingWindowHandlers) insteadCheckClicked(s *gtk.Button) {
+	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
 	go func() {
@@ -187,6 +192,7 @@ func (h *SettingWindowHandlers) insteadCheckClicked() {
 			command, e := h.win.EntryInstead.GetText()
 			if e != nil {
 				ShowErrorDlg(e.Error())
+				s.SetSensitive(true)
 				return
 			}
 
@@ -194,11 +200,13 @@ func (h *SettingWindowHandlers) insteadCheckClicked() {
 			if e != nil {
 				h.win.LblInsteadInf.SetText("INSTEAD check failed!")
 				h.win.LblInsteadInf.Show()
+				s.SetSensitive(true)
 				return
 			}
 
 			h.win.LblInsteadInf.SetText("INSTEAD " + version + " has found!")
 			h.win.LblInsteadInf.Show()
+			s.SetSensitive(true)
 		})
 
 		if e != nil {
@@ -207,7 +215,8 @@ func (h *SettingWindowHandlers) insteadCheckClicked() {
 	}()
 }
 
-func (h *SettingWindowHandlers) cacheClearClicked() {
+func (h *SettingWindowHandlers) cacheClearClicked(s *gtk.Button) {
+	s.SetSensitive(false)
 	h.win.LblCacheInf.Hide()
 
 	go func() {
@@ -215,11 +224,13 @@ func (h *SettingWindowHandlers) cacheClearClicked() {
 			e := h.win.Manager.ClearCache()
 			if e != nil {
 				ShowErrorDlg(e.Error())
+				s.SetSensitive(true)
 				return
 			}
 
 			h.win.LblCacheInf.SetText("Cache has been cleared!")
 			h.win.LblCacheInf.Show()
+			s.SetSensitive(true)
 		})
 
 		if e != nil {
