@@ -26,6 +26,7 @@ func showErrorDlg(txt string, fatal bool) {
 	lbl, _ := gtk.LabelNew(txt)
 	lbl.SetMarginStart(6)
 	lbl.SetMarginEnd(6)
+	lbl.SetLineWrap(true)
 	dlgBox.Add(lbl)
 	lbl.Show()
 
@@ -34,16 +35,10 @@ func showErrorDlg(txt string, fatal bool) {
 	dlg.SetResizable(false)
 	//dlg.SetTransientFor(window)
 
-	response := dlg.Run()
 	dlg.SetKeepAbove(true)
-	if response == int(gtk.RESPONSE_ACCEPT) {
-		dlg.Destroy()
-		if fatal {
-			os.Exit(1)
-		}
-	}
-
+	dlg.Run()
+	dlg.Destroy()
 	if fatal {
-		dlg.Connect("destroy", gtk.MainQuit)
+		os.Exit(1)
 	}
 }

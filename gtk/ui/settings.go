@@ -118,6 +118,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	// Handlers
 	handlers := &SettingWindowHandlers{win: win}
+	win.BtnInsteadBrowse.Connect("clicked", handlers.insteadBrowseClicked)
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
@@ -149,31 +150,39 @@ type SettingWindowHandlers struct {
 	win *SettingsWindow
 }
 
+func (h *SettingWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
+	s.SetSensitive(false)
+
+	dlg, _ := gtk.FileChooserDialogNewWith2Buttons("Choose INSTEAD", h.win.Window, gtk.FILE_CHOOSER_ACTION_OPEN,
+		"Cancel", gtk.RESPONSE_CANCEL, "Open", gtk.RESPONSE_ACCEPT)
+
+	response := dlg.Run()
+	if response == int(gtk.RESPONSE_ACCEPT) {
+		h.win.EntryInstead.SetText(dlg.GetFilename())
+	}
+
+	dlg.Destroy()
+
+	s.SetSensitive(true)
+}
+
 func (h *SettingWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
 	go func() {
+		command := h.win.Finder.Find()
+
 		_, e := glib.IdleAdd(func() {
-			command := h.win.Finder.Find()
-			if command == nil {
+			if command != nil {
+				h.win.EntryInstead.SetText(*command)
+				h.win.LblInsteadInf.SetText("INSTEAD has detected!")
+				h.win.LblInsteadInf.Show()
+			} else {
 				h.win.LblInsteadInf.SetText("INSTEAD hasn't detected!")
 				h.win.LblInsteadInf.Show()
-				s.SetSensitive(true)
-				return
 			}
 
-			h.win.Manager.Config.InterpreterCommand = *command
-			e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
-			if e != nil {
-				ShowErrorDlg(e.Error())
-				s.SetSensitive(true)
-				return
-			}
-
-			h.win.readSettings()
-			h.win.LblInsteadInf.SetText("INSTEAD has detected!")
-			h.win.LblInsteadInf.Show()
 			s.SetSensitive(true)
 		})
 
@@ -187,24 +196,23 @@ func (h *SettingWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
+	command, e := h.win.EntryInstead.GetText()
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		s.SetSensitive(true)
+		return
+	}
+
 	go func() {
+		version, checkErr := h.win.Finder.Check(command)
+
 		_, e := glib.IdleAdd(func() {
-			command, e := h.win.EntryInstead.GetText()
-			if e != nil {
-				ShowErrorDlg(e.Error())
-				s.SetSensitive(true)
-				return
-			}
-
-			version, e := h.win.Finder.Check(command)
-			if e != nil {
+			if checkErr != nil {
 				h.win.LblInsteadInf.SetText("INSTEAD check failed!")
-				h.win.LblInsteadInf.Show()
-				s.SetSensitive(true)
-				return
+			} else {
+				h.win.LblInsteadInf.SetText("INSTEAD " + version + " has found!")
 			}
 
-			h.win.LblInsteadInf.SetText("INSTEAD " + version + " has found!")
 			h.win.LblInsteadInf.Show()
 			s.SetSensitive(true)
 		})
@@ -220,15 +228,14 @@ func (h *SettingWindowHandlers) cacheClearClicked(s *gtk.Button) {
 	h.win.LblCacheInf.Hide()
 
 	go func() {
+		cacheErr := h.win.Manager.ClearCache()
 		_, e := glib.IdleAdd(func() {
-			e := h.win.Manager.ClearCache()
-			if e != nil {
-				ShowErrorDlg(e.Error())
-				s.SetSensitive(true)
-				return
+			if cacheErr != nil {
+				ShowErrorDlg(cacheErr.Error())
+			} else {
+				h.win.LblCacheInf.SetText("Cache has been cleared!")
 			}
 
-			h.win.LblCacheInf.SetText("Cache has been cleared!")
 			h.win.LblCacheInf.Show()
 			s.SetSensitive(true)
 		})

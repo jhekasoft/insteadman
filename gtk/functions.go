@@ -15,7 +15,7 @@ import (
 
 func RunGame(g *manager.Game) {
 	if M.Config.GetInterpreterCommand() == "" {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
 		return
 	}
 
@@ -30,7 +30,7 @@ func RunGame(g *manager.Game) {
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if M.Config.GetInterpreterCommand() == "" {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
 		return
 	}
 
@@ -53,11 +53,19 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 
 	go func() {
 		instGame := g
-		M.InstallGame(instGame)
-		log.Print("Game has installed.")
+		instErr := M.InstallGame(instGame)
+
+		if instErr == nil {
+			log.Print("Game has installed.")
+		}
 
 		_, e := glib.IdleAdd(func() {
+			if instErr != nil {
+				ui.ShowErrorDlg("Game hasn't installed (" + instErr.Error() +
+					"). Please check INSTEAD in the Settings.")
+			}
 			RefreshSeveralGames([]manager.Game{*instGame})
+
 			if instBtn != nil {
 				instBtn.SetSensitive(true)
 			}
