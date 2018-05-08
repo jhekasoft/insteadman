@@ -117,7 +117,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.readSettings()
 
 	// Handlers
-	handlers := &SettingWindowHandlers{win: win}
+	handlers := &SettingsWindowHandlers{win: win}
 	win.BtnInsteadBrowse.Connect("clicked", handlers.insteadBrowseClicked)
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
@@ -136,7 +136,11 @@ func (win *SettingsWindow) readSettings() {
 
 	// INSTEAD
 	win.EntryInstead.SetText(config.InterpreterCommand)
-	win.TglBtnInsteadBuiltin.SetSensitive(win.Finder.HaveBuiltIn())
+	haveBuildInInstead := win.Finder.HaveBuiltIn()
+	win.TglBtnInsteadBuiltin.SetSensitive(haveBuildInInstead)
+	if !haveBuildInInstead {
+		win.TglBtnInsteadBuiltin.SetTooltipText("Built-in INSTEAD hasn't found")
+	}
 	win.TglBtnInsteadBuiltin.SetActive(config.UseBuiltinInterpreter)
 
 	// Cache
@@ -146,11 +150,11 @@ func (win *SettingsWindow) readSettings() {
 	win.LblConfigPath.SetText(win.Configurator.FilePath)
 }
 
-type SettingWindowHandlers struct {
+type SettingsWindowHandlers struct {
 	win *SettingsWindow
 }
 
-func (h *SettingWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
+func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 
 	dlg, _ := gtk.FileChooserDialogNewWith2Buttons("Choose INSTEAD", h.win.Window, gtk.FILE_CHOOSER_ACTION_OPEN,
@@ -166,7 +170,7 @@ func (h *SettingWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 	s.SetSensitive(true)
 }
 
-func (h *SettingWindowHandlers) insteadDetectClicked(s *gtk.Button) {
+func (h *SettingsWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
@@ -192,7 +196,7 @@ func (h *SettingWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 	}()
 }
 
-func (h *SettingWindowHandlers) insteadCheckClicked(s *gtk.Button) {
+func (h *SettingsWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
@@ -223,7 +227,7 @@ func (h *SettingWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 	}()
 }
 
-func (h *SettingWindowHandlers) cacheClearClicked(s *gtk.Button) {
+func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblCacheInf.Hide()
 
@@ -246,11 +250,11 @@ func (h *SettingWindowHandlers) cacheClearClicked(s *gtk.Button) {
 	}()
 }
 
-func (h *SettingWindowHandlers) closeClicked() {
+func (h *SettingsWindowHandlers) closeClicked() {
 	h.win.Window.Close()
 }
 
-func (h *SettingWindowHandlers) settingsDeleted() {
+func (h *SettingsWindowHandlers) settingsDeleted() {
 	needSave := false
 
 	interpreteNewValue, _ := h.win.EntryInstead.GetText()
