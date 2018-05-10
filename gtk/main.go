@@ -1,8 +1,8 @@
 package main
 
 import (
-	"../core/interpreter_finder"
 	"../core/configurator"
+	"../core/interpreter_finder"
 	"../core/manager"
 	"../core/utils"
 	"./ui"

@@ -45,8 +45,6 @@ type SettingsWindow struct {
 
 	NtbkCategories *gtk.Notebook
 
-	LblVersion *gtk.Label
-
 	EntryInstead         *gtk.Entry
 	BtnInsteadBrowse     *gtk.Button
 	TglBtnInsteadBuiltin *gtk.ToggleButton
@@ -58,6 +56,15 @@ type SettingsWindow struct {
 	LblCacheInf   *gtk.Label
 
 	LblConfigPath *gtk.Label
+
+	LblVersion *gtk.Label
+
+	ListStoreRepositories   *gtk.ListStore
+	BtnRepositoriesAdd      *gtk.Button
+	BtnRepositoriesRemove   *gtk.Button
+	BtnRepositoriesUp       *gtk.Button
+	BtnRepositoriesDown     *gtk.Button
+	BtnRepositoriesDefaults *gtk.Button
 
 	BtnClose *gtk.Button
 
@@ -94,9 +101,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	win.NtbkCategories = gtkutils.GetNotebook(b, "notebook_categories")
 
-	win.LblVersion = gtkutils.GetLabel(b, "label_version")
-	win.LblVersion.SetText(version)
-
+	// Main tab
 	win.EntryInstead = gtkutils.GetEntry(b, "entry_instead")
 	win.BtnInsteadBrowse = gtkutils.GetButton(b, "button_instead_browse")
 	win.TglBtnInsteadBuiltin = gtkutils.GetToggleButton(b, "togglebutton_instead_builtin")
@@ -108,6 +113,18 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.LblCacheInf = gtkutils.GetLabel(b, "label_cache_inf")
 
 	win.LblConfigPath = gtkutils.GetLabel(b, "label_config_path")
+
+	// Repositories tab
+	win.ListStoreRepositories = gtkutils.GetListStore(b, "liststore_repositories")
+	win.BtnRepositoriesAdd = gtkutils.GetButton(b, "button_repositories_add")
+	win.BtnRepositoriesRemove = gtkutils.GetButton(b, "button_repositories_remove")
+	win.BtnRepositoriesUp = gtkutils.GetButton(b, "button_repositories_up")
+	win.BtnRepositoriesDown = gtkutils.GetButton(b, "button_repositories_down")
+	win.BtnRepositoriesDefaults = gtkutils.GetButton(b, "button_repositories_defaults")
+
+	// About tab
+	win.LblVersion = gtkutils.GetLabel(b, "label_version")
+	win.LblVersion.SetText(version)
 
 	win.BtnClose = gtkutils.GetButton(b, "button_close")
 
@@ -121,6 +138,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
+	win.BtnRepositoriesAdd.Connect("clicked", handlers.repositoryAddClicked)
 	win.BtnClose.Connect("clicked", handlers.closeClicked)
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
@@ -148,6 +166,16 @@ func (win *SettingsWindow) readSettings() {
 
 	// Config path
 	win.LblConfigPath.SetText(win.Configurator.FilePath)
+
+	// Repositories
+	win.ListStoreRepositories.Clear()
+	for _, repo := range win.Manager.Config.Repositories {
+		addToListStoreRepositories(win.ListStoreRepositories, repo.Name, repo.Url)
+	}
+}
+
+func addToListStoreRepositories(ls *gtk.ListStore, name, url string) {
+	ls.InsertWithValues(nil, -1, []int{0, 1}, []interface{}{name, url})
 }
 
 func (win *SettingsWindow) toggleBuiltin(active bool) {
@@ -268,12 +296,16 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 	}()
 }
 
+func (h *SettingsWindowHandlers) repositoryAddClicked() {
+	addToListStoreRepositories(h.win.ListStoreRepositories, "new", "")
+}
+
 func (h *SettingsWindowHandlers) closeClicked() {
 	h.win.Window.Close()
 }
 
 func (h *SettingsWindowHandlers) settingsDeleted() {
-	// Autosave
+	// Auto save
 	e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
 	if e != nil {
 		ShowErrorDlg(e.Error())
