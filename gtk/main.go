@@ -151,14 +151,16 @@ func main() {
 		findInterpreter(M, &c)
 	}
 
-	if M.HasDownloadedRepositories() {
-		ClearFilterValues()
-		RefreshGames()
-		RefreshFilterValues()
-	} else {
-		// Update repositories
-		updateClicked(BtnUpdate)
-	}
+	// Update repositories
+	updateClicked(BtnUpdate)
+	//if M.HasDownloadedRepositories() {
+	//	ClearFilterValues()
+	//	RefreshGames()
+	//	RefreshFilterValues()
+	//} else {
+	//	// Update repositories
+	//	updateClicked(BtnUpdate)
+	//}
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
 		c.ShareResourcePath(LogoFilePath), 210, 210, true)
