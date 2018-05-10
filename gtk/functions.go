@@ -49,7 +49,7 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
-	ListStoreGames.SetValue(iter, GameColumnSize, g.GetHumanSize()+" Installing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.GetHumanSize()+" Installing...")
 
 	go func() {
 		instGame := g
@@ -322,7 +322,8 @@ func updateGameInfo(g *manager.Game) {
 }
 
 func gameListStoreColumns() []int {
-	return []int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSize, GameColumnFontWeight}
+	return []int{GameColumnId, GameColumnTitle, GameColumnVersion, GameColumnSizeHuman, GameColumnFontWeight,
+		GameColumnSize}
 }
 
 func gameListStoreValues(g manager.Game) []interface{} {
@@ -331,7 +332,7 @@ func gameListStoreValues(g manager.Game) []interface{} {
 		fontWeight = FontWeightBold
 	}
 
-	return []interface{}{g.Id, g.Title, g.Version, g.GetHumanSize(), fontWeight}
+	return []interface{}{g.Id, g.Title, g.Version, g.GetHumanSize(), fontWeight, g.Size}
 }
 
 func ToggleSidebox(show bool) {

@@ -121,7 +121,7 @@ done
 # Create archives for distributing
 cd $output_base_path
 package_name=$package_out'-'$GOOS'-'$GOARCH'-'$version
-zip -r -9 $package_name'.zip' '../'$package_out
+zip -r -9 '../'$package_name'.zip' $package_out
 cd -
 
 # Create installator

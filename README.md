@@ -79,28 +79,22 @@ make DESTDIR="package" uninstall
 Other build variants
 --------------------
 
-If you want to build only CLI or GTK-version, then install Go dependencies:
+Build only CLI-version:
 
 ```bash
-make dep
-```
-
-Then build only CLI-version:
-
-```bash
-make cli
+make insteadman
 ```
 
 Or only GTK-version:
 
 ```bash
-make gtk
+make insteadman-gtk
 ```
 
 Building CLI for all platforms (binaries will be placed to the `build` directory):
 
 ```bash
-make cli-cross
+make insteadman-cross
 ```
 
 Test

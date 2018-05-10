@@ -26,8 +26,9 @@ const (
 	GameColumnId         = 0
 	GameColumnTitle      = 1
 	GameColumnVersion    = 2
-	GameColumnSize       = 3
+	GameColumnSizeHuman  = 3
 	GameColumnFontWeight = 4
+	GameColumnSize       = 5
 
 	FontWeightNormal = 400
 	FontWeightBold   = 700
@@ -171,14 +172,16 @@ func main() {
 		findInterpreter(M, Configurator)
 	}
 
-	if M.HasDownloadedRepositories() {
-		ClearFilterValues()
-		RefreshGames()
-		RefreshFilterValues()
-	} else {
-		// Update repositories
-		updateClicked(BtnUpdate)
-	}
+	// Update repositories
+	updateClicked(BtnUpdate)
+	//if M.HasDownloadedRepositories() {
+	//	ClearFilterValues()
+	//	RefreshGames()
+	//	RefreshFilterValues()
+	//} else {
+	//	// Update repositories
+	//	updateClicked(BtnUpdate)
+	//}
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
 		Configurator.ShareResourcePath(LogoFilePath), 210, 210, true)
@@ -347,7 +350,7 @@ func removeGameClicked(s *gtk.Button) {
 		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
-	ListStoreGames.SetValue(iter, GameColumnSize, CurGame.GetHumanSize()+" Removing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman, CurGame.GetHumanSize()+" Removing...")
 
 	go func() {
 		rmGame := CurGame
