@@ -40,9 +40,11 @@
       <column type="gchararray"/>
       <!-- column-name Version -->
       <column type="gchararray"/>
-      <!-- column-name Size -->
+      <!-- column-name Size (human) -->
       <column type="gchararray"/>
       <!-- column-name Font_weight -->
+      <column type="gint"/>
+      <!-- column-name Size -->
       <column type="gint"/>
     </columns>
   </object>
@@ -277,7 +279,7 @@
                         <property name="title" translatable="yes">Size</property>
                         <property name="clickable">True</property>
                         <property name="sort_indicator">True</property>
-                        <property name="sort_column_id">3</property>
+                        <property name="sort_column_id">5</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>

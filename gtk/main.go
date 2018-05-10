@@ -24,8 +24,9 @@ const (
 	GameColumnId         = 0
 	GameColumnTitle      = 1
 	GameColumnVersion    = 2
-	GameColumnSize       = 3
+	GameColumnSizeHuman  = 3
 	GameColumnFontWeight = 4
+	GameColumnSize       = 5
 
 	FontWeightNormal = 400
 	FontWeightBold   = 700
@@ -309,7 +310,7 @@ func removeGameClicked(s *gtk.Button) {
 		ShowErrorDlgFatal(e.Error())
 		return
 	}
-	ListStoreGames.SetValue(iter, GameColumnSize, CurGame.GetHumanSize()+" Removing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman, CurGame.GetHumanSize()+" Removing...")
 
 	go func() {
 		rmGame := CurGame
