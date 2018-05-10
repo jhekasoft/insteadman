@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var version string = "3"
+var version = "3"
 
 func main() {
 	m, c := initManagerAndConfigurator()
@@ -226,8 +226,7 @@ func remove(m *manager.Manager, args []string) {
 }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
-	finder := interpreterFinder.InterpreterFinder{Config: m.Config}
-	path := finder.Find()
+	path := m.InterpreterFinder.Find()
 
 	if path == nil {
 		fmt.Println("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
@@ -300,7 +299,9 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 	config, e := c.GetConfig()
 	ExitIfError(e)
 
-	m := manager.Manager{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
+
+	m := manager.Manager{Config: config, InterpreterFinder: finder}
 
 	return &m, &c
 }

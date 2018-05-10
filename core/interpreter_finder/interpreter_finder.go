@@ -8,7 +8,6 @@ import (
 )
 
 type InterpreterFinder struct {
-	Config *configurator.InsteadmanConfig
 }
 
 func (f *InterpreterFinder) HaveBuiltIn() bool {
@@ -22,17 +21,24 @@ func (f *InterpreterFinder) HaveBuiltIn() bool {
 	return false
 }
 
+func (f *InterpreterFinder) FindBuiltin() (path string) {
+	if f.HaveBuiltIn() {
+		path = builtinRelativeFilePath
+	}
+	return
+}
+
 func (f *InterpreterFinder) Find() *string {
 	// Built-in interpreter
-	if f.Config.UseBuiltinInterpreter {
-		builtInPath := builtinRelativeFilePath
-		_, e := os.Stat(builtInPath)
-		exists := !os.IsNotExist(e)
-
-		if exists && e == nil {
-			return &builtInPath
-		}
-	}
+	//if f.Config.UseBuiltinInterpreter {
+	//	builtInPath := builtinRelativeFilePath
+	//	_, e := os.Stat(builtInPath)
+	//	exists := !os.IsNotExist(e)
+	//
+	//	if exists && e == nil {
+	//		return &builtInPath
+	//	}
+	//}
 
 	// External interpreter
 	for _, path := range exactFilePaths() {

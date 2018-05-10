@@ -2,7 +2,6 @@ package ui
 
 import (
 	"../../core/configurator"
-	"../../core/interpreter_finder"
 	"../../core/manager"
 	gtkutils "../utils"
 	"github.com/gotk3/gotk3/glib"
@@ -64,7 +63,6 @@ type SettingsWindow struct {
 
 	Manager      *manager.Manager
 	Configurator *configurator.Configurator
-	Finder       *interpreterFinder.InterpreterFinder
 }
 
 func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Configurator, version string) *SettingsWindow {
@@ -113,12 +111,13 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	win.BtnClose = gtkutils.GetButton(b, "button_close")
 
-	win.Finder = &interpreterFinder.InterpreterFinder{Config: win.Manager.Config}
 	win.readSettings()
 
 	// Handlers
 	handlers := &SettingsWindowHandlers{win: win}
+	win.EntryInstead.Connect("changed", handlers.insteadChanged)
 	win.BtnInsteadBrowse.Connect("clicked", handlers.insteadBrowseClicked)
+	win.TglBtnInsteadBuiltin.Connect("clicked", handlers.insteadBuiltinClicked)
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
@@ -136,12 +135,13 @@ func (win *SettingsWindow) readSettings() {
 
 	// INSTEAD
 	win.EntryInstead.SetText(config.InterpreterCommand)
-	haveBuildInInstead := win.Finder.HaveBuiltIn()
-	win.TglBtnInsteadBuiltin.SetSensitive(haveBuildInInstead)
-	if !haveBuildInInstead {
+	haveBuiltInInstead := win.Manager.InterpreterFinder.HaveBuiltIn()
+	win.TglBtnInsteadBuiltin.SetSensitive(haveBuiltInInstead)
+	if !haveBuiltInInstead {
 		win.TglBtnInsteadBuiltin.SetTooltipText("Built-in INSTEAD hasn't found")
 	}
 	win.TglBtnInsteadBuiltin.SetActive(config.UseBuiltinInterpreter)
+	win.toggleBuiltin(!config.UseBuiltinInterpreter)
 
 	// Cache
 	win.BtnCacheClear.SetTooltipText("Cache directory: " + win.Manager.CacheDir())
@@ -150,8 +150,21 @@ func (win *SettingsWindow) readSettings() {
 	win.LblConfigPath.SetText(win.Configurator.FilePath)
 }
 
+func (win *SettingsWindow) toggleBuiltin(active bool) {
+	win.EntryInstead.SetSensitive(active)
+	win.BtnInsteadBrowse.SetSensitive(active)
+	win.BtnInsteadDetect.SetSensitive(active)
+}
+
 type SettingsWindowHandlers struct {
 	win *SettingsWindow
+}
+
+func (h *SettingsWindowHandlers) insteadChanged(s *gtk.Entry) {
+	value, e := s.GetText()
+	if e == nil {
+		h.win.Manager.Config.InterpreterCommand = value
+	}
 }
 
 func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
@@ -170,12 +183,17 @@ func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 	s.SetSensitive(true)
 }
 
+func (h *SettingsWindowHandlers) insteadBuiltinClicked(s *gtk.ToggleButton) {
+	h.win.Manager.Config.UseBuiltinInterpreter = s.GetActive()
+	h.win.readSettings()
+}
+
 func (h *SettingsWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
 	go func() {
-		command := h.win.Finder.Find()
+		command := h.win.Manager.InterpreterFinder.Find()
 
 		_, e := glib.IdleAdd(func() {
 			if command != nil {
@@ -200,22 +218,22 @@ func (h *SettingsWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 	h.win.LblInsteadInf.Hide()
 
-	command, e := h.win.EntryInstead.GetText()
-	if e != nil {
-		ShowErrorDlg(e.Error())
-		s.SetSensitive(true)
-		return
-	}
-
 	go func() {
-		version, checkErr := h.win.Finder.Check(command)
+		version, checkErr := h.win.Manager.InterpreterFinder.Check(h.win.Manager.InterpreterCommand())
 
 		_, e := glib.IdleAdd(func() {
+			var txt string
 			if checkErr != nil {
-				h.win.LblInsteadInf.SetText("INSTEAD check failed!")
+				if h.win.Manager.IsBuiltinInterpreterCommand() {
+					txt = "INSTEAD built-in check failed!"
+				} else {
+					txt = "INSTEAD check failed!"
+				}
+
 			} else {
-				h.win.LblInsteadInf.SetText("INSTEAD " + version + " has found!")
+				txt = "INSTEAD " + version + " has found!"
 			}
+			h.win.LblInsteadInf.SetText(txt)
 
 			h.win.LblInsteadInf.Show()
 			s.SetSensitive(true)
@@ -255,20 +273,10 @@ func (h *SettingsWindowHandlers) closeClicked() {
 }
 
 func (h *SettingsWindowHandlers) settingsDeleted() {
-	needSave := false
-
-	interpreteNewValue, _ := h.win.EntryInstead.GetText()
-	if interpreteNewValue != "" && interpreteNewValue != h.win.Manager.Config.InterpreterCommand {
-		h.win.Manager.Config.InterpreterCommand = interpreteNewValue
-		needSave = true
-	}
-
 	// Autosave
-	if needSave {
-		e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
-		if e != nil {
-			ShowErrorDlg(e.Error())
-			return
-		}
+	e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		return
 	}
 }

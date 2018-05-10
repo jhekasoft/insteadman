@@ -2,7 +2,6 @@ package main
 
 import (
 	"../core/configurator"
-	"../core/interpreter_finder"
 	"../core/manager"
 	"./ui"
 	gtkutils "./utils"
@@ -14,7 +13,7 @@ import (
 )
 
 func RunGame(g *manager.Game) {
-	if M.Config.GetInterpreterCommand() == "" {
+	if M.InterpreterCommand() == "" {
 		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
 		return
 	}
@@ -29,7 +28,7 @@ func RunGame(g *manager.Game) {
 }
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
-	if M.Config.GetInterpreterCommand() == "" {
+	if M.InterpreterCommand() == "" {
 		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
 		return
 	}
@@ -207,8 +206,7 @@ func ClearFilter() {
 }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
-	finder := interpreterFinder.InterpreterFinder{Config: m.Config}
-	path := finder.Find()
+	path := m.InterpreterFinder.Find()
 
 	if path == nil {
 		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")

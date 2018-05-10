@@ -2,6 +2,7 @@ package manager
 
 import (
 	"../configurator"
+	"../interpreter_finder"
 	"encoding/xml"
 	"errors"
 	"github.com/pyk/byten"
@@ -86,6 +87,7 @@ const (
 
 type Manager struct {
 	Config            *configurator.InsteadmanConfig
+	InterpreterFinder *interpreterFinder.InterpreterFinder
 	CurrentRunningCmd *exec.Cmd
 }
 
@@ -332,9 +334,11 @@ func (m *Manager) RunGame(game *Game) error {
 		return e
 	}
 
+	interpreterCommand := m.InterpreterCommand()
+
 	// todo: idf
-	cmd := exec.Command(m.Config.GetInterpreterCommand(), "-gamespath", gamesPath, "-game", game.Name)
-	cmd.Dir = filepath.Dir(m.Config.GetInterpreterCommand())
+	cmd := exec.Command(interpreterCommand, "-gamespath", gamesPath, "-game", game.Name)
+	cmd.Dir = filepath.Dir(interpreterCommand)
 	e = cmd.Start()
 
 	// Current running cmd
@@ -432,8 +436,10 @@ func (m *Manager) InstallGame(game *Game) error {
 		return e
 	}
 
-	cmd := exec.Command(m.Config.GetInterpreterCommand(), "-gamespath", gamesPath, "-install", fileName, "-quit")
-	cmd.Dir = filepath.Dir(m.Config.GetInterpreterCommand())
+	interpreterCommand := m.InterpreterCommand()
+
+	cmd := exec.Command(interpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit")
+	cmd.Dir = filepath.Dir(interpreterCommand)
 	out, e := cmd.CombinedOutput()
 	if e != nil {
 		return errors.New(e.Error() + "; " + strings.Replace(string(out), "\n", "", -1))
@@ -478,6 +484,25 @@ func (m *Manager) FindLangs(games []Game) []string {
 
 func (m *Manager) ClearCache() error {
 	return os.RemoveAll(m.CacheDir())
+}
+
+func (m *Manager) IsBuiltinInterpreterCommand() bool {
+	if m.Config.UseBuiltinInterpreter {
+		return m.InterpreterFinder.HaveBuiltIn()
+	}
+
+	return false
+}
+
+func (m *Manager) InterpreterCommand() string {
+	if m.Config.UseBuiltinInterpreter {
+		builtInCmd := m.InterpreterFinder.FindBuiltin()
+		if builtInCmd != "" {
+			return builtInCmd
+		}
+	}
+
+	return m.Config.GetInterpreterCommand()
 }
 
 func existsString(stack []string, element string) bool {

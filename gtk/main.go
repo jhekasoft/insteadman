@@ -1,6 +1,7 @@
 package main
 
 import (
+	"../core/interpreter_finder"
 	"../core/configurator"
 	"../core/manager"
 	"../core/utils"
@@ -110,7 +111,9 @@ func main() {
 		ui.ShowErrorDlgFatal(e.Error())
 	}
 
-	M = &manager.Manager{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
+
+	M = &manager.Manager{Config: config, InterpreterFinder: finder}
 
 	e = b.AddFromFile(Configurator.ShareResourcePath(MainFormFilePath))
 	if e != nil {
