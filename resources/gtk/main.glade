@@ -307,6 +307,9 @@
                       <object class="GtkTreeViewColumn" id="column_game_size">
                         <property name="resizable">True</property>
                         <property name="title" translatable="yes">Size</property>
+                        <property name="clickable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">3</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
