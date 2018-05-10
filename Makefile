@@ -2,7 +2,9 @@ VERSION=3.0.10
 DESTDIR=
 PREFIX=/usr
 
-all: insteadman insteadman-gtk
+all:
+	${MAKE} insteadman
+	${MAKE} insteadman-gtk
 
 insteadman-deps:
 	go get github.com/ghodss/yaml
