@@ -21,10 +21,6 @@ type InsteadmanConfig struct {
 	CalculatedInsteadManPath string       `json:"-"`
 }
 
-func (c *InsteadmanConfig) GetInterpreterCommand() string {
-	return ExpandInterpreterCommand(c.InterpreterCommand)
-}
-
 func ExpandInterpreterCommand(command string) string {
 	if command == "" {
 		return ""

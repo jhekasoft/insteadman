@@ -235,10 +235,10 @@ func main() {
 
 	ChckMenuItmSideBar.Connect("toggled", sideBarToggled)
 	MenuItmSettings.Connect("activate", func() {
-		ui.ShowSettingWin(M, Configurator, version)
+		ui.ShowSettingWin(M, Configurator, version, WndMain)
 	})
 	MenuItmAbout.Connect("activate", func() {
-		ui.ShowAboutWin(M, Configurator, version)
+		ui.ShowAboutWin(M, Configurator, version, WndMain)
 
 	})
 
@@ -251,7 +251,6 @@ func main() {
 	WndMain.SetDefaultSize(width, height)
 
 	WndMain.SetTitle(Title)
-	WndMain.SetPosition(gtk.WIN_POS_CENTER)
 	WndMain.Show()
 
 	gtk.Main()

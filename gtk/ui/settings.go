@@ -25,14 +25,20 @@ func GetSettings(manager *manager.Manager, configurator *configurator.Configurat
 	return SettingsWindowNew(manager, configurator, version)
 }
 
-func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configurator, version string) {
+func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configurator, version string, parent *gtk.Window) {
 	SettingsWin = GetSettings(manager, configurator, version)
+	if parent != nil {
+		SettingsWin.Window.SetTransientFor(parent)
+	}
 	SettingsWin.Window.Show()
 	SettingsWin.Window.Present()
 }
 
-func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configurator, version string) {
+func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configurator, version string, parent *gtk.Window) {
 	SettingsWin = GetSettings(manager, configurator, version)
+	if parent != nil {
+		SettingsWin.Window.SetTransientFor(parent)
+	}
 	SettingsWin.Window.Show()
 	SettingsWin.Window.Present()
 
@@ -151,7 +157,6 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
 	win.Window.SetTitle("Settings")
-	win.Window.SetPosition(gtk.WIN_POS_CENTER)
 
 	return win
 }
@@ -167,7 +172,7 @@ func (win *SettingsWindow) readSettings() {
 		win.TglBtnInsteadBuiltin.SetTooltipText("Built-in INSTEAD hasn't found")
 	}
 	win.TglBtnInsteadBuiltin.SetActive(config.UseBuiltinInterpreter)
-	win.toggleBuiltin(!config.UseBuiltinInterpreter)
+	win.toggleBuiltin(!config.UseBuiltinInterpreter || !win.Manager.InterpreterFinder.HaveBuiltIn())
 
 	// Cache
 	win.BtnCacheClear.SetTooltipText("Cache directory: " + win.Manager.CacheDir())

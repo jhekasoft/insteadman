@@ -498,11 +498,11 @@ func (m *Manager) InterpreterCommand() string {
 	if m.Config.UseBuiltinInterpreter {
 		builtInCmd := m.InterpreterFinder.FindBuiltin()
 		if builtInCmd != "" {
-			return builtInCmd
+			return configurator.ExpandInterpreterCommand(builtInCmd)
 		}
 	}
 
-	return m.Config.GetInterpreterCommand()
+	return configurator.ExpandInterpreterCommand(m.Config.InterpreterCommand)
 }
 
 func existsString(stack []string, element string) bool {

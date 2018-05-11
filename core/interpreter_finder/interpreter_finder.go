@@ -59,7 +59,8 @@ func (f *InterpreterFinder) Check(command string) (version string, e error) {
 		return "", e
 	}
 
-	version = strings.Replace(string(out), "\n", "", -1)
+	replacer := strings.NewReplacer("\n", "", "\r", "")
+	version = replacer.Replace(string(out))
 
 	return
 }
