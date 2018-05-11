@@ -12,6 +12,8 @@ import (
 const (
 	settingsFormFilePath = "resources/gtk/settings.glade"
 	aboutTabNum          = 2
+	RepositoryColumnName = 0
+	RepositoryColumnUrl  = 1
 )
 
 var (
@@ -25,7 +27,9 @@ func GetSettings(manager *manager.Manager, configurator *configurator.Configurat
 	return SettingsWindowNew(manager, configurator, version)
 }
 
-func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configurator, version string, parent *gtk.Window) {
+func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configurator, version string,
+	parent *gtk.Window) {
+
 	SettingsWin = GetSettings(manager, configurator, version)
 	if parent != nil {
 		SettingsWin.Window.SetTransientFor(parent)
@@ -34,7 +38,9 @@ func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configu
 	SettingsWin.Window.Present()
 }
 
-func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configurator, version string, parent *gtk.Window) {
+func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configurator, version string,
+	parent *gtk.Window) {
+
 	SettingsWin = GetSettings(manager, configurator, version)
 	if parent != nil {
 		SettingsWin.Window.SetTransientFor(parent)
@@ -150,9 +156,10 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
-	//win.TrSlctnRepositories.Connect("changed", handlers.repositoriesChanged)
 	win.BtnRepositoriesAdd.Connect("clicked", handlers.repositoryAddClicked)
 	win.BtnRepositoriesRemove.Connect("clicked", handlers.repositoryRemoveClicked)
+	win.BtnRepositoriesUp.Connect("clicked", handlers.repositoryUpClicked)
+	win.BtnRepositoriesDown.Connect("clicked", handlers.repositoryDownClicked)
 	win.BtnClose.Connect("clicked", handlers.closeClicked)
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
@@ -189,7 +196,7 @@ func (win *SettingsWindow) readSettings() {
 
 func addToListStoreRepositories(ls *gtk.ListStore, name, url string) (iter *gtk.TreeIter) {
 	iter = new(gtk.TreeIter)
-	ls.InsertWithValues(iter, -1, []int{0, 1}, []interface{}{name, url})
+	ls.InsertWithValues(iter, -1, []int{RepositoryColumnName, RepositoryColumnUrl}, []interface{}{name, url})
 	return iter
 }
 
@@ -327,6 +334,36 @@ func (h *SettingsWindowHandlers) repositoryRemoveClicked() {
 	}
 
 	h.win.ListStoreRepositories.Remove(iter)
+}
+
+func (h *SettingsWindowHandlers) repositoryUpClicked() {
+	iter, e := gtkutils.FindFirstIterInTreeSelection(h.win.ListStoreRepositories, h.win.TrSlctnRepositories)
+	if e != nil {
+		log.Printf("Error: %v", e)
+		return
+	}
+	curIter := *iter
+
+	if h.win.ListStoreRepositories.IterPrevious(iter) {
+		prevIter := *iter
+
+		h.win.ListStoreRepositories.MoveBefore(&curIter, &prevIter)
+	}
+}
+
+func (h *SettingsWindowHandlers) repositoryDownClicked() {
+	iter, e := gtkutils.FindFirstIterInTreeSelection(h.win.ListStoreRepositories, h.win.TrSlctnRepositories)
+	if e != nil {
+		log.Printf("Error: %v", e)
+		return
+	}
+	curIter := *iter
+
+	if h.win.ListStoreRepositories.IterNext(iter) {
+		nextIter := *iter
+
+		h.win.ListStoreRepositories.MoveAfter(&curIter, &nextIter)
+	}
 }
 
 func (h *SettingsWindowHandlers) closeClicked() {
