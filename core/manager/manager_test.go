@@ -57,12 +57,12 @@ func TestInstallGame(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := interpreterFinder.InterpreterFinder{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
 
-	man := Manager{Config: config}
+	man := Manager{Config: config, InterpreterFinder: finder}
 
 	e = man.InstallGame(&Game{Name: testGameName, Url: testGameUrl})
 
@@ -85,12 +85,12 @@ func TestRunGame(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := interpreterFinder.InterpreterFinder{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
 
-	man := Manager{Config: config}
+	man := Manager{Config: config, InterpreterFinder: finder}
 
 	// Run game
 	e = man.RunGame(&Game{Name: testGameName, Url: testGameUrl})
@@ -143,12 +143,12 @@ func TestGetGameImage(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := interpreterFinder.InterpreterFinder{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
 
-	man := Manager{Config: config}
+	man := Manager{Config: config, InterpreterFinder: finder}
 
 	imageFilePath, e := man.GetGameImage(&Game{Id: testGameId, Image: testGameImage})
 

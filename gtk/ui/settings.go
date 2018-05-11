@@ -60,6 +60,7 @@ type SettingsWindow struct {
 	LblVersion *gtk.Label
 
 	ListStoreRepositories   *gtk.ListStore
+	TrSlctnRepositories     *gtk.TreeSelection
 	BtnRepositoriesAdd      *gtk.Button
 	BtnRepositoriesRemove   *gtk.Button
 	BtnRepositoriesUp       *gtk.Button
@@ -121,6 +122,11 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnRepositoriesUp = gtkutils.GetButton(b, "button_repositories_up")
 	win.BtnRepositoriesDown = gtkutils.GetButton(b, "button_repositories_down")
 	win.BtnRepositoriesDefaults = gtkutils.GetButton(b, "button_repositories_defaults")
+	treeViewRepositories := gtkutils.GetTreeView(b, "treeview_repositories")
+	win.TrSlctnRepositories, e = treeViewRepositories.GetSelection()
+	if e != nil {
+		ShowErrorDlgFatal(e.Error())
+	}
 
 	// About tab
 	win.LblVersion = gtkutils.GetLabel(b, "label_version")
@@ -138,7 +144,9 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
+	//win.TrSlctnRepositories.Connect("changed", handlers.repositoriesChanged)
 	win.BtnRepositoriesAdd.Connect("clicked", handlers.repositoryAddClicked)
+	win.BtnRepositoriesRemove.Connect("clicked", handlers.repositoryRemoveClicked)
 	win.BtnClose.Connect("clicked", handlers.closeClicked)
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
@@ -174,8 +182,10 @@ func (win *SettingsWindow) readSettings() {
 	}
 }
 
-func addToListStoreRepositories(ls *gtk.ListStore, name, url string) {
-	ls.InsertWithValues(nil, -1, []int{0, 1}, []interface{}{name, url})
+func addToListStoreRepositories(ls *gtk.ListStore, name, url string) (iter *gtk.TreeIter) {
+	iter = new(gtk.TreeIter)
+	ls.InsertWithValues(iter, -1, []int{0, 1}, []interface{}{name, url})
+	return iter
 }
 
 func (win *SettingsWindow) toggleBuiltin(active bool) {
@@ -297,7 +307,21 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 }
 
 func (h *SettingsWindowHandlers) repositoryAddClicked() {
-	addToListStoreRepositories(h.win.ListStoreRepositories, "new", "")
+	iter := addToListStoreRepositories(h.win.ListStoreRepositories, "new", "")
+	h.win.TrSlctnRepositories.SelectIter(iter)
+}
+
+func (h *SettingsWindowHandlers) repositoryRemoveClicked() {
+	iter, e := gtkutils.FindFirstIterInTreeSelection(h.win.ListStoreRepositories, h.win.TrSlctnRepositories)
+	if e != nil {
+		log.Printf("Error: %v", e)
+		return
+	}
+	if iter == nil {
+		return
+	}
+
+	h.win.ListStoreRepositories.Remove(iter)
 }
 
 func (h *SettingsWindowHandlers) closeClicked() {
