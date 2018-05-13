@@ -264,7 +264,10 @@ func updateClicked(s *gtk.Button) {
 	log.Print("Updating repositories...")
 
 	go func() {
-		M.UpdateRepositories()
+		errors := M.UpdateRepositories()
+		for _, e := range errors {
+			log.Printf("Update repository error: %s", e.Error())
+		}
 		log.Print("Repositories have updated.")
 
 		_, e := glib.IdleAdd(func() {

@@ -181,6 +181,17 @@ func GetNotebook(b *gtk.Builder, id string) (el *gtk.Notebook) {
 	return
 }
 
+func GetCellRendererText(b *gtk.Builder, id string) (el *gtk.CellRendererText) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("CellRendererText error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.CellRendererText)
+	return
+}
+
 func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLang *gtk.ComboBox,
 	chckBtnInstalled *gtk.CheckButton) (keywordP, repoP, langP *string, onlyInstalled bool) {
 	var e error
@@ -217,5 +228,15 @@ func FindFirstIterInTreeSelection(ls *gtk.ListStore, s *gtk.TreeSelection) (*gtk
 	path := rows.Data().(*gtk.TreePath)
 	iter, e := ls.GetIter(path)
 
+	return iter, e
+}
+
+func GetIterFromTextPathInListStore(ls *gtk.ListStore, path string) (*gtk.TreeIter, error) {
+	treePath, e := gtk.TreePathNewFromString(path)
+	if e != nil {
+		return nil, e
+	}
+
+	iter, e := ls.GetIter(treePath)
 	return iter, e
 }

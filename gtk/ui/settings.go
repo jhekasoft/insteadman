@@ -73,6 +73,8 @@ type SettingsWindow struct {
 
 	ListStoreRepositories   *gtk.ListStore
 	TrSlctnRepositories     *gtk.TreeSelection
+	CllRndrTxtName          *gtk.CellRendererText
+	CllRndrTxtUrl           *gtk.CellRendererText
 	BtnRepositoriesAdd      *gtk.Button
 	BtnRepositoriesRemove   *gtk.Button
 	BtnRepositoriesUp       *gtk.Button
@@ -129,6 +131,8 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	// Repositories tab
 	win.ListStoreRepositories = gtkutils.GetListStore(b, "liststore_repositories")
+	win.CllRndrTxtName = gtkutils.GetCellRendererText(b, "cellrenderertext_repositories_name")
+	win.CllRndrTxtUrl = gtkutils.GetCellRendererText(b, "cellrenderertext_repositories_url")
 	win.BtnRepositoriesAdd = gtkutils.GetButton(b, "button_repositories_add")
 	win.BtnRepositoriesRemove = gtkutils.GetButton(b, "button_repositories_remove")
 	win.BtnRepositoriesUp = gtkutils.GetButton(b, "button_repositories_up")
@@ -156,10 +160,14 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
+	//win.TrSlctnRepositories.Connect("changed", handlers.repositoriesChanged)
+	win.CllRndrTxtName.Connect("edited", handlers.repositoriesNameEdited)
+	win.CllRndrTxtUrl.Connect("edited", handlers.repositoriesUrlEdited)
 	win.BtnRepositoriesAdd.Connect("clicked", handlers.repositoryAddClicked)
 	win.BtnRepositoriesRemove.Connect("clicked", handlers.repositoryRemoveClicked)
 	win.BtnRepositoriesUp.Connect("clicked", handlers.repositoryUpClicked)
 	win.BtnRepositoriesDown.Connect("clicked", handlers.repositoryDownClicked)
+	win.BtnRepositoriesDefaults.Connect("clicked", handlers.repositoryDefaultsClicked)
 	win.BtnClose.Connect("clicked", handlers.closeClicked)
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
@@ -194,6 +202,15 @@ func (win *SettingsWindow) readSettings() {
 	}
 }
 
+func (win *SettingsWindow) setRepositoriesConfigFromListStore() {
+	repos, e := configRepositoriesFromListStore(win.ListStoreRepositories)
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		return
+	}
+	win.Manager.Config.Repositories = repos
+}
+
 func addToListStoreRepositories(ls *gtk.ListStore, name, url string) (iter *gtk.TreeIter) {
 	iter = new(gtk.TreeIter)
 	ls.InsertWithValues(iter, -1, []int{RepositoryColumnName, RepositoryColumnUrl}, []interface{}{name, url})
@@ -204,6 +221,47 @@ func (win *SettingsWindow) toggleBuiltin(active bool) {
 	win.EntryInstead.SetSensitive(active)
 	win.BtnInsteadBrowse.SetSensitive(active)
 	win.BtnInsteadDetect.SetSensitive(active)
+}
+
+func configRepositoriesFromListStore(ls *gtk.ListStore) (repositories []configurator.Repository, e error) {
+	iter, _ := ls.GetIterFirst()
+
+	var (
+		value     *glib.Value
+		name, url string
+	)
+
+	// Collect repositories from list store
+	for iter != nil {
+		value, e = ls.GetValue(iter, RepositoryColumnName)
+		if e != nil {
+			return
+		}
+		name, e = value.GetString()
+		if e != nil {
+			return
+		}
+
+		value, e = ls.GetValue(iter, RepositoryColumnUrl)
+		if e != nil {
+			return
+		}
+		url, e = value.GetString()
+		if e != nil {
+			return
+		}
+
+		// Add non-empty repositories
+		if name != "" && url != "" {
+			repositories = append(repositories, configurator.Repository{Name: name, Url: url})
+		}
+
+		if !ls.IterNext(iter) {
+			iter = nil
+		}
+	}
+
+	return
 }
 
 type SettingsWindowHandlers struct {
@@ -318,9 +376,38 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 	}()
 }
 
+//func (h *SettingsWindowHandlers) repositoriesChanged(s *gtk.TreeSelection) {
+//}
+
+func (h *SettingsWindowHandlers) repositoriesNameEdited(s *gtk.CellRendererText, path, newText string) {
+	iter, e := gtkutils.GetIterFromTextPathInListStore(h.win.ListStoreRepositories, path)
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		return
+	}
+
+	h.win.ListStoreRepositories.SetValue(iter, RepositoryColumnName, newText)
+
+	h.win.setRepositoriesConfigFromListStore()
+}
+
+func (h *SettingsWindowHandlers) repositoriesUrlEdited(s *gtk.CellRendererText, path, newText string) {
+	iter, e := gtkutils.GetIterFromTextPathInListStore(h.win.ListStoreRepositories, path)
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		return
+	}
+
+	h.win.ListStoreRepositories.SetValue(iter, RepositoryColumnUrl, newText)
+
+	h.win.setRepositoriesConfigFromListStore()
+}
+
 func (h *SettingsWindowHandlers) repositoryAddClicked() {
-	iter := addToListStoreRepositories(h.win.ListStoreRepositories, "new", "")
+	iter := addToListStoreRepositories(h.win.ListStoreRepositories, "", "")
 	h.win.TrSlctnRepositories.SelectIter(iter)
+
+	h.win.setRepositoriesConfigFromListStore()
 }
 
 func (h *SettingsWindowHandlers) repositoryRemoveClicked() {
@@ -334,6 +421,8 @@ func (h *SettingsWindowHandlers) repositoryRemoveClicked() {
 	}
 
 	h.win.ListStoreRepositories.Remove(iter)
+
+	h.win.setRepositoriesConfigFromListStore()
 }
 
 func (h *SettingsWindowHandlers) repositoryUpClicked() {
@@ -349,6 +438,8 @@ func (h *SettingsWindowHandlers) repositoryUpClicked() {
 
 		h.win.ListStoreRepositories.MoveBefore(&curIter, &prevIter)
 	}
+
+	h.win.setRepositoriesConfigFromListStore()
 }
 
 func (h *SettingsWindowHandlers) repositoryDownClicked() {
@@ -364,6 +455,20 @@ func (h *SettingsWindowHandlers) repositoryDownClicked() {
 
 		h.win.ListStoreRepositories.MoveAfter(&curIter, &nextIter)
 	}
+
+	h.win.setRepositoriesConfigFromListStore()
+}
+
+func (h *SettingsWindowHandlers) repositoryDefaultsClicked() {
+	skeletonConfig, e := h.win.Configurator.GetSkeletonConfig()
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		return
+	}
+
+	h.win.Manager.Config.Repositories = skeletonConfig.Repositories
+
+	h.win.readSettings()
 }
 
 func (h *SettingsWindowHandlers) closeClicked() {
@@ -377,4 +482,6 @@ func (h *SettingsWindowHandlers) settingsDeleted() {
 		ShowErrorDlg(e.Error())
 		return
 	}
+
+	h.win.Window.Destroy()
 }

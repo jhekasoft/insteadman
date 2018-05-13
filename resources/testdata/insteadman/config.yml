@@ -12,5 +12,7 @@ repositories:
   url: http://instead-games.ru/xml.php
 - name: instead-games-sandbox
   url: http://instead-games.ru/xml2.php
+- name: test
+  url: https://raw.githubusercontent.com/jhekasoft/insteadman3/master/resources/testdata/xml_repositories/test.xml
 use_builtin_interpreter: false
 version: 3.0.0

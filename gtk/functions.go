@@ -134,6 +134,8 @@ func RefreshGames() {
 	CurGame = nil
 	resetGameInfo()
 
+	log.Print("Refreshing games has finished.")
+
 	IsRefreshing = false
 }
 

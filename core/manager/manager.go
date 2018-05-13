@@ -107,17 +107,24 @@ func (m *Manager) UpdateRepositories() []error {
 	repositoriesDir := m.repositoriesDir()
 	os.MkdirAll(repositoriesDir, os.ModePerm)
 
-	var errors []error = nil
-	for _, repo := range m.Config.Repositories {
-		// fmt.Printf("%v %v\n", repo.Name, repo.Url)
-		e := downloadFileSimple(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
-
-		if e != nil {
-			errors = append(errors, e)
+	// Remove all repository files
+	files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
+	if e == nil && files != nil {
+		for _, f := range files {
+			os.Remove(f)
 		}
 	}
 
-	return errors
+	var errs []error = nil
+	for _, repo := range m.Config.Repositories {
+		e := downloadFileSimple(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
+
+		if e != nil {
+			errs = append(errs, e)
+		}
+	}
+
+	return errs
 }
 
 func (m *Manager) GetRepositoryGames() ([]Game, error) {
@@ -415,7 +422,7 @@ func (m *Manager) GetGameImage(game *Game) (imagePath string, e error) {
 func (m *Manager) InstallGame(game *Game) error {
 	// todo: idf
 
-	tempGamesDir := filepath.Join(m.Config.CalculatedInsteadManPath, tempGamesDirName)
+	tempGamesDir := filepath.Join(m.CacheDir(), tempGamesDirName)
 	os.MkdirAll(tempGamesDir, os.ModePerm)
 
 	// Absolute filepath
@@ -430,6 +437,9 @@ func (m *Manager) InstallGame(game *Game) error {
 		return e
 	}
 
+	// Remove downloaded temp file (after installing)
+	defer os.Remove(fileName)
+
 	// Absolute games path
 	gamesPath, e := filepath.Abs(m.Config.CalculatedGamesPath)
 	if e != nil {
@@ -443,12 +453,6 @@ func (m *Manager) InstallGame(game *Game) error {
 	out, e := cmd.CombinedOutput()
 	if e != nil {
 		return errors.New(e.Error() + "; " + strings.Replace(string(out), "\n", "", -1))
-	}
-
-	// Remove downloaded temp file
-	e = os.Remove(fileName)
-	if e != nil {
-		return e
 	}
 
 	return nil

@@ -25,3 +25,11 @@ func TestSaveConfig(t *testing.T) {
 	e = configurator.SaveConfig(config)
 	assert.NoError(t, e)
 }
+
+func TestGetSkeletonConfig(t *testing.T) {
+	configurator := Configurator{FilePath: configFilePath, CurrentDir: "../../"}
+	config, e := configurator.GetSkeletonConfig()
+
+	assert.NoError(t, e)
+	assert.NotEmpty(t, config.Repositories)
+}

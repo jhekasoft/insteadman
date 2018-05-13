@@ -155,3 +155,14 @@ func TestGetGameImage(t *testing.T) {
 	assert.NoError(t, e)
 	assert.NotEmpty(t, imageFilePath)
 }
+
+func TestClearCache(t *testing.T) {
+	conf := configurator.Configurator{FilePath: configFilePath}
+	config, e := conf.GetConfig()
+	assert.NoError(t, e)
+
+	man := Manager{Config: config}
+
+	e = man.ClearCache()
+	assert.NoError(t, e)
+}
