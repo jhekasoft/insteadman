@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"errors"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
-	"github.com/NebulousLabs/errors"
 )
 
 func GetListStore(b *gtk.Builder, id string) (listStore *gtk.ListStore) {

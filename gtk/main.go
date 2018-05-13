@@ -71,8 +71,8 @@ var (
 	LblGameDesc    *gtk.Label
 	BtnGameRun     *gtk.Button
 	BtnGameInstall *gtk.Button
-	//BtnGameUpdate  *gtk.Button
-	BtnGameRemove *gtk.Button
+	BtnGameUpdate  *gtk.Button
+	BtnGameRemove  *gtk.Button
 
 	SprtrSideBox *gtk.Separator
 	BxSideBox    *gtk.Box
@@ -162,6 +162,7 @@ func main() {
 
 	BtnGameRun = gtkutils.GetButton(b, "button_game_run")
 	BtnGameInstall = gtkutils.GetButton(b, "button_game_install")
+	BtnGameUpdate = gtkutils.GetButton(b, "button_game_update")
 	BtnGameRemove = gtkutils.GetButton(b, "button_game_remove")
 
 	SprtrSideBox = gtkutils.GetSeparator(b, "separator_side")
@@ -231,6 +232,7 @@ func main() {
 
 	BtnGameRun.Connect("clicked", runGameClicked)
 	BtnGameInstall.Connect("clicked", installGameClicked)
+	BtnGameUpdate.Connect("clicked", updateGameClicked)
 	BtnGameRemove.Connect("clicked", removeGameClicked)
 
 	ChckMenuItmSideBar.Connect("toggled", sideBarToggled)
@@ -239,7 +241,6 @@ func main() {
 	})
 	MenuItmAbout.Connect("activate", func() {
 		ui.ShowAboutWin(M, Configurator, version, WndMain)
-
 	})
 
 	WndMain.Connect("destroy", gtk.MainQuit)
@@ -326,10 +327,12 @@ func gameRowActivated() {
 		return
 	}
 
-	if CurGame.Installed {
-		RunGame(CurGame)
-	} else {
+	if !CurGame.Installed {
 		InstallGame(CurGame, BtnGameInstall)
+	} else if CurGame.IsUpdateAvailable() {
+		InstallGame(CurGame, BtnGameUpdate)
+	} else {
+		RunGame(CurGame)
 	}
 }
 
@@ -340,6 +343,10 @@ func runGameClicked() {
 func installGameClicked(s *gtk.Button) {
 	// todo: CurGame as parameter
 
+	InstallGame(CurGame, s)
+}
+
+func updateGameClicked(s *gtk.Button) {
 	InstallGame(CurGame, s)
 }
 
@@ -355,7 +362,7 @@ func removeGameClicked(s *gtk.Button) {
 		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
-	ListStoreGames.SetValue(iter, GameColumnSizeHuman, CurGame.GetHumanSize()+" Removing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman, CurGame.HumanSize()+" Removing...")
 
 	go func() {
 		rmGame := CurGame

@@ -48,7 +48,7 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
-	ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.GetHumanSize()+" Installing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" Installing...")
 
 	go func() {
 		instGame := g
@@ -238,6 +238,7 @@ func resetGameInfo() {
 	LblGameVersion.Hide()
 	BtnGameRun.Hide()
 	BtnGameInstall.Hide()
+	BtnGameUpdate.Hide()
 	BtnGameRemove.Hide()
 }
 
@@ -280,10 +281,16 @@ func updateGameInfo(g *manager.Game) {
 		BtnGameRun.Show()
 		BtnGameInstall.Hide()
 		BtnGameRemove.Show()
+		if g.IsUpdateAvailable() {
+			BtnGameUpdate.Show()
+		} else {
+			BtnGameUpdate.Hide()
+		}
 	} else {
 		BtnGameRun.Hide()
 		BtnGameInstall.Show()
 		BtnGameRemove.Hide()
+		BtnGameUpdate.Hide()
 	}
 
 	// Image
@@ -332,7 +339,7 @@ func gameListStoreValues(g manager.Game) []interface{} {
 		fontWeight = FontWeightBold
 	}
 
-	return []interface{}{g.Id, g.Title, g.Version, g.GetHumanSize(), fontWeight, g.Size}
+	return []interface{}{g.Id, g.Title, g.HumanVersion(), g.HumanSize(), fontWeight, g.Size}
 }
 
 func ToggleSidebox(show bool) {

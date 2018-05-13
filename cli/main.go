@@ -163,7 +163,8 @@ func show(m *manager.Manager, args []string) {
 	}
 
 	// Print game information
-	fmt.Printf("%s (%s) %s %s\n", game.Title, game.Name, game.Version, installedTxt)
+	fmt.Printf("%s (%s) %s %s\n", game.Title, game.Name, game.HumanSize(), installedTxt)
+	fmt.Printf("Version: %s\n", game.HumanVersion())
 	if game.Languages != nil {
 		fmt.Printf("Languages: %s\n", strings.Join(game.Languages, ", "))
 	}

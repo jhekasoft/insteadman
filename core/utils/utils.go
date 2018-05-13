@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"os"
 	"path/filepath"
 )
 
@@ -21,5 +22,16 @@ func ExistsString(stack []string, element string) bool {
 			return true
 		}
 	}
+	return false
+}
+
+func PathExist(path string) bool {
+	_, e := os.Stat(path)
+	exists := !os.IsNotExist(e)
+
+	if exists && e == nil {
+		return true
+	}
+
 	return false
 }

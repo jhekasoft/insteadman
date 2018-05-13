@@ -169,8 +169,8 @@ func TestClearCache(t *testing.T) {
 
 func TestFilterRepositoryName(t *testing.T) {
 	names := map[string]string{
-		"test/test12": "testtest12",
-		"TesT.///2_gg": "TesT.2_gg",
+		"test/test12":      "testtest12",
+		"TesT.///2_gg":     "TesT.2_gg",
 		"TestПривет/2Пока": "Test2",
 	}
 

@@ -1,9 +1,9 @@
 package manager
 
 import (
-	"../utils"
 	"../configurator"
 	"../interpreter_finder"
+	"../utils"
 	"encoding/xml"
 	"errors"
 	"github.com/pyk/byten"
@@ -15,9 +15,9 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
-	"regexp"
 )
 
 type RepositoryGameList struct {
@@ -42,9 +42,9 @@ type RepositoryGame struct {
 	RepositoryName   string   `xml:"-"`
 	Installed        bool     `xml:"-"`
 	OnlyInstalled    bool     `xml:"-"`
-	IsUpdateExist    bool     `xml:"-"`
-	Languages        []string `xml:"-"`
-	Id               string   `xml:"-"`
+	//IsUpdateExist    bool     `xml:"-"`
+	Languages []string `xml:"-"`
+	Id        string   `xml:"-"`
 }
 
 type Game RepositoryGame
@@ -71,12 +71,24 @@ func (g *Game) addGameAdditionalData(repositoryName string) {
 	g.Id = generateGameId(repositoryName, g)
 }
 
-func (g *Game) GetHumanSize() string {
+func (g *Game) HumanSize() string {
 	if g.Size > 0 {
 		return byten.Size(int64(g.Size))
 	}
 
 	return ""
+}
+
+func (g *Game) HumanVersion() string {
+	if g.IsUpdateAvailable() {
+		return g.InstalledVersion + " (" + g.Version + ")"
+	}
+
+	return g.Version
+}
+
+func (g *Game) IsUpdateAvailable() bool {
+	return g.InstalledVersion != "" && g.InstalledVersion != g.Version
 }
 
 const (
@@ -198,18 +210,7 @@ func (m *Manager) GetInstalledGames() ([]Game, error) {
 			continue
 		}
 
-		gameName := file.Name()
-		if !file.IsDir() {
-			gameName = strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
-		}
-
-		game := Game{
-			Name:      gameName,
-			Title:     gameName,
-			Installed: true,
-		}
-		game.addGameAdditionalData("")
-
+		game := readLocalGameInfo(m.Config.CalculatedGamesPath, file)
 		games = append(games, game)
 	}
 
@@ -235,7 +236,7 @@ func (m *Manager) GetMergedGames() ([]Game, error) {
 		for j, installedGame := range installedGames {
 			if game.Name == installedGame.Name {
 				games[i].Installed = true
-				// todo: installed version
+				games[i].InstalledVersion = installedGame.InstalledVersion
 				installedGames[j].OnlyInstalled = false
 			}
 		}
@@ -511,7 +512,7 @@ func (m *Manager) InterpreterCommand() string {
 	return configurator.ExpandInterpreterCommand(m.Config.InterpreterCommand)
 }
 
-func FilterRepositoryName(name string) (filteredName string, e error)  {
+func FilterRepositoryName(name string) (filteredName string, e error) {
 	r, e := regexp.Compile("[^a-zA-Z0-9\\-_.]+")
 	if e != nil {
 		return
