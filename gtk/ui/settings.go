@@ -386,7 +386,13 @@ func (h *SettingsWindowHandlers) repositoriesNameEdited(s *gtk.CellRendererText,
 		return
 	}
 
-	h.win.ListStoreRepositories.SetValue(iter, RepositoryColumnName, newText)
+	filteredName, e := manager.FilterRepositoryName(newText)
+	if e != nil {
+		ShowErrorDlg(e.Error())
+		return
+	}
+
+	h.win.ListStoreRepositories.SetValue(iter, RepositoryColumnName, filteredName)
 
 	h.win.setRepositoriesConfigFromListStore()
 }

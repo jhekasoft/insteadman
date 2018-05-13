@@ -166,3 +166,17 @@ func TestClearCache(t *testing.T) {
 	e = man.ClearCache()
 	assert.NoError(t, e)
 }
+
+func TestFilterRepositoryName(t *testing.T) {
+	names := map[string]string{
+		"test/test12": "testtest12",
+		"TesT.///2_gg": "TesT.2_gg",
+		"TestПривет/2Пока": "Test2",
+	}
+
+	for name, mustBeName := range names {
+		result, e := FilterRepositoryName(name)
+		assert.NoError(t, e)
+		assert.Equal(t, result, mustBeName)
+	}
+}

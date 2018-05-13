@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"../utils"
 	"../configurator"
 	"../interpreter_finder"
 	"encoding/xml"
@@ -16,6 +17,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"regexp"
 )
 
 type RepositoryGameList struct {
@@ -284,7 +286,7 @@ func FilterGames(games []Game, keyword *string, repository *string, lang *string
 
 	if lang != nil {
 		games = filterGamesBy(games, func(game Game) bool {
-			return existsString(game.Languages, *lang)
+			return utils.ExistsString(game.Languages, *lang)
 		})
 	}
 
@@ -477,7 +479,7 @@ func (m *Manager) FindLangs(games []Game) []string {
 
 	for _, game := range games {
 		for _, gameLang := range game.Languages {
-			if !existsString(langs, gameLang) && strings.Trim(gameLang, " ") != "" {
+			if !utils.ExistsString(langs, gameLang) && strings.Trim(gameLang, " ") != "" {
 				langs = append(langs, gameLang)
 			}
 		}
@@ -509,13 +511,14 @@ func (m *Manager) InterpreterCommand() string {
 	return configurator.ExpandInterpreterCommand(m.Config.InterpreterCommand)
 }
 
-func existsString(stack []string, element string) bool {
-	for _, el := range stack {
-		if el == element {
-			return true
-		}
+func FilterRepositoryName(name string) (filteredName string, e error)  {
+	r, e := regexp.Compile("[^a-zA-Z0-9\\-_.]+")
+	if e != nil {
+		return
 	}
-	return false
+
+	filteredName = r.ReplaceAllString(name, "")
+	return
 }
 
 // func CheckAppNewVersion() {

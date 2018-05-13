@@ -364,6 +364,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Add</property>
                         <property name="image">image_add</property>
                         <property name="always_show_image">True</property>
                       </object>
@@ -376,6 +377,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Remove</property>
                         <property name="image">image_remove</property>
                         <property name="always_show_image">True</property>
                       </object>
@@ -388,6 +390,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Move up</property>
                         <property name="image">image_up</property>
                         <property name="always_show_image">True</property>
                       </object>
@@ -400,6 +403,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Move down</property>
                         <property name="image">image_down</property>
                         <property name="always_show_image">True</property>
                       </object>

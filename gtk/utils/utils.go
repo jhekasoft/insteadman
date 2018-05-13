@@ -3,6 +3,7 @@ package utils
 import (
 	"github.com/gotk3/gotk3/gtk"
 	"log"
+	"github.com/NebulousLabs/errors"
 )
 
 func GetListStore(b *gtk.Builder, id string) (listStore *gtk.ListStore) {
@@ -222,7 +223,7 @@ func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLa
 func FindFirstIterInTreeSelection(ls *gtk.ListStore, s *gtk.TreeSelection) (*gtk.TreeIter, error) {
 	rows := s.GetSelectedRows(ls)
 	if rows.Length() < 1 {
-		return nil, nil
+		return nil, errors.New("No selected elements")
 	}
 
 	path := rows.Data().(*gtk.TreePath)
