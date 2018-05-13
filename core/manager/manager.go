@@ -210,7 +210,7 @@ func (m *Manager) GetInstalledGames() ([]Game, error) {
 			continue
 		}
 
-		game := readLocalGameInfo(m.Config.CalculatedGamesPath, file)
+		game := ReadLocalGameInfo(m.Config.CalculatedGamesPath, file)
 		games = append(games, game)
 	}
 

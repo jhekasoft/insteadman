@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func readLocalGameInfo(path string, info os.FileInfo) Game {
+func ReadLocalGameInfo(path string, info os.FileInfo) Game {
 	var e error
 
 	// Eval possible symlink

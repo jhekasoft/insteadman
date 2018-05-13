@@ -1,2 +1,6 @@
 *
 !.gitignore
+!/stead2testgame
+!/stead2testgame/*
+!/stead3testgame
+!/stead3testgame/*
