@@ -2,8 +2,9 @@ package main
 
 import (
 	"../core/configurator"
-	"../core/interpreter_finder"
 	"../core/manager"
+	"./ui"
+	gtkutils "./utils"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -12,13 +13,13 @@ import (
 )
 
 func RunGame(g *manager.Game) {
-	if M.Config.GetInterpreterCommand() == "" {
-		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+	if M.InterpreterCommand() == "" {
+		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
 		return
 	}
 
 	if CurGame == nil {
-		ShowErrorDlg("No running. No game selected.")
+		ui.ShowErrorDlg("No running. No game selected.")
 		return
 	}
 
@@ -27,13 +28,13 @@ func RunGame(g *manager.Game) {
 }
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
-	if M.Config.GetInterpreterCommand() == "" {
-		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+	if M.InterpreterCommand() == "" {
+		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
 		return
 	}
 
 	if CurGame == nil {
-		ShowErrorDlg("No installing. No game selected.")
+		ui.ShowErrorDlg("No installing. No game selected.")
 		return
 	}
 
@@ -43,7 +44,7 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	log.Printf("Installing %s (%s) game...", g.Title, g.Name)
 
 	// Set installing status in the list
-	iter, e := FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
+	iter, e := gtkutils.FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
@@ -51,11 +52,19 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 
 	go func() {
 		instGame := g
-		M.InstallGame(instGame)
-		log.Print("Game has installed.")
+		instErr := M.InstallGame(instGame)
+
+		if instErr == nil {
+			log.Print("Game has installed.")
+		}
 
 		_, e := glib.IdleAdd(func() {
+			if instErr != nil {
+				ui.ShowErrorDlg("Game hasn't installed (" + instErr.Error() +
+					"). Please check INSTEAD in the Settings.")
+			}
 			RefreshSeveralGames([]manager.Game{*instGame})
+
 			if instBtn != nil {
 				instBtn.SetSensitive(true)
 			}
@@ -107,11 +116,11 @@ func RefreshGames() {
 
 	Games, e = M.GetSortedGames()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
-	keywordP, repoP, langP, onlyInstalled := GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
+	keywordP, repoP, langP, onlyInstalled := gtkutils.GetFilterValues(EntryKeyword, CmbBoxRepo, CmbBoxLang, ChckBtnInstalled)
 	filteredGames := manager.FilterGames(Games, keywordP, repoP, langP, onlyInstalled)
 
 	IsRefreshing = true
@@ -125,6 +134,8 @@ func RefreshGames() {
 	CurGame = nil
 	resetGameInfo()
 
+	log.Print("Refreshing games has finished.")
+
 	IsRefreshing = false
 }
 
@@ -135,7 +146,7 @@ func RefreshSeveralGames(upGames []manager.Game) {
 
 	Games, e = M.GetSortedGames()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
@@ -156,13 +167,13 @@ func RefreshSeveralGames(upGames []manager.Game) {
 		for iter != nil {
 			value, e := ListStoreGames.GetValue(iter, GameColumnId)
 			if e != nil {
-				ShowErrorDlgFatal(e.Error())
+				ui.ShowErrorDlgFatal(e.Error())
 				return
 			}
 
 			id, e := value.GetString()
 			if e != nil {
-				ShowErrorDlgFatal(e.Error())
+				ui.ShowErrorDlgFatal(e.Error())
 				return
 			}
 
@@ -197,11 +208,10 @@ func ClearFilter() {
 }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
-	finder := interpreterFinder.InterpreterFinder{Config: m.Config}
-	path := finder.Find()
+	path := m.InterpreterFinder.Find()
 
 	if path == nil {
-		ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
 		return
 	}
 
@@ -210,7 +220,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	m.Config.InterpreterCommand = *path
 	e := c.SaveConfig(m.Config)
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error())
 		return
 	}
 
@@ -323,4 +333,26 @@ func gameListStoreValues(g manager.Game) []interface{} {
 	}
 
 	return []interface{}{g.Id, g.Title, g.Version, g.GetHumanSize(), fontWeight, g.Size}
+}
+
+func ToggleSidebox(show bool) {
+	if show {
+		SprtrSideBox.Show()
+		BxSideBox.Show()
+	} else {
+		SprtrSideBox.Hide()
+		BxSideBox.Hide()
+	}
+}
+
+func GetDefaultWindowSize(config *configurator.InsteadmanConfig) (width, height int) {
+	width = config.Gtk.MainWidth
+	height = config.Gtk.MainHeight
+	if width < 1 {
+		width = 770
+	}
+	if height < 1 {
+		height = 500
+	}
+	return
 }

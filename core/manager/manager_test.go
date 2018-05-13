@@ -57,12 +57,12 @@ func TestInstallGame(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := interpreterFinder.InterpreterFinder{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
 
-	man := Manager{Config: config}
+	man := Manager{Config: config, InterpreterFinder: finder}
 
 	e = man.InstallGame(&Game{Name: testGameName, Url: testGameUrl})
 
@@ -85,12 +85,12 @@ func TestRunGame(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := interpreterFinder.InterpreterFinder{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
 
-	man := Manager{Config: config}
+	man := Manager{Config: config, InterpreterFinder: finder}
 
 	// Run game
 	e = man.RunGame(&Game{Name: testGameName, Url: testGameUrl})
@@ -143,15 +143,40 @@ func TestGetGameImage(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := interpreterFinder.InterpreterFinder{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
 
-	man := Manager{Config: config}
+	man := Manager{Config: config, InterpreterFinder: finder}
 
 	imageFilePath, e := man.GetGameImage(&Game{Id: testGameId, Image: testGameImage})
 
 	assert.NoError(t, e)
 	assert.NotEmpty(t, imageFilePath)
+}
+
+func TestClearCache(t *testing.T) {
+	conf := configurator.Configurator{FilePath: configFilePath}
+	config, e := conf.GetConfig()
+	assert.NoError(t, e)
+
+	man := Manager{Config: config}
+
+	e = man.ClearCache()
+	assert.NoError(t, e)
+}
+
+func TestFilterRepositoryName(t *testing.T) {
+	names := map[string]string{
+		"test/test12": "testtest12",
+		"TesT.///2_gg": "TesT.2_gg",
+		"TestПривет/2Пока": "Test2",
+	}
+
+	for name, mustBeName := range names {
+		result, e := FilterRepositoryName(name)
+		assert.NoError(t, e)
+		assert.Equal(t, result, mustBeName)
+	}
 }

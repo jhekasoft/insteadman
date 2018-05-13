@@ -1,8 +1,9 @@
-package main
+package utils
 
 import (
 	"github.com/gotk3/gotk3/gtk"
 	"log"
+	"github.com/NebulousLabs/errors"
 )
 
 func GetListStore(b *gtk.Builder, id string) (listStore *gtk.ListStore) {
@@ -24,6 +25,17 @@ func GetButton(b *gtk.Builder, id string) (btn *gtk.Button) {
 	}
 
 	btn, _ = obj.(*gtk.Button)
+	return
+}
+
+func GetToggleButton(b *gtk.Builder, id string) (btn *gtk.ToggleButton) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Toggle button error: %s", e)
+		return nil
+	}
+
+	btn, _ = obj.(*gtk.ToggleButton)
 	return
 }
 
@@ -115,6 +127,72 @@ func GetImage(b *gtk.Builder, id string) (el *gtk.Image) {
 	return
 }
 
+func GetMenuItem(b *gtk.Builder, id string) (el *gtk.MenuItem) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("MenuItem error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.MenuItem)
+	return
+}
+
+func GetCheckMenuItem(b *gtk.Builder, id string) (el *gtk.CheckMenuItem) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("CheckMenuItem error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.CheckMenuItem)
+	return
+}
+
+func GetBox(b *gtk.Builder, id string) (el *gtk.Box) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Box error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Box)
+	return
+}
+
+func GetSeparator(b *gtk.Builder, id string) (el *gtk.Separator) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Separator error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Separator)
+	return
+}
+
+func GetNotebook(b *gtk.Builder, id string) (el *gtk.Notebook) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("Notebook error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.Notebook)
+	return
+}
+
+func GetCellRendererText(b *gtk.Builder, id string) (el *gtk.CellRendererText) {
+	obj, e := b.GetObject(id)
+	if e != nil {
+		log.Printf("CellRendererText error: %s", e)
+		return nil
+	}
+
+	el, _ = obj.(*gtk.CellRendererText)
+	return
+}
+
 func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLang *gtk.ComboBox,
 	chckBtnInstalled *gtk.CheckButton) (keywordP, repoP, langP *string, onlyInstalled bool) {
 	var e error
@@ -145,11 +223,21 @@ func GetFilterValues(entryKeyword *gtk.Entry, cmbBoxRepo *gtk.ComboBox, cmbBoxLa
 func FindFirstIterInTreeSelection(ls *gtk.ListStore, s *gtk.TreeSelection) (*gtk.TreeIter, error) {
 	rows := s.GetSelectedRows(ls)
 	if rows.Length() < 1 {
-		return nil, nil
+		return nil, errors.New("No selected elements")
 	}
 
 	path := rows.Data().(*gtk.TreePath)
 	iter, e := ls.GetIter(path)
 
+	return iter, e
+}
+
+func GetIterFromTextPathInListStore(ls *gtk.ListStore, path string) (*gtk.TreeIter, error) {
+	treePath, e := gtk.TreePathNewFromString(path)
+	if e != nil {
+		return nil, e
+	}
+
+	iter, e := ls.GetIter(treePath)
 	return iter, e
 }

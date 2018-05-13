@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var version string = "3"
+var version = "3"
 
 func main() {
 	m, c := initManagerAndConfigurator()
@@ -65,6 +65,9 @@ func main() {
 		}
 
 		langs(m)
+
+	case "configpath":
+		printConfigPath(c)
 
 	case "version":
 		printVersion()
@@ -223,8 +226,7 @@ func remove(m *manager.Manager, args []string) {
 }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
-	finder := interpreterFinder.InterpreterFinder{Config: m.Config}
-	path := finder.Find()
+	path := m.InterpreterFinder.Find()
 
 	if path == nil {
 		fmt.Println("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
@@ -259,6 +261,10 @@ func printVersion() {
 	fmt.Println(version)
 }
 
+func printConfigPath(c *configurator.Configurator) {
+	fmt.Println(c.FilePath)
+}
+
 func printHelpAndExit() {
 	fmt.Printf("InsteadMan CLI %s — INSTEAD games manager\n\n"+
 		"Usage:\n"+
@@ -274,6 +280,7 @@ func printHelpAndExit() {
 		"findInterpreter\n    Find INSTEAD interpreter and save path to the config\n"+
 		"repositories\n    Print available repositories\n"+
 		"langs\n    Print available game languages\n"+
+		"configPath\n    Print config path\n"+
 		"version\n    Print current version of the application\n\n"+
 		"More info: http://jhekasoft.github.io/insteadman/\n", version)
 	os.Exit(1)
@@ -292,7 +299,9 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 	config, e := c.GetConfig()
 	ExitIfError(e)
 
-	m := manager.Manager{Config: config}
+	finder := new(interpreterFinder.InterpreterFinder)
+
+	m := manager.Manager{Config: config, InterpreterFinder: finder}
 
 	return &m, &c
 }

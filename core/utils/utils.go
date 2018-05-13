@@ -14,3 +14,12 @@ func BinAbsDir(executablePath string) (path string, e error) {
 
 	return
 }
+
+func ExistsString(stack []string, element string) bool {
+	for _, el := range stack {
+		if el == element {
+			return true
+		}
+	}
+	return false
+}

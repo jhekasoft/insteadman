@@ -1,7 +1,9 @@
 package manager
 
 import (
+	"../utils"
 	"../configurator"
+	"../interpreter_finder"
 	"encoding/xml"
 	"errors"
 	"github.com/pyk/byten"
@@ -15,6 +17,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"regexp"
 )
 
 type RepositoryGameList struct {
@@ -86,6 +89,7 @@ const (
 
 type Manager struct {
 	Config            *configurator.InsteadmanConfig
+	InterpreterFinder *interpreterFinder.InterpreterFinder
 	CurrentRunningCmd *exec.Cmd
 }
 
@@ -105,17 +109,24 @@ func (m *Manager) UpdateRepositories() []error {
 	repositoriesDir := m.repositoriesDir()
 	os.MkdirAll(repositoriesDir, os.ModePerm)
 
-	var errors []error = nil
-	for _, repo := range m.Config.Repositories {
-		// fmt.Printf("%v %v\n", repo.Name, repo.Url)
-		e := downloadFileSimple(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
-
-		if e != nil {
-			errors = append(errors, e)
+	// Remove all repository files
+	files, e := filepath.Glob(filepath.Join(repositoriesDir, "*.xml"))
+	if e == nil && files != nil {
+		for _, f := range files {
+			os.Remove(f)
 		}
 	}
 
-	return errors
+	var errs []error = nil
+	for _, repo := range m.Config.Repositories {
+		e := downloadFileSimple(filepath.Join(repositoriesDir, repo.Name+".xml"), repo.Url)
+
+		if e != nil {
+			errs = append(errs, e)
+		}
+	}
+
+	return errs
 }
 
 func (m *Manager) GetRepositoryGames() ([]Game, error) {
@@ -145,6 +156,10 @@ func (m *Manager) GetRepositoryGames() ([]Game, error) {
 	}
 
 	return games, nil
+}
+
+func (m *Manager) CacheDir() string {
+	return filepath.Join(m.Config.CalculatedInsteadManPath, cacheDirName)
 }
 
 func (m *Manager) repositoriesDir() string {
@@ -271,7 +286,7 @@ func FilterGames(games []Game, keyword *string, repository *string, lang *string
 
 	if lang != nil {
 		games = filterGamesBy(games, func(game Game) bool {
-			return existsString(game.Languages, *lang)
+			return utils.ExistsString(game.Languages, *lang)
 		})
 	}
 
@@ -328,9 +343,11 @@ func (m *Manager) RunGame(game *Game) error {
 		return e
 	}
 
+	interpreterCommand := m.InterpreterCommand()
+
 	// todo: idf
-	cmd := exec.Command(m.Config.GetInterpreterCommand(), "-gamespath", gamesPath, "-game", game.Name)
-	cmd.Dir = filepath.Dir(m.Config.GetInterpreterCommand())
+	cmd := exec.Command(interpreterCommand, "-gamespath", gamesPath, "-game", game.Name)
+	cmd.Dir = filepath.Dir(interpreterCommand)
 	e = cmd.Start()
 
 	// Current running cmd
@@ -407,7 +424,7 @@ func (m *Manager) GetGameImage(game *Game) (imagePath string, e error) {
 func (m *Manager) InstallGame(game *Game) error {
 	// todo: idf
 
-	tempGamesDir := filepath.Join(m.Config.CalculatedInsteadManPath, tempGamesDirName)
+	tempGamesDir := filepath.Join(m.CacheDir(), tempGamesDirName)
 	os.MkdirAll(tempGamesDir, os.ModePerm)
 
 	// Absolute filepath
@@ -422,23 +439,22 @@ func (m *Manager) InstallGame(game *Game) error {
 		return e
 	}
 
+	// Remove downloaded temp file (after installing)
+	defer os.Remove(fileName)
+
 	// Absolute games path
 	gamesPath, e := filepath.Abs(m.Config.CalculatedGamesPath)
 	if e != nil {
 		return e
 	}
 
-	cmd := exec.Command(m.Config.GetInterpreterCommand(), "-gamespath", gamesPath, "-install", fileName, "-quit")
-	cmd.Dir = filepath.Dir(m.Config.GetInterpreterCommand())
+	interpreterCommand := m.InterpreterCommand()
+
+	cmd := exec.Command(interpreterCommand, "-gamespath", gamesPath, "-install", fileName, "-quit")
+	cmd.Dir = filepath.Dir(interpreterCommand)
 	out, e := cmd.CombinedOutput()
 	if e != nil {
 		return errors.New(e.Error() + "; " + strings.Replace(string(out), "\n", "", -1))
-	}
-
-	// Remove downloaded temp file
-	e = os.Remove(fileName)
-	if e != nil {
-		return e
 	}
 
 	return nil
@@ -463,7 +479,7 @@ func (m *Manager) FindLangs(games []Game) []string {
 
 	for _, game := range games {
 		for _, gameLang := range game.Languages {
-			if !existsString(langs, gameLang) && strings.Trim(gameLang, " ") != "" {
+			if !utils.ExistsString(langs, gameLang) && strings.Trim(gameLang, " ") != "" {
 				langs = append(langs, gameLang)
 			}
 		}
@@ -472,13 +488,37 @@ func (m *Manager) FindLangs(games []Game) []string {
 	return langs
 }
 
-func existsString(stack []string, element string) bool {
-	for _, el := range stack {
-		if el == element {
-			return true
+func (m *Manager) ClearCache() error {
+	return os.RemoveAll(m.CacheDir())
+}
+
+func (m *Manager) IsBuiltinInterpreterCommand() bool {
+	if m.Config.UseBuiltinInterpreter {
+		return m.InterpreterFinder.HaveBuiltIn()
+	}
+
+	return false
+}
+
+func (m *Manager) InterpreterCommand() string {
+	if m.Config.UseBuiltinInterpreter {
+		builtInCmd := m.InterpreterFinder.FindBuiltin()
+		if builtInCmd != "" {
+			return configurator.ExpandInterpreterCommand(builtInCmd)
 		}
 	}
-	return false
+
+	return configurator.ExpandInterpreterCommand(m.Config.InterpreterCommand)
+}
+
+func FilterRepositoryName(name string) (filteredName string, e error)  {
+	r, e := regexp.Compile("[^a-zA-Z0-9\\-_.]+")
+	if e != nil {
+		return
+	}
+
+	filteredName = r.ReplaceAllString(name, "")
+	return
 }
 
 // func CheckAppNewVersion() {

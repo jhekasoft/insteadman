@@ -16,18 +16,19 @@ type InsteadmanConfig struct {
 	CheckUpdateOnStart       bool         `json:"check_update_on_start"`
 	GamesPath                string       `json:"games_path"`
 	InsteadManPath           string       `json:"insteadman_path"`
+	Gtk                      Gtk          `json:"gtk"`
 	CalculatedGamesPath      string       `json:"-"`
 	CalculatedInsteadManPath string       `json:"-"`
 }
 
-func (c *InsteadmanConfig) GetInterpreterCommand() string {
-	if c.InterpreterCommand == "" {
+func ExpandInterpreterCommand(command string) string {
+	if command == "" {
 		return ""
 	}
 
-	path, e := filepath.Abs(c.InterpreterCommand)
+	path, e := filepath.Abs(command)
 	if e != nil {
-		return c.InterpreterCommand
+		return command
 	}
 
 	return path
@@ -36,6 +37,12 @@ func (c *InsteadmanConfig) GetInterpreterCommand() string {
 type Repository struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
+}
+
+type Gtk struct {
+	HideSidebar bool `json:"hide_sidebar"`
+	MainWidth   int  `json:"main_width"`
+	MainHeight  int  `json:"main_height"`
 }
 
 const (
@@ -85,8 +92,12 @@ func (c *Configurator) gamesDir() string {
 	return gamesDir
 }
 
+func (c *Configurator) sceletonConfigPath() string {
+	return c.ShareResourcePath(filepath.Join(skeletonDir, configName))
+}
+
 func (c *Configurator) ShareResourcePath(relPath string) string {
-	// Add curent dir to search
+	// Add current dir to search
 	sharePathList := []string{c.CurrentDir}
 
 	// Add UNIX-path to search
@@ -111,8 +122,18 @@ func (c *Configurator) ShareResourcePath(relPath string) string {
 	return relPath
 }
 
+func (c *Configurator) GetSkeletonConfig() (config *InsteadmanConfig, e error) {
+	configData, e := ioutil.ReadFile(c.sceletonConfigPath())
+	if e != nil {
+		return
+	}
+
+	e = yaml.Unmarshal(configData, &config)
+	return
+}
+
 func (c *Configurator) writeSkeleton() error {
-	configData, e := ioutil.ReadFile(c.ShareResourcePath(filepath.Join(skeletonDir, configName)))
+	configData, e := ioutil.ReadFile(c.sceletonConfigPath())
 	if e != nil {
 		return e
 	}

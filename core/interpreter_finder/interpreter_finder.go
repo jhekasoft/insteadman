@@ -8,20 +8,37 @@ import (
 )
 
 type InterpreterFinder struct {
-	Config *configurator.InsteadmanConfig
+}
+
+func (f *InterpreterFinder) HaveBuiltIn() bool {
+	_, e := os.Stat(builtinRelativeFilePath)
+	exists := !os.IsNotExist(e)
+
+	if exists && e == nil {
+		return true
+	}
+
+	return false
+}
+
+func (f *InterpreterFinder) FindBuiltin() (path string) {
+	if f.HaveBuiltIn() {
+		path = builtinRelativeFilePath
+	}
+	return
 }
 
 func (f *InterpreterFinder) Find() *string {
 	// Built-in interpreter
-	if f.Config.UseBuiltinInterpreter {
-		builtInPath := builtinRelativeFilePath
-		_, e := os.Stat(builtInPath)
-		exists := !os.IsNotExist(e)
-
-		if exists && e == nil {
-			return &builtInPath
-		}
-	}
+	//if f.Config.UseBuiltinInterpreter {
+	//	builtInPath := builtinRelativeFilePath
+	//	_, e := os.Stat(builtInPath)
+	//	exists := !os.IsNotExist(e)
+	//
+	//	if exists && e == nil {
+	//		return &builtInPath
+	//	}
+	//}
 
 	// External interpreter
 	for _, path := range exactFilePaths() {
@@ -36,13 +53,14 @@ func (f *InterpreterFinder) Find() *string {
 	return nil
 }
 
-func (f *InterpreterFinder) Check() (string, error) {
-	out, e := exec.Command(f.Config.GetInterpreterCommand(), "-version").Output()
+func (f *InterpreterFinder) Check(command string) (version string, e error) {
+	out, e := exec.Command(configurator.ExpandInterpreterCommand(command), "-version").Output()
 	if e != nil {
 		return "", e
 	}
 
-	version := strings.Replace(string(out), "\n", "", -1)
+	replacer := strings.NewReplacer("\n", "", "\r", "")
+	version = replacer.Replace(string(out))
 
-	return version, nil
+	return
 }
