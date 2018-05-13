@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<game_list version="1.0">
+    <game>
+        <name>test</name>
+        <title>Test</title>
+        <version>0.1</version>
+        <url></url>
+        <size>4550110</size>
+        <lang>en</lang>
+        <descurl></descurl>
+    </game>
+</game_list>
