@@ -98,18 +98,18 @@ func main() {
 
 	executablePath, e := os.Executable()
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	currentDir, e := utils.BinAbsDir(executablePath)
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir}
 	config, e := Configurator.GetConfig()
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	finder := new(interpreterFinder.InterpreterFinder)
@@ -118,18 +118,18 @@ func main() {
 
 	e = b.AddFromFile(Configurator.ShareResourcePath(MainFormFilePath))
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	obj, e := b.GetObject("window_main")
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	var ok bool
 	WndMain, ok = obj.(*gtk.Window)
 	if !ok {
-		ui.ShowErrorDlgFatal("No main window")
+		ui.ShowErrorDlgFatal("No main window", WndMain)
 	}
 
 	ListStoreRepo = gtkutils.GetListStore(b, "liststore_repo")
@@ -149,7 +149,7 @@ func main() {
 	treeViewGames := gtkutils.GetTreeView(b, "treeview_games")
 	GamesSelection, e = treeViewGames.GetSelection()
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	LblGameTitle = gtkutils.GetLabel(b, "label_game_title")
@@ -185,7 +185,7 @@ func main() {
 		Configurator.ShareResourcePath(LogoFilePath), 210, 210, true)
 
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
 	showSideBar := !M.Config.Gtk.HideSidebar
@@ -301,19 +301,19 @@ func gameChanged(s *gtk.TreeSelection) {
 
 	value, e := ListStoreGames.GetValue(iter, GameColumnId)
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
 
 	id, e := value.GetString()
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
 
 	CurGame = manager.FindGameById(Games, id)
 	if CurGame == nil {
-		ui.ShowErrorDlgFatal("Game " + id + " has not found")
+		ui.ShowErrorDlgFatal("Game "+id+" has not found", WndMain)
 		return
 	}
 
@@ -326,9 +326,13 @@ func gameRowActivated() {
 	}
 
 	if !CurGame.Installed {
-		InstallGame(CurGame, BtnGameInstall)
+		if BtnGameInstall.IsSensitive() {
+			InstallGame(CurGame, BtnGameInstall)
+		}
 	} else if CurGame.IsUpdateAvailable() {
-		InstallGame(CurGame, BtnGameUpdate)
+		if BtnGameUpdate.IsSensitive() {
+			InstallGame(CurGame, BtnGameUpdate)
+		}
 	} else {
 		RunGame(CurGame)
 	}
@@ -357,7 +361,7 @@ func removeGameClicked(s *gtk.Button) {
 	// Set removing status in the list
 	iter, e := gtkutils.FindFirstIterInTreeSelection(ListStoreGames, GamesSelection)
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
 	ListStoreGames.SetValue(iter, GameColumnSizeHuman, CurGame.HumanSize()+" Removing...")

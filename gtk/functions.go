@@ -14,12 +14,12 @@ import (
 
 func RunGame(g *manager.Game) {
 	if M.InterpreterCommand() == "" {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.", WndMain)
 		return
 	}
 
 	if CurGame == nil {
-		ui.ShowErrorDlg("No running. No game selected.")
+		ui.ShowErrorDlg("No running. No game selected.", WndMain)
 		return
 	}
 
@@ -29,12 +29,12 @@ func RunGame(g *manager.Game) {
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if M.InterpreterCommand() == "" {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.", WndMain)
 		return
 	}
 
 	if CurGame == nil {
-		ui.ShowErrorDlg("No installing. No game selected.")
+		ui.ShowErrorDlg("No installing. No game selected.", WndMain)
 		return
 	}
 
@@ -60,8 +60,8 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 
 		_, e := glib.IdleAdd(func() {
 			if instErr != nil {
-				ui.ShowErrorDlg("Game hasn't installed (" + instErr.Error() +
-					"). Please check INSTEAD in the Settings.")
+				ui.ShowErrorDlg("Game hasn't installed ("+instErr.Error()+
+					"). Please check INSTEAD in the Settings.", WndMain)
 			}
 			RefreshSeveralGames([]manager.Game{*instGame})
 
@@ -116,7 +116,7 @@ func RefreshGames() {
 
 	Games, e = M.GetSortedGamesByDateDesc()
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
 
@@ -146,7 +146,7 @@ func RefreshSeveralGames(upGames []manager.Game) {
 
 	Games, e = M.GetSortedGamesByDateDesc()
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
 
@@ -167,13 +167,13 @@ func RefreshSeveralGames(upGames []manager.Game) {
 		for iter != nil {
 			value, e := ListStoreGames.GetValue(iter, GameColumnId)
 			if e != nil {
-				ui.ShowErrorDlgFatal(e.Error())
+				ui.ShowErrorDlgFatal(e.Error(), WndMain)
 				return
 			}
 
 			id, e := value.GetString()
 			if e != nil {
-				ui.ShowErrorDlgFatal(e.Error())
+				ui.ShowErrorDlgFatal(e.Error(), WndMain)
 				return
 			}
 
@@ -211,7 +211,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	path := m.InterpreterFinder.Find()
 
 	if path == nil {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)")
+		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)", WndMain)
 		return
 	}
 
@@ -220,7 +220,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	m.Config.InterpreterCommand = *path
 	e := c.SaveConfig(m.Config)
 	if e != nil {
-		ui.ShowErrorDlgFatal(e.Error())
+		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
 

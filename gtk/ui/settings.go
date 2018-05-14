@@ -97,18 +97,18 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 
 	e = b.AddFromFile(configurator.ShareResourcePath(settingsFormFilePath))
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ShowErrorDlgFatal(e.Error(), win.Window)
 	}
 
 	obj, e := b.GetObject("window_settings")
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ShowErrorDlgFatal(e.Error(), win.Window)
 	}
 
 	var ok bool
 	win.Window, ok = obj.(*gtk.Window)
 	if !ok {
-		ShowErrorDlgFatal("No settings window")
+		ShowErrorDlgFatal("No settings window", win.Window)
 	}
 
 	win.Manager = manager
@@ -141,7 +141,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	treeViewRepositories := gtkutils.GetTreeView(b, "treeview_repositories")
 	win.TrSlctnRepositories, e = treeViewRepositories.GetSelection()
 	if e != nil {
-		ShowErrorDlgFatal(e.Error())
+		ShowErrorDlgFatal(e.Error(), win.Window)
 	}
 
 	// About tab
@@ -205,7 +205,7 @@ func (win *SettingsWindow) readSettings() {
 func (win *SettingsWindow) setRepositoriesConfigFromListStore() {
 	repos, e := configRepositoriesFromListStore(win.ListStoreRepositories)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlg(e.Error(), win.Window)
 		return
 	}
 	win.Manager.Config.Repositories = repos
@@ -361,7 +361,7 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 		cacheErr := h.win.Manager.ClearCache()
 		_, e := glib.IdleAdd(func() {
 			if cacheErr != nil {
-				ShowErrorDlg(cacheErr.Error())
+				ShowErrorDlg(cacheErr.Error(), h.win.Window)
 			} else {
 				h.win.LblCacheInf.SetText("Cache has been cleared!")
 			}
@@ -382,13 +382,13 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 func (h *SettingsWindowHandlers) repositoriesNameEdited(s *gtk.CellRendererText, path, newText string) {
 	iter, e := gtkutils.GetIterFromTextPathInListStore(h.win.ListStoreRepositories, path)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlg(e.Error(), h.win.Window)
 		return
 	}
 
 	filteredName, e := manager.FilterRepositoryName(newText)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlg(e.Error(), h.win.Window)
 		return
 	}
 
@@ -400,7 +400,7 @@ func (h *SettingsWindowHandlers) repositoriesNameEdited(s *gtk.CellRendererText,
 func (h *SettingsWindowHandlers) repositoriesUrlEdited(s *gtk.CellRendererText, path, newText string) {
 	iter, e := gtkutils.GetIterFromTextPathInListStore(h.win.ListStoreRepositories, path)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlg(e.Error(), h.win.Window)
 		return
 	}
 
@@ -468,7 +468,7 @@ func (h *SettingsWindowHandlers) repositoryDownClicked() {
 func (h *SettingsWindowHandlers) repositoryDefaultsClicked() {
 	skeletonConfig, e := h.win.Configurator.GetSkeletonConfig()
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlg(e.Error(), h.win.Window)
 		return
 	}
 
@@ -485,7 +485,7 @@ func (h *SettingsWindowHandlers) settingsDeleted() {
 	// Auto save
 	e := h.win.Configurator.SaveConfig(h.win.Manager.Config)
 	if e != nil {
-		ShowErrorDlg(e.Error())
+		ShowErrorDlg(e.Error(), h.win.Window)
 		return
 	}
 

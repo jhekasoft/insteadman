@@ -6,15 +6,15 @@ import (
 	"os"
 )
 
-func ShowErrorDlgFatal(txt string) {
-	showErrorDlg(txt, true)
+func ShowErrorDlgFatal(txt string, parent *gtk.Window) {
+	showErrorDlg(txt, true, parent)
 }
 
-func ShowErrorDlg(txt string) {
-	showErrorDlg(txt, false)
+func ShowErrorDlg(txt string, parent *gtk.Window) {
+	showErrorDlg(txt, false, parent)
 }
 
-func showErrorDlg(txt string, fatal bool) {
+func showErrorDlg(txt string, fatal bool, parent *gtk.Window) {
 	log.Printf("Error: %v", txt)
 
 	dlg, _ := gtk.DialogNew()
@@ -33,7 +33,10 @@ func showErrorDlg(txt string, fatal bool) {
 	dlg.SetModal(true)
 	dlg.SetPosition(gtk.WIN_POS_CENTER)
 	dlg.SetResizable(false)
-	//dlg.SetTransientFor(window)
+
+	if parent != nil {
+		dlg.SetTransientFor(parent)
+	}
 
 	dlg.SetKeepAbove(true)
 	dlg.Run()
