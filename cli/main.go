@@ -93,7 +93,7 @@ func update(m *manager.Manager) {
 }
 
 func list(m *manager.Manager, args []string) {
-	games, e := m.GetSortedGames()
+	games, e := m.GetSortedGamesByDateDesc()
 	ExitIfError(e)
 
 	// Parse args without "list" command
@@ -317,8 +317,6 @@ func checkInterpreterAndReinit(m *manager.Manager, c *configurator.Configurator)
 }
 
 func printGames(games []manager.Game) {
-	fmt.Println("Games:")
-
 	for _, game := range games {
 		installed := ""
 		if game.Installed {
