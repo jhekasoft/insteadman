@@ -77,9 +77,10 @@ var (
 	SprtrSideBox *gtk.Separator
 	BxSideBox    *gtk.Box
 
-	ChckMenuItmSideBar *gtk.CheckMenuItem
-	MenuItmSettings    *gtk.MenuItem
-	MenuItmAbout       *gtk.MenuItem
+	MenuItmSortingReset *gtk.MenuItem
+	ChckMenuItmSideBar  *gtk.CheckMenuItem
+	MenuItmSettings     *gtk.MenuItem
+	MenuItmAbout        *gtk.MenuItem
 
 	PixBufGameDefaultImage *gdk.Pixbuf
 	PixBufGameImage        *gdk.Pixbuf
@@ -168,6 +169,7 @@ func main() {
 	SprtrSideBox = gtkutils.GetSeparator(b, "separator_side")
 	BxSideBox = gtkutils.GetBox(b, "box_side")
 
+	MenuItmSortingReset = gtkutils.GetMenuItem(b, "menuitem_sorting_reset")
 	ChckMenuItmSideBar = gtkutils.GetCheckMenuItem(b, "checkmenuitem_sidebar")
 	MenuItmSettings = gtkutils.GetMenuItem(b, "menuitem_settings")
 	MenuItmAbout = gtkutils.GetMenuItem(b, "menuitem_about")
@@ -178,14 +180,6 @@ func main() {
 
 	// Update repositories
 	updateClicked(BtnUpdate)
-	//if M.HasDownloadedRepositories() {
-	//	ClearFilterValues()
-	//	RefreshGames()
-	//	RefreshFilterValues()
-	//} else {
-	//	// Update repositories
-	//	updateClicked(BtnUpdate)
-	//}
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
 		Configurator.ShareResourcePath(LogoFilePath), 210, 210, true)
@@ -235,6 +229,10 @@ func main() {
 	BtnGameUpdate.Connect("clicked", updateGameClicked)
 	BtnGameRemove.Connect("clicked", removeGameClicked)
 
+	MenuItmSortingReset.Connect("activate", func() {
+		ListStoreGames.SetSortColumnId(gtk.SORT_COLUMN_UNSORTED, gtk.SORT_ASCENDING)
+		RefreshGames()
+	})
 	ChckMenuItmSideBar.Connect("toggled", sideBarToggled)
 	MenuItmSettings.Connect("activate", func() {
 		ui.ShowSettingWin(M, Configurator, version, WndMain)

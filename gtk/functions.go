@@ -114,7 +114,7 @@ func RefreshGames() {
 
 	log.Print("Refreshing games...")
 
-	Games, e = M.GetSortedGames()
+	Games, e = M.GetSortedGamesByDateDesc()
 	if e != nil {
 		ui.ShowErrorDlgFatal(e.Error())
 		return
@@ -144,7 +144,7 @@ func RefreshSeveralGames(upGames []manager.Game) {
 
 	log.Print("Refreshing several games...")
 
-	Games, e = M.GetSortedGames()
+	Games, e = M.GetSortedGamesByDateDesc()
 	if e != nil {
 		ui.ShowErrorDlgFatal(e.Error())
 		return

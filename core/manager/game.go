@@ -2,12 +2,93 @@ package manager
 
 import (
 	"../utils"
+	"github.com/pyk/byten"
+	"html"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
+
+type RepositoryGameList struct {
+	// XMLName xml.Name `xml:"game_list"`
+	GameList []RepositoryGame `xml:"game"`
+}
+
+type RepositoryGame struct {
+	// XMLName xml.Name `xml:"game"`
+	Name             string   `xml:"name"`
+	Title            string   `xml:"title"`
+	Version          string   `xml:"version"`
+	Url              string   `xml:"url"`
+	Size             int      `xml:"size"`
+	Lang             string   `xml:"lang"`
+	Descurl          string   `xml:"descurl"`
+	Author           string   `xml:"author"`
+	Description      string   `xml:"description"`
+	Image            string   `xml:"image"`
+	Langs            []string `xml:"langs>lang"`
+	Date             string   `xml:"date"`
+	Timestamp        int64    `xml:"-"`
+	InstalledVersion string   `xml:"-"`
+	RepositoryName   string   `xml:"-"`
+	Installed        bool     `xml:"-"`
+	OnlyInstalled    bool     `xml:"-"`
+	//IsUpdateExist    bool     `xml:"-"`
+	Languages []string `xml:"-"`
+	Id        string   `xml:"-"`
+}
+
+type Game RepositoryGame
+
+func generateGameId(repository string, g *Game) string {
+	return repository + "/" + g.Name + "/" + strings.Join(g.Languages, "_")
+}
+
+func (g *Game) addGameAdditionalData(repositoryName string) {
+	date, e := time.Parse("2006-01-02", g.Date)
+	if e == nil {
+		g.Timestamp = date.Unix()
+	}
+
+	if len(g.Langs) > 0 {
+		g.Languages = g.Langs
+	} else {
+		g.Languages = strings.Split(g.Lang, ",")
+	}
+
+	g.RepositoryName = repositoryName
+
+	g.Title = html.UnescapeString(g.Title)
+
+	if g.Description != "" {
+		g.Description = html.UnescapeString(g.Description)
+	}
+
+	g.Id = generateGameId(repositoryName, g)
+}
+
+func (g *Game) HumanSize() string {
+	if g.Size > 0 {
+		return byten.Size(int64(g.Size))
+	}
+
+	return ""
+}
+
+func (g *Game) HumanVersion() string {
+	if g.IsUpdateAvailable() {
+		return g.InstalledVersion + " (" + g.Version + ")"
+	}
+
+	return g.Version
+}
+
+func (g *Game) IsUpdateAvailable() bool {
+	return g.InstalledVersion != "" && g.InstalledVersion != g.Version
+}
 
 func ReadLocalGameInfo(path string, info os.FileInfo) Game {
 	var e error

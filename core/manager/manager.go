@@ -6,8 +6,6 @@ import (
 	"../utils"
 	"encoding/xml"
 	"errors"
-	"github.com/pyk/byten"
-	"html"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -20,83 +18,15 @@ import (
 	"strings"
 )
 
-type RepositoryGameList struct {
-	// XMLName xml.Name `xml:"game_list"`
-	GameList []RepositoryGame `xml:"game"`
-}
-
-type RepositoryGame struct {
-	// XMLName xml.Name `xml:"game"`
-	Name             string   `xml:"name"`
-	Title            string   `xml:"title"`
-	Version          string   `xml:"version"`
-	Url              string   `xml:"url"`
-	Size             int      `xml:"size"`
-	Lang             string   `xml:"lang"`
-	Descurl          string   `xml:"descurl"`
-	Author           string   `xml:"author"`
-	Description      string   `xml:"description"`
-	Image            string   `xml:"image"`
-	Langs            []string `xml:"langs>lang"`
-	InstalledVersion string   `xml:"-"`
-	RepositoryName   string   `xml:"-"`
-	Installed        bool     `xml:"-"`
-	OnlyInstalled    bool     `xml:"-"`
-	//IsUpdateExist    bool     `xml:"-"`
-	Languages []string `xml:"-"`
-	Id        string   `xml:"-"`
-}
-
-type Game RepositoryGame
-
-func generateGameId(repository string, g *Game) string {
-	return repository + "/" + g.Name + "/" + strings.Join(g.Languages, "_")
-}
-
-func (g *Game) addGameAdditionalData(repositoryName string) {
-	if len(g.Langs) > 0 {
-		g.Languages = g.Langs
-	} else {
-		g.Languages = strings.Split(g.Lang, ",")
-	}
-
-	g.RepositoryName = repositoryName
-
-	g.Title = html.UnescapeString(g.Title)
-
-	if g.Description != "" {
-		g.Description = html.UnescapeString(g.Description)
-	}
-
-	g.Id = generateGameId(repositoryName, g)
-}
-
-func (g *Game) HumanSize() string {
-	if g.Size > 0 {
-		return byten.Size(int64(g.Size))
-	}
-
-	return ""
-}
-
-func (g *Game) HumanVersion() string {
-	if g.IsUpdateAvailable() {
-		return g.InstalledVersion + " (" + g.Version + ")"
-	}
-
-	return g.Version
-}
-
-func (g *Game) IsUpdateAvailable() bool {
-	return g.InstalledVersion != "" && g.InstalledVersion != g.Version
-}
-
 const (
 	//updateCheckUrl = "https://raw.githubusercontent.com/jhekasoft/insteadman/master/version.json"
 	cacheDirName        = "cache"
 	repositoriesDirName = "repositories"
 	tempGamesDirName    = "temp_games"
 	gameImagesDirName   = "game_images"
+
+	SortByTitleAsc = "title"
+	SortByDateDesc = "date"
 )
 
 type Manager struct {
@@ -251,23 +181,38 @@ func (m *Manager) GetMergedGames() ([]Game, error) {
 	return games, nil
 }
 
+func (m *Manager) GetSortedGames() ([]Game, error) {
+	return m.GetSortedGamesBy(SortByTitleAsc)
+}
+
+func (m *Manager) GetSortedGamesByDateDesc() ([]Game, error) {
+	return m.GetSortedGamesBy(SortByDateDesc)
+}
+
 //type GameTitleSorter []Game
 //
 //func (a GameTitleSorter) Len() int           { return len(a) }
 //func (a GameTitleSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 //func (a GameTitleSorter) Less(i, j int) bool { return a[i].Title < a[j].Title }
 
-func (m *Manager) GetSortedGames() ([]Game, error) {
+func (m *Manager) GetSortedGamesBy(sortBy string) ([]Game, error) {
 	games, e := m.GetMergedGames()
 
 	if e != nil {
 		return nil, e
 	}
 
-	//sort.Sort(GameTitleSorter(games))
-	sort.Slice(games, func(i, j int) bool {
-		return strings.ToLower(games[i].Title) < strings.ToLower(games[j].Title)
-	})
+	switch sortBy {
+	case SortByTitleAsc:
+		//sort.Sort(GameTitleSorter(games))
+		sort.Slice(games, func(i, j int) bool {
+			return strings.ToLower(games[i].Title) < strings.ToLower(games[j].Title)
+		})
+	case SortByDateDesc:
+		sort.Slice(games, func(i, j int) bool {
+			return games[i].Timestamp > games[j].Timestamp
+		})
+	}
 
 	return games, nil
 }
