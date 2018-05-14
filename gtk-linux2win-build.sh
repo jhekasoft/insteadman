@@ -30,7 +30,10 @@ dynamic_libs=('libatk-1.0-0.dll' 'libgdk_pixbuf-2.0-0.dll' 'libjpeg-8.dll'
 icons=('document-save-symbolic.*' 'pan-down-symbolic.*'
        'edit-clear-symbolic.*' 'pan-up-symbolic.*'
        'edit-delete-symbolic.*' 'view-refresh-symbolic.*'
-       'media-playback-start-symbolic.*')
+       'media-playback-start-symbolic.*' 'open-menu-symbolic.*'
+       'edit-clear-all-symbolic.*' 'list-add-symbolic.*'
+       'list-remove-symbolic.*' 'go-up-symbolic.*'
+       'go-down-symbolic.*')
 
 icons_dirs=('16x16' '24x24' '32x32' '512x512' '8x8' 'scalable'
             '22x22' '256x256' '48x48' '64x64' '96x96')
