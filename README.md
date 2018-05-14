@@ -6,7 +6,7 @@ InsteadMan 3
 
 This is new version that is writing with go lang
 
-Old version: https://github.com/jhekasoft/insteadman
+Old version: https://github.com/jhekasoft/insteadman2
 
 GUI (GTK+ 3)
 ---
