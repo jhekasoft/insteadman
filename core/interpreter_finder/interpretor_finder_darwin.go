@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const builtinRelativeFilePath = "../../MacOS/instead/sdl-instead"
+const builtinRelativeFilePath = "sdl-instead"
 
 func exactFilePaths() []string {
 	// Add /Application path

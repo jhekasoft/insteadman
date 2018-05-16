@@ -33,6 +33,8 @@ const (
 
 	FontWeightNormal = 400
 	FontWeightBold   = 700
+
+	EnvDataPath = "DATA_PATH"
 )
 
 var (
@@ -106,17 +108,19 @@ func main() {
 		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
-	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir}
+	dataPath := os.Getenv(EnvDataPath)
+
+	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir, DataPath: dataPath}
 	config, e := Configurator.GetConfig()
 	if e != nil {
 		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
 
-	finder := new(interpreterFinder.InterpreterFinder)
+	finder := &interpreterFinder.InterpreterFinder{CurrentDir: currentDir}
 
 	M = &manager.Manager{Config: config, InterpreterFinder: finder}
 
-	e = b.AddFromFile(Configurator.ShareResourcePath(MainFormFilePath))
+	e = b.AddFromFile(Configurator.DataResourcePath(MainFormFilePath))
 	if e != nil {
 		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 	}
@@ -182,7 +186,7 @@ func main() {
 	updateClicked(BtnUpdate)
 
 	PixBufGameDefaultImage, e = gdk.PixbufNewFromFileAtScale(
-		Configurator.ShareResourcePath(LogoFilePath), 210, 210, true)
+		Configurator.DataResourcePath(LogoFilePath), 210, 210, true)
 
 	if e != nil {
 		ui.ShowErrorDlgFatal(e.Error(), WndMain)

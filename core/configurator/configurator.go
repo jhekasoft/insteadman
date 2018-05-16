@@ -55,6 +55,7 @@ const (
 type Configurator struct {
 	FilePath   string
 	CurrentDir string
+	DataPath   string
 }
 
 func (c *Configurator) insteadManDir() string {
@@ -93,22 +94,28 @@ func (c *Configurator) gamesDir() string {
 }
 
 func (c *Configurator) sceletonConfigPath() string {
-	return c.ShareResourcePath(filepath.Join(skeletonDir, configName))
+	return c.DataResourcePath(filepath.Join(skeletonDir, configName))
 }
 
-func (c *Configurator) ShareResourcePath(relPath string) string {
-	// Add current dir to search
-	sharePathList := []string{c.CurrentDir}
+func (c *Configurator) DataResourcePath(relPath string) string {
+	var dataPathList []string
 
-	// Add UNIX-path to search
-	const unixSharePath = "share/insteadman"
-	unixSharedDir, e := filepath.Abs(filepath.Join(c.CurrentDir, "..", unixSharePath))
-	if e == nil {
-		sharePathList = append(sharePathList, unixSharedDir)
+	if c.DataPath != "" {
+		dataPathList = append(dataPathList, c.DataPath)
+	} else { // default path if empty
+		// Add current dir to search
+		dataPathList = append(dataPathList, c.CurrentDir)
+
+		// Add UNIX-path to search
+		const unixDataPath = "share/insteadman"
+		unixDataDir, e := filepath.Abs(filepath.Join(c.CurrentDir, "..", unixDataPath))
+		if e == nil {
+			dataPathList = append(dataPathList, unixDataDir)
+		}
 	}
 
 	// Search resource in all the path
-	for _, sharePath := range sharePathList {
+	for _, sharePath := range dataPathList {
 		absPath := filepath.Join(sharePath, relPath)
 
 		_, e := os.Stat(absPath)

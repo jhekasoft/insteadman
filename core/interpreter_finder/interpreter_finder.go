@@ -4,14 +4,16 @@ import (
 	"../configurator"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
 type InterpreterFinder struct {
+	CurrentDir string
 }
 
 func (f *InterpreterFinder) HaveBuiltIn() bool {
-	_, e := os.Stat(builtinRelativeFilePath)
+	_, e := os.Stat(filepath.Join(f.CurrentDir, builtinRelativeFilePath))
 	exists := !os.IsNotExist(e)
 
 	if exists && e == nil {
@@ -23,7 +25,7 @@ func (f *InterpreterFinder) HaveBuiltIn() bool {
 
 func (f *InterpreterFinder) FindBuiltin() (path string) {
 	if f.HaveBuiltIn() {
-		path = builtinRelativeFilePath
+		path = filepath.Join(f.CurrentDir, builtinRelativeFilePath)
 	}
 	return
 }

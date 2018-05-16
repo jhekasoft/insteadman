@@ -300,7 +300,7 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 	config, e := c.GetConfig()
 	ExitIfError(e)
 
-	finder := new(interpreterFinder.InterpreterFinder)
+	finder := &interpreterFinder.InterpreterFinder{CurrentDir: currentDir}
 
 	m := manager.Manager{Config: config, InterpreterFinder: finder}
 

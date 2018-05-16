@@ -95,7 +95,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 		log.Fatalf("Error: %v", e)
 	}
 
-	e = b.AddFromFile(configurator.ShareResourcePath(settingsFormFilePath))
+	e = b.AddFromFile(configurator.DataResourcePath(settingsFormFilePath))
 	if e != nil {
 		ShowErrorDlgFatal(e.Error(), win.Window)
 	}
