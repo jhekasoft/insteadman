@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"../os_integration"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
@@ -37,8 +38,11 @@ func showErrorDlg(txt string, fatal bool, parent *gtk.Window) {
 	if parent != nil {
 		dlg.SetTransientFor(parent)
 	}
-
 	dlg.SetKeepAbove(true)
+
+	// OS integrations for window
+	os_integration.OsIntegrateDialog(dlg)
+
 	dlg.Run()
 	dlg.Destroy()
 	if fatal {

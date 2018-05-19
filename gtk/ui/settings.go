@@ -3,6 +3,7 @@ package ui
 import (
 	"../../core/configurator"
 	"../../core/manager"
+	"../os_integration"
 	gtkutils "../utils"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -172,6 +173,9 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
 	win.Window.SetTitle("Settings")
+
+	// OS integrations for window
+	os_integration.OsIntegrateWindow(win.Window)
 
 	return win
 }

@@ -454,7 +454,11 @@ func (m *Manager) InterpreterCommand() string {
 		}
 	}
 
-	return configurator.ExpandInterpreterCommand(m.Config.InterpreterCommand)
+	if m.Config.InterpreterCommand != "" {
+		return configurator.ExpandInterpreterCommand(m.Config.InterpreterCommand)
+	}
+
+	return ""
 }
 
 func FilterRepositoryName(name string) (filteredName string, e error) {

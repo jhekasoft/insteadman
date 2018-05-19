@@ -18,7 +18,7 @@
          app. If you leave out the path, the current directory is
          used. Note the usage of an environment variable here again.
     -->
-    <destination overwrite="yes">${env:HOME}/Desktop</destination>
+    <destination overwrite="yes">${project}/../../../build</destination>
 
     <image>
       <!-- Not implemented yet (DMG image). -->
@@ -79,9 +79,9 @@
        want to copy in to the bundle. The "dest" attribute is
        optional, as usual. Bundler will find all translations of that
        library/program under the indicated directory and copy them.-->
-  <translations  name="gtk30">
+  <!-- translations  name="gtk30">
     ${prefix}/share/locale
-  </translations>
+  </translations -->
 
 
   <!-- Data to copy in, usually Glade/UI files, images, sounds files
@@ -96,12 +96,18 @@
 
   <!-- Copy in the themes data. You may want to trim this to save space
        in your bundle. -->
-  <data>
+  <!-- data>
     ${prefix}/share/themes
+  </data -->
+
+  <!-- icons -->
+  <data dest="${bundle}/Contents/Resources/share/icons">
+    ${project}/../../../build/darwin-amd64/insteadman-gtk/tmp/icons/share/icons
   </data>
 
-  <data>
-    ${prefix}/share/icons
+  <!-- INSTEAD -->
+  <data dest="${bundle}/Contents">
+    ${project}/../../../build/darwin-amd64/insteadman-gtk/tmp/Contents
   </data>
 
   <!-- Copy icons. Note that the .icns file is an Apple format which

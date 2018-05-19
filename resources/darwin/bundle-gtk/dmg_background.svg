@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="dmg_background.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient6073"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#8fceff;stop-opacity:1;"
+         offset="0"
+         id="stop6075" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5659"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5661" />
+    </linearGradient>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter8396"
+       x="-0.14832135"
+       width="1.2966427"
+       y="-0.27701988"
+       height="1.5540398">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="8.6128653"
+         id="feGaussianBlur8398" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.9258161"
+     inkscape:cx="353.63716"
+     inkscape:cy="827.38728"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="851"
+     inkscape:window-x="0"
+     inkscape:window-y="1"
+     inkscape:window-maximized="1"
+     inkscape:object-paths="false" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#fbffe0;fill-opacity:1"
+       id="rect3403"
+       width="508"
+       height="337"
+       x="45.999992"
+       y="49.576485"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#8fceff;fill-opacity:1;fill-rule:evenodd;stroke:#00599d;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 316.68785,241.27746 c 0,0 -83.18538,-2.66034 -85.1587,0.51926 -3.8492,6.20222 -3.77993,27.8252 0.51926,29.59784 5.66705,2.33663 83.60092,0.51926 83.60092,0.51926 0,0 -0.66505,15.22194 0,19.7319 1.37807,9.34521 50.73701,-22.17456 52.4453,-32.71341 -0.96505,-9.53984 -51.40678,-48.94543 -51.40678,-38.42527 z"
+       id="path3401"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csscscsc" />
+    <path
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path6095"
+       d="m 316.68785,241.27746 -85.1587,0.51926 0.51926,29.59784 83.60092,0.51926 0,19.7319 52.4453,-32.71341 -51.40678,-38.42527 z"
+       style="display:none;opacity:1;fill:#8fceff;fill-opacity:1;fill-rule:evenodd;stroke:#00599d;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3405"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'.Damascus PUA';-inkscape-font-specification:'.Damascus PUA';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(9.2303049,0)"><flowRegion
+         id="flowRegion3407"><rect
+           id="rect3409"
+           width="229.11565"
+           height="30.842499"
+           x="176.24283"
+           y="86.698395"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'.Damascus PUA';-inkscape-font-specification:'.Damascus PUA'" /></flowRegion><flowPara
+         id="flowPara3411"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Hiragino Maru Gothic Pro';-inkscape-font-specification:'Hiragino Maru Gothic Pro'">InsteadMan</flowPara></flowRoot>    <path
+       sodipodi:nodetypes="csscscsc"
+       inkscape:connector-curvature="0"
+       id="path8142"
+       d="m 316.68785,241.27746 c 0,0 -83.18538,-2.66034 -85.1587,0.51926 -3.8492,6.20222 -3.77993,27.8252 0.51926,29.59784 5.66705,2.33663 83.60092,0.51926 83.60092,0.51926 0,0 -0.66505,15.22194 0,19.7319 1.37807,9.34521 50.73701,-22.17456 52.4453,-32.71341 -0.96505,-9.53984 -51.40678,-48.94543 -51.40678,-38.42527 z"
+       style="opacity:1;fill:#8fceff;fill-opacity:1;fill-rule:evenodd;stroke:#00599d;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter8396)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

@@ -76,6 +76,26 @@ gtk-linux2win:
 gtk-darwin64:
 	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} darwin amd64
 
+gtk-darwin-bundle: # build it from 'jhbuild shell'
+	${MAKE} PREFIX="${JHBUILD_PREFIX}" install
+	./gtk-darwin-bundle-prepare.sh ./gtk insteadman-gtk ${VERSION}
+	gtk-mac-bundler ./resources/darwin/bundle-gtk/insteadman.bundle
+
+	# Create DMG
+	#test -f "./build/InsteadMan-${VERSION}.dmg" && rm "./build/InsteadMan-${VERSION}.dmg"
+	${HOME}/app/create-dmg/create-dmg \
+    --volname "InsteadMan ${VERSION}" \
+    --volicon "./resources/images/logo.icns" \
+    --background "./resources/darwin/bundle-gtk/dmg_background.png" \
+    --window-pos 200 120 \
+	--window-size 508 337 \
+	--icon-size 64 \
+	--icon "InsteadMan.app" 114 200 \
+	--hide-extension "InsteadMan.app" \
+	--app-drop-link 390 200 \
+	"./build/InsteadMan-${VERSION}.dmg" \
+	"./build/InsteadMan.app"
+
 test:
 	go test ./...
 

@@ -5,6 +5,7 @@ import (
 	"../core/interpreter_finder"
 	"../core/manager"
 	"../core/utils"
+	"./os_integration"
 	"./ui"
 	gtkutils "./utils"
 	"github.com/gotk3/gotk3/gdk"
@@ -90,6 +91,9 @@ var (
 
 func main() {
 	runtime.LockOSThread()
+
+	// OS integrations
+	os_integration.OsIntegrate()
 
 	gtk.Init(nil)
 
@@ -178,7 +182,7 @@ func main() {
 	MenuItmSettings = gtkutils.GetMenuItem(b, "menuitem_settings")
 	MenuItmAbout = gtkutils.GetMenuItem(b, "menuitem_about")
 
-	if M.Config.InterpreterCommand == "" {
+	if M.InterpreterCommand() == "" {
 		findInterpreter(M, Configurator)
 	}
 
@@ -255,6 +259,9 @@ func main() {
 
 	WndMain.SetTitle(Title)
 	WndMain.Show()
+
+	// OS integrations for window
+	os_integration.OsIntegrateWindow(WndMain)
 
 	gtk.Main()
 }
