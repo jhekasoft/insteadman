@@ -7,7 +7,7 @@ import "github.com/gotk3/gotk3/gtk"
 func OsIntegrate() {
 }
 
-func OsIntegrateWindows(windows *gtk.Window) {
+func OsIntegrateWindow(win *gtk.Window) {
 }
 
 func OsIntegrateDialog(win *gtk.Dialog) {
