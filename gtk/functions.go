@@ -3,6 +3,7 @@ package main
 import (
 	"../core/configurator"
 	"../core/manager"
+	"../core/utils"
 	"./ui"
 	gtkutils "./utils"
 	"github.com/gotk3/gotk3/gdk"
@@ -50,9 +51,16 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	}
 	ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" Installing...")
 
+	installProgress := func(size uint64) {
+		percents := utils.Percents(size, uint64(g.Size))
+		glib.IdleAdd(func() {
+			ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" Installing... "+percents)
+		})
+	}
+
 	go func() {
 		instGame := g
-		instErr := M.InstallGame(instGame)
+		instErr := M.InstallGame(instGame, installProgress)
 
 		if instErr == nil {
 			log.Print("Game has installed.")

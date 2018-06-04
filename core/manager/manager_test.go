@@ -64,7 +64,7 @@ func TestInstallGame(t *testing.T) {
 
 	man := Manager{Config: config, InterpreterFinder: finder}
 
-	e = man.InstallGame(&Game{Name: testGameName, Url: testGameUrl})
+	e = man.InstallGame(&Game{Name: testGameName, Url: testGameUrl}, nil)
 
 	assert.NoError(t, e)
 }

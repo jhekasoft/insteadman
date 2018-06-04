@@ -335,6 +335,41 @@ func downloadFileSimple(fileName, url string) error {
 	return e
 }
 
+type WriteCounter struct {
+	Total     uint64
+	progressF func(uint64) // progress function
+}
+
+func (wc *WriteCounter) Write(p []byte) (int, error) {
+	n := len(p)
+	wc.Total += uint64(n)
+	if wc.progressF != nil {
+		wc.progressF(wc.Total)
+	}
+	return n, nil
+}
+
+func downloadFile(fileName, url string, progressF func(uint64)) error {
+	// Create the file
+	out, e := os.Create(fileName)
+	if e != nil {
+		return e
+	}
+	defer out.Close()
+
+	// Download the data
+	resp, e := http.Get(url)
+	if e != nil {
+		return e
+	}
+	defer resp.Body.Close()
+
+	counter := &WriteCounter{progressF: progressF}
+	_, e = io.Copy(out, io.TeeReader(resp.Body, counter))
+
+	return e
+}
+
 func (m *Manager) GetGameImage(game *Game) (imagePath string, e error) {
 	if game == nil || game.Image == "" || game.Id == "" {
 		return
@@ -367,7 +402,7 @@ func (m *Manager) GetGameImage(game *Game) (imagePath string, e error) {
 	return imagePath, e
 }
 
-func (m *Manager) InstallGame(game *Game) error {
+func (m *Manager) InstallGame(game *Game, progressF func(uint64)) error {
 	// todo: idf
 
 	tempGamesDir := filepath.Join(m.CacheDir(), tempGamesDirName)
@@ -380,7 +415,7 @@ func (m *Manager) InstallGame(game *Game) error {
 		fileName = fileNameAbs
 	}
 
-	e = downloadFileSimple(fileName, game.Url)
+	e = downloadFile(fileName, game.Url, progressF)
 	if e != nil {
 		return e
 	}

@@ -136,12 +136,17 @@ func install(m *manager.Manager, args []string) {
 
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
-	fmt.Printf("Downloading and installing game %s...\n", game.Title)
+	fmt.Printf("Downloading and installing game %s...", game.Title)
 
-	e = m.InstallGame(&game)
+	installProgress := func(size uint64) {
+		percents := utils.Percents(size, uint64(game.Size))
+		fmt.Printf("\rDownloading and installing game %s... %s", game.Title, percents)
+	}
+
+	e = m.InstallGame(&game, installProgress)
 	ExitIfError(e)
 
-	fmt.Printf("Game %s has installed.\n", game.Title)
+	fmt.Printf("\nGame %s has installed.\n", game.Title)
 }
 
 func show(m *manager.Manager, args []string) {

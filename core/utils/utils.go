@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -34,4 +35,9 @@ func PathExist(path string) bool {
 	}
 
 	return false
+}
+
+func Percents(value, total uint64) string {
+	percents := int(float64(value) / float64(total) * float64(100))
+	return fmt.Sprintf("%d", percents) + "%"
 }
