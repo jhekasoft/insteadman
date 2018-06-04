@@ -38,7 +38,7 @@ cp -r 'resources/gtk' $resources_path
 cp 'resources/images/logo.png' $images_path
 
 # Add README
-readme_name='resources/gtk/readme/windows/README.txt'
+readme_name='resources/gtk/readme/unix/README.txt'
 cp $readme_name $output_path
 
 # Add LICENSE
