@@ -39,3 +39,7 @@ mkdir -p $tmp_resources_path
 cp -r $instead_app_path'/Contents/Frameworks' $tmp_contents_path'/'
 cp -r $instead_app_path'/Contents/Resources/__private__' $tmp_resources_path'/'
 cp $instead_app_path'/Contents/MacOS/sdl-instead' $tmp_macos_path'/sdl-instead'
+
+# Update version in plist
+plist_path="./resources/darwin/bundle-gtk/Info-insteadman.plist"
+sed -e "s/{{version}}/$version/g" "$plist_path.in" > $plist_path
