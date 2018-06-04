@@ -31,3 +31,12 @@ do
         cp $theme_path'/'$icon_dir'/actions/'$icon $theme_output_path'/'$icon_dir'/actions'
     done
 done
+
+# Copy spinner icon
+loader_icon='process-working-symbolic.svg'
+mkdir -p $theme_output_path'/scalable-up-to-32/status'
+cp $theme_path'/scalable-up-to-32/status/'$loader_icon $theme_output_path'/scalable-up-to-32/status/'$loader_icon
+
+# Copy theme file
+theme_file='index.theme'
+cp $theme_path'/'$theme_file $theme_output_path'/'$theme_file

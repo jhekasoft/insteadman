@@ -109,17 +109,7 @@ do
 done
 
 # Copy icons
-theme_output_path=$output_path'/share/icons/Adwaita'
-theme_path=$mingw_path'/share/icons/Adwaita'
-for icon_dir in "${icons_dirs[@]}"
-do
-    mkdir -p $theme_output_path'/'$icon_dir'/actions'
-
-    for icon in "${icons[@]}"
-    do
-        cp $theme_path'/'$icon_dir'/actions/'$icon $theme_output_path'/'$icon_dir'/actions'
-    done
-done
+./gtk-copy-icons.sh $mingw_path $output_path
 
 # Create archives for distributing
 cd $output_base_path

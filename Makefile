@@ -83,7 +83,8 @@ gtk-darwin-bundle: # build it from 'jhbuild shell'
 
 	# Create DMG
 	#test -f "./build/InsteadMan-${VERSION}.dmg" && rm "./build/InsteadMan-${VERSION}.dmg"
-	${HOME}/app/create-dmg/create-dmg \
+	#${HOME}/app/create-dmg/create-dmg \
+	create-dmg \
     --volname "InsteadMan ${VERSION}" \
     --volicon "./resources/images/logo.icns" \
     --background "./resources/darwin/bundle-gtk/dmg_background.png" \
