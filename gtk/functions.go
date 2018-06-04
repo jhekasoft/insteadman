@@ -54,7 +54,7 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	installProgress := func(size uint64) {
 		percents := utils.Percents(size, uint64(g.Size))
 		glib.IdleAdd(func() {
-			ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" Installing... "+percents)
+			ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" "+percents+" Installing...")
 		})
 	}
 
