@@ -44,6 +44,7 @@
   <object class="GtkWindow" id="window_settings">
     <property name="can_focus">False</property>
     <property name="window_position">center-on-parent</property>
+    <property name="icon_name">insteadman</property>
     <child>
       <placeholder/>
     </child>

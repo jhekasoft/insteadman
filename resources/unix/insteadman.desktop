@@ -9,5 +9,6 @@ Comment[uk]=INSTEAD менеджер
 Exec=/usr/bin/insteadman-gtk
 Icon=insteadman
 Terminal=false
+StartupWMClass=insteadman-gtk
 Type=Application
 Categories=Application;Game;

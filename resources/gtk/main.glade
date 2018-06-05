@@ -127,6 +127,7 @@
   <object class="GtkWindow" id="window_main">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
+    <property name="icon_name">insteadman</property>
     <child type="titlebar">
       <placeholder/>
     </child>
