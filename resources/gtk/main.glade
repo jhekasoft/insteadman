@@ -94,7 +94,6 @@
         <property name="label" translatable="yes">Sidebar</property>
         <property name="use_underline">True</property>
         <accelerator key="i" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-        <accelerator key="Cyrillic_sha" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
     <child>
@@ -110,7 +109,6 @@
         <property name="label" translatable="yes">Settings...</property>
         <property name="use_underline">True</property>
         <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-        <accelerator key="Cyrillic_yeru" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
     <child>
@@ -120,7 +118,6 @@
         <property name="label" translatable="yes">About...</property>
         <property name="use_underline">True</property>
         <accelerator key="a" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-        <accelerator key="Cyrillic_ef" signal="activate" modifiers="GDK_CONTROL_MASK"/>
       </object>
     </child>
   </object>
@@ -198,7 +195,6 @@
                     <property name="image">imagerefresh</property>
                     <property name="always_show_image">True</property>
                     <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                    <accelerator key="Cyrillic_ka" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
