@@ -36,8 +36,8 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">instead-games</col>
-        <col id="1" translatable="yes">https://test.com/dfdf/fdfdf.xml</col>
+        <col id="0">instead-games</col>
+        <col id="1">https://test.com/dfdf/fdfdf.xml</col>
       </row>
     </data>
   </object>
@@ -188,7 +188,7 @@
                       <object class="GtkLabel" id="label_instead_inf">
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">INSTEAD 3.2.1 has found!</property>
+                        <property name="label">INSTEAD 3.2.1 has found!</property>
                         <attributes>
                           <attribute name="style" value="italic"/>
                         </attributes>
@@ -233,7 +233,7 @@
                         <child>
                           <object class="GtkLabel" id="label_cache_inf">
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Cache has been clean</property>
+                            <property name="label">Cache has been clean</property>
                             <attributes>
                               <attribute name="style" value="italic"/>
                             </attributes>
@@ -267,7 +267,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">/</property>
+                        <property name="label">/</property>
                         <property name="selectable">True</property>
                       </object>
                       <packing>
@@ -524,7 +524,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">3.0.2</property>
+                            <property name="label">3.0.2</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -561,7 +561,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">MIT</property>
+                            <property name="label">MIT</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -574,7 +574,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">http://jhekasoft.github.io/insteadman/</property>
+                            <property name="label">http://jhekasoft.github.io/insteadman/</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -594,7 +594,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">© 2015-2018 InsteadMan</property>
+                        <property name="label">© 2015-2018 InsteadMan</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>

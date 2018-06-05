@@ -390,7 +390,7 @@
               <object class="GtkLabel" id="label_game_title">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">InsteadMan</property>
+                <property name="label">InsteadMan</property>
                 <property name="justify">center</property>
                 <property name="wrap">True</property>
                 <attributes>
@@ -469,7 +469,7 @@
                   <object class="GtkLabel" id="label_game_repo">
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Repository</property>
-                    <property name="label" translatable="yes">official</property>
+                    <property name="label">official</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -492,7 +492,7 @@
                   <object class="GtkLabel" id="label_game_lang">
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Language</property>
-                    <property name="label" translatable="yes">en</property>
+                    <property name="label">en</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -516,7 +516,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Version</property>
-                    <property name="label" translatable="yes">0.1</property>
+                    <property name="label">0.1</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -543,7 +543,7 @@
                       <object class="GtkLabel" id="label_game_desc">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Desc</property>
+                        <property name="label">Desc</property>
                         <property name="wrap">True</property>
                         <property name="selectable">True</property>
                       </object>

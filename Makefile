@@ -14,6 +14,7 @@ insteadman-gtk-deps:
 	go get github.com/ghodss/yaml
 	go get github.com/pyk/byten
 	go get github.com/gotk3/gotk3/...
+	go get github.com/gosexy/gettext
 
 insteadman:
 	${MAKE} insteadman-deps
@@ -70,6 +71,15 @@ gtk-linux2win-deps:
     GOARCH=386 \
     go install github.com/gotk3/gotk3/gtk
 
+	CGO_LDFLAGS_ALLOW=".*" \
+    CGO_LDFLAGS="-lintl" \
+    PKG_CONFIG_PATH=/usr/i686-w64-mingw32/lib/pkgconfig \
+    CGO_ENABLED=1 \
+    CC=i686-w64-mingw32-cc \
+    GOOS=windows \
+    GOARCH=386 \
+    go install github.com/gosexy/gettext
+
 gtk-linux2win:
 	./gtk-linux2win-build.sh ./gtk insteadman-gtk ${VERSION}
 
@@ -96,6 +106,13 @@ gtk-darwin-bundle: # build it from 'jhbuild shell'
 	--app-drop-link 390 200 \
 	"./build/InsteadMan-${VERSION}.dmg" \
 	"./build/InsteadMan.app"
+
+prepare-i18n:
+	#intltool-extract --type=gettext/glade resources/gtk/main.glade
+	#intltool-extract --type=gettext/glade resources/gtk/settings.glade
+
+	xgettext --sort-output --keyword=translatable -o main.glade.pot resources/gtk/main.glade
+	xgettext --sort-output --keyword=translatable -o settings.glade.pot resources/gtk/settings.glade
 
 test:
 	go test ./...

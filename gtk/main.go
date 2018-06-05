@@ -14,6 +14,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"github.com/gosexy/gettext"
 )
 
 const (
@@ -94,6 +95,9 @@ func main() {
 
 	// OS integrations
 	os_integration.OsIntegrate()
+
+	gettext.BindTextdomain("insteadman", "./")
+	gettext.Textdomain("insteadman")
 
 	gtk.Init(nil)
 

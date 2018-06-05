@@ -81,6 +81,14 @@ env CGO_ENABLED=1 \
 	GOARCH=$GOARCH \
 	go build -ldflags "-H=windowsgui -s -w -X main.version=$version" -o $output_name $package
 
+if [ $? -ne 0 ]; then
+    # Remove .syso
+    rm $package'/'$syso_name
+
+    echo 'An error has occurred! Aborting the script execution...'
+    exit 1
+fi
+
 # Remove .syso
 rm $package'/'$syso_name
 
