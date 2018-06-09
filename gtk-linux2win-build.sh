@@ -79,7 +79,7 @@ env CGO_ENABLED=1 \
 	CC=i686-w64-mingw32-cc \
 	GOOS=$GOOS \
 	GOARCH=$GOARCH \
-	go build -ldflags "-s -w -X main.version=$version" -o $output_name $package
+	go build -ldflags "-H=windowsgui -s -w -X main.version=$version" -o $output_name $package
 
 if [ $? -ne 0 ]; then
     # Remove .syso
@@ -101,6 +101,7 @@ images_path=$resources_path'/images'
 mkdir $resources_path
 mkdir $images_path
 cp -r 'resources/gtk' $resources_path
+cp -r 'resources/locale' $resources_path
 cp 'resources/images/logo.png' $images_path
 cp -r resources/windows/gtk/* $output_path
 

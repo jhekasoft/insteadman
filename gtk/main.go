@@ -131,7 +131,6 @@ func main() {
 
 	// I18n init
 	i18n.Init(Configurator, I18nDomain)
-	log.Print(i18n.T("About"))
 
 	e = b.AddFromFile(Configurator.DataResourcePath(MainFormFilePath))
 	if e != nil {

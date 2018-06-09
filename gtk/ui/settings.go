@@ -284,8 +284,12 @@ func (h *SettingsWindowHandlers) insteadChanged(s *gtk.Entry) {
 func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 
-	dlg, _ := gtk.FileChooserDialogNewWith2Buttons(i18n.T("Choose INSTEAD"), h.win.Window, gtk.FILE_CHOOSER_ACTION_OPEN,
+	dlg, e := gtk.FileChooserDialogNewWith2Buttons(i18n.T("Choose INSTEAD"), h.win.Window, gtk.FILE_CHOOSER_ACTION_OPEN,
 		i18n.T("Cancel"), gtk.RESPONSE_CANCEL, i18n.T("Open"), gtk.RESPONSE_ACCEPT)
+	if e != nil {
+		ShowErrorDlg(e.Error(), h.win.Window)
+		return
+	}
 
 	response := dlg.Run()
 	if response == int(gtk.RESPONSE_ACCEPT) {
