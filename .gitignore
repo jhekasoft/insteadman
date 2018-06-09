@@ -13,3 +13,5 @@
 /resources/windows/instead
 /resources/windows/setup.iss
 /resources/darwin/bundle-gtk/Info-insteadman.plist
+/resources/locale/*.pot
+*.po~

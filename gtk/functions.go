@@ -4,8 +4,10 @@ import (
 	"../core/configurator"
 	"../core/manager"
 	"../core/utils"
+	"./i18n"
 	"./ui"
 	gtkutils "./utils"
+	"fmt"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -15,12 +17,12 @@ import (
 
 func RunGame(g *manager.Game) {
 	if M.InterpreterCommand() == "" {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.", WndMain)
+		ui.ShowErrorDlg(i18n.T("INSTEAD has not found. Please add INSTEAD in the Settings."), WndMain)
 		return
 	}
 
 	if CurGame == nil {
-		ui.ShowErrorDlg("No running. No game selected.", WndMain)
+		ui.ShowErrorDlg(i18n.T("No running. No game selected."), WndMain)
 		return
 	}
 
@@ -30,12 +32,12 @@ func RunGame(g *manager.Game) {
 
 func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if M.InterpreterCommand() == "" {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add INSTEAD in the Settings.", WndMain)
+		ui.ShowErrorDlg(i18n.T("INSTEAD has not found. Please add INSTEAD in the Settings."), WndMain)
 		return
 	}
 
 	if CurGame == nil {
-		ui.ShowErrorDlg("No installing. No game selected.", WndMain)
+		ui.ShowErrorDlg(i18n.T("No installing. No game selected."), WndMain)
 		return
 	}
 
@@ -49,12 +51,12 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 	if e != nil {
 		log.Fatalf("Error: %v", e)
 	}
-	ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" Installing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman, fmt.Sprintf(i18n.T("%s Installing..."), g.HumanSize()))
 
 	installProgress := func(size uint64) {
 		percents := utils.Percents(size, uint64(g.Size))
 		glib.IdleAdd(func() {
-			ListStoreGames.SetValue(iter, GameColumnSizeHuman, g.HumanSize()+" "+percents+" Installing...")
+			ListStoreGames.SetValue(iter, GameColumnSizeHuman, fmt.Sprintf(i18n.T("%s %s Installing..."), g.HumanSize(), percents))
 		})
 	}
 
@@ -68,8 +70,9 @@ func InstallGame(g *manager.Game, instBtn *gtk.Button) {
 
 		_, e := glib.IdleAdd(func() {
 			if instErr != nil {
-				ui.ShowErrorDlg("Game hasn't installed ("+instErr.Error()+
-					"). Please check INSTEAD in the Settings.", WndMain)
+				ui.ShowErrorDlg(
+					fmt.Sprintf(i18n.T("Game hasn't installed (%s). Please check INSTEAD in the Settings."),
+						instErr.Error()), WndMain)
 			}
 			RefreshSeveralGames([]manager.Game{*instGame})
 
@@ -90,12 +93,12 @@ func ClearFilterValues() {
 
 	ListStoreRepo.Clear()
 	iter := ListStoreRepo.Append()
-	ListStoreRepo.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{"", "Repository"})
+	ListStoreRepo.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{"", i18n.T("Repository")})
 	CmbBoxRepo.SetActiveID("")
 
 	ListStoreLang.Clear()
 	iter = ListStoreLang.Append()
-	ListStoreLang.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{"", "Language"})
+	ListStoreLang.Set(iter, []int{ComboBoxColumnId, ComboBoxColumnTitle}, []interface{}{"", i18n.T("Language")})
 	CmbBoxLang.SetActiveID("")
 
 	CmbBoxRepo.SetSensitive(true)
@@ -219,7 +222,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 	path := m.InterpreterFinder.Find()
 
 	if path == nil {
-		ui.ShowErrorDlg("INSTEAD has not found. Please add it in config.yml (interpreter_command)", WndMain)
+		ui.ShowErrorDlg(i18n.T("INSTEAD has not found. Please add INSTEAD in the Settings."), WndMain)
 		return
 	}
 

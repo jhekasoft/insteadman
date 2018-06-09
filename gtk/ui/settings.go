@@ -3,8 +3,10 @@ package ui
 import (
 	"../../core/configurator"
 	"../../core/manager"
+	"../i18n"
 	"../os_integration"
 	gtkutils "../utils"
+	"fmt"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
@@ -109,7 +111,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	var ok bool
 	win.Window, ok = obj.(*gtk.Window)
 	if !ok {
-		ShowErrorDlgFatal("No settings window", win.Window)
+		ShowErrorDlgFatal(i18n.T("No settings window"), win.Window)
 	}
 
 	win.Manager = manager
@@ -172,7 +174,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnClose.Connect("clicked", handlers.closeClicked)
 	win.Window.Connect("delete_event", handlers.settingsDeleted)
 
-	win.Window.SetTitle("Settings")
+	win.Window.SetTitle(i18n.T("Settings"))
 
 	// OS integrations for window
 	os_integration.OsIntegrateWindow(win.Window)
@@ -282,8 +284,8 @@ func (h *SettingsWindowHandlers) insteadChanged(s *gtk.Entry) {
 func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 	s.SetSensitive(false)
 
-	dlg, _ := gtk.FileChooserDialogNewWith2Buttons("Choose INSTEAD", h.win.Window, gtk.FILE_CHOOSER_ACTION_OPEN,
-		"Cancel", gtk.RESPONSE_CANCEL, "Open", gtk.RESPONSE_ACCEPT)
+	dlg, _ := gtk.FileChooserDialogNewWith2Buttons(i18n.T("Choose INSTEAD"), h.win.Window, gtk.FILE_CHOOSER_ACTION_OPEN,
+		i18n.T("Cancel"), gtk.RESPONSE_CANCEL, i18n.T("Open"), gtk.RESPONSE_ACCEPT)
 
 	response := dlg.Run()
 	if response == int(gtk.RESPONSE_ACCEPT) {
@@ -310,10 +312,10 @@ func (h *SettingsWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 		_, e := glib.IdleAdd(func() {
 			if command != nil {
 				h.win.EntryInstead.SetText(*command)
-				h.win.LblInsteadInf.SetText("INSTEAD has detected!")
+				h.win.LblInsteadInf.SetText(i18n.T("INSTEAD has detected!"))
 				h.win.LblInsteadInf.Show()
 			} else {
-				h.win.LblInsteadInf.SetText("INSTEAD hasn't detected!")
+				h.win.LblInsteadInf.SetText(i18n.T("INSTEAD hasn't detected!"))
 				h.win.LblInsteadInf.Show()
 			}
 
@@ -337,13 +339,13 @@ func (h *SettingsWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 			var txt string
 			if checkErr != nil {
 				if h.win.Manager.IsBuiltinInterpreterCommand() {
-					txt = "INSTEAD built-in check failed!"
+					txt = i18n.T("INSTEAD built-in check failed!")
 				} else {
-					txt = "INSTEAD check failed!"
+					txt = i18n.T("INSTEAD check failed!")
 				}
 
 			} else {
-				txt = "INSTEAD " + version + " has found!"
+				txt = fmt.Sprintf(i18n.T("INSTEAD %s has found!"), version)
 			}
 			h.win.LblInsteadInf.SetText(txt)
 
@@ -367,7 +369,7 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 			if cacheErr != nil {
 				ShowErrorDlg(cacheErr.Error(), h.win.Window)
 			} else {
-				h.win.LblCacheInf.SetText("Cache has been cleared!")
+				h.win.LblCacheInf.SetText(i18n.T("Cache has been cleared!"))
 			}
 
 			h.win.LblCacheInf.Show()

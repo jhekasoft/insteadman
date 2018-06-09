@@ -5,16 +5,17 @@ import (
 	"../core/interpreter_finder"
 	"../core/manager"
 	"../core/utils"
+	"./i18n"
 	"./os_integration"
 	"./ui"
 	gtkutils "./utils"
+	"github.com/gosexy/gettext"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
 	"runtime"
-	"github.com/gosexy/gettext"
 )
 
 const (
@@ -22,7 +23,6 @@ const (
 
 	LogoFilePath     = "resources/images/logo.png"
 	MainFormFilePath = "resources/gtk/main.glade"
-	I18nLocaleDir    = "resources/locale"
 
 	ComboBoxColumnId    = 0
 	ComboBoxColumnTitle = 1
@@ -129,14 +129,9 @@ func main() {
 
 	M = &manager.Manager{Config: config, InterpreterFinder: finder}
 
-	// I18n
-	//gettext.SetLocale(gettext.LcAll, "ru_RU.UTF-8")
-	gettext.SetLocale(gettext.LcAll, "")
-	gettext.BindTextdomain(I18nDomain, Configurator.DataResourcePath(I18nLocaleDir))
-	gettext.BindTextdomainCodeset(I18nDomain, "UTF-8")
-	gettext.Textdomain(I18nDomain)
-
-	log.Print(gettext.Gettext("About"))
+	// I18n init
+	i18n.Init(Configurator, I18nDomain)
+	log.Print(i18n.T("About"))
 
 	e = b.AddFromFile(Configurator.DataResourcePath(MainFormFilePath))
 	if e != nil {
@@ -338,7 +333,7 @@ func gameChanged(s *gtk.TreeSelection) {
 
 	CurGame = manager.FindGameById(Games, id)
 	if CurGame == nil {
-		ui.ShowErrorDlgFatal("Game "+id+" has not found", WndMain)
+		ui.ShowErrorDlgFatal(gettext.Sprintf(i18n.T("Game %s has not found."), id), WndMain)
 		return
 	}
 
@@ -389,7 +384,8 @@ func removeGameClicked(s *gtk.Button) {
 		ui.ShowErrorDlgFatal(e.Error(), WndMain)
 		return
 	}
-	ListStoreGames.SetValue(iter, GameColumnSizeHuman, CurGame.HumanSize()+" Removing...")
+	ListStoreGames.SetValue(iter, GameColumnSizeHuman,
+		gettext.Sprintf(i18n.T("%s Removing..."), CurGame.HumanSize()))
 
 	go func() {
 		rmGame := CurGame

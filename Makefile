@@ -52,6 +52,7 @@ uninstall:
 deps-dev:
 	go get github.com/stretchr/testify/assert
 	go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+	go get github.com/gosexy/gettext/go-xgettext
 
 insteadman-cross: insteadman-deps
 	./cli-cross-build.sh ./cli insteadman ${VERSION}
@@ -111,16 +112,20 @@ gtk-prepare-i18n:
 	#intltool-extract --type=gettext/glade resources/gtk/main.glade
 	#intltool-extract --type=gettext/glade resources/gtk/settings.glade
 
-	xgettext --sort-output --keyword=translatable -o resources/locale/insteadman.pot \
+	xgettext --sort-output --keyword=translatable -o resources/locale/insteadman-glade.pot \
 		resources/gtk/main.glade resources/gtk/settings.glade
+
+	go-xgettext -o resources/locale/insteadman-code.pot --package-name=insteadman -k=i18n.T gtk/*.go gtk/ui/*.go
+
+	msgcat resources/locale/insteadman-glade.pot resources/locale/insteadman-code.pot > resources/locale/insteadman.pot
 
 	# Init if there aren't insteadman.po files
 	# msginit -l ru -o resources/locale/ru/LC_MESSAGES/insteadman.po -i resources/locale/insteadman.pot
 	# msginit -l uk -o resources/locale/uk/LC_MESSAGES/insteadman.po -i resources/locale/insteadman.pot
 
 	# Merge if there are insteadman.po files
-	msgmerge resources/locale/insteadman.pot resources/locale/ru/LC_MESSAGES/insteadman.po
-	msgmerge resources/locale/insteadman.pot resources/locale/uk/LC_MESSAGES/insteadman.po
+	msgmerge -U resources/locale/ru/LC_MESSAGES/insteadman.po resources/locale/insteadman.pot
+	msgmerge -U resources/locale/uk/LC_MESSAGES/insteadman.po resources/locale/insteadman.pot
 
 gtk-compile-i18n:
 	msgfmt resources/locale/ru/LC_MESSAGES/insteadman.po -o resources/locale/ru/LC_MESSAGES/insteadman.mo

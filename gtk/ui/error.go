@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"../i18n"
 	"../os_integration"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
@@ -19,8 +20,8 @@ func showErrorDlg(txt string, fatal bool, parent *gtk.Window) {
 	log.Printf("Error: %v", txt)
 
 	dlg, _ := gtk.DialogNew()
-	dlg.SetTitle("InsteadMan error")
-	dlg.AddButton("Close", gtk.RESPONSE_ACCEPT)
+	dlg.SetTitle(i18n.T("InsteadMan error"))
+	dlg.AddButton(i18n.T("Close"), gtk.RESPONSE_ACCEPT)
 	dlgBox, _ := dlg.GetContentArea()
 	dlgBox.SetSpacing(6)
 
