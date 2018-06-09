@@ -1,0 +1,199 @@
+# Ukrainian translations for insteadman package.
+# Copyright (C) 2018 THE insteadman'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the insteadman package.
+#  <jhekasoft@gmail.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: insteadman 3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-09 19:47+0300\n"
+"PO-Revision-Date: 2018-06-09 19:48+0300\n"
+"Last-Translator:  <jhekasoft@gmail.com>\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: resources/gtk/settings.glade:621
+msgid "About"
+msgstr ""
+
+#: resources/gtk/main.glade:118
+msgid "About..."
+msgstr ""
+
+#: resources/gtk/settings.glade:368
+msgid "Add"
+msgstr ""
+
+#: resources/gtk/settings.glade:130
+msgid "Browse..."
+msgstr ""
+
+#: resources/gtk/settings.glade:206
+msgid "Cache:"
+msgstr ""
+
+#: resources/gtk/settings.glade:170
+msgid "Check"
+msgstr ""
+
+#: resources/gtk/settings.glade:220
+msgid "Clear"
+msgstr ""
+
+#: resources/gtk/main.glade:176
+msgid "Clear filter"
+msgstr ""
+
+#: resources/gtk/settings.glade:646
+msgid "Close"
+msgstr ""
+
+#: resources/gtk/settings.glade:258
+msgid "Config path:"
+msgstr ""
+
+#: resources/gtk/settings.glade:417
+msgid "Defaults"
+msgstr ""
+
+#: resources/gtk/settings.glade:157
+msgid "Detect"
+msgstr ""
+
+#: resources/gtk/settings.glade:115 resources/gtk/settings.glade:116
+msgid "INSTEAD interpreter path"
+msgstr ""
+
+#: resources/gtk/settings.glade:93
+msgid "INSTEAD:"
+msgstr ""
+
+#: resources/gtk/main.glade:450
+msgid "Install"
+msgstr ""
+
+#: resources/gtk/settings.glade:468
+msgid "InsteadMan"
+msgstr ""
+
+#: resources/gtk/main.glade:61
+msgid "Lang"
+msgstr ""
+
+#: resources/gtk/main.glade:494
+msgid "Language"
+msgstr ""
+
+#: resources/gtk/settings.glade:81
+msgid "Language:"
+msgstr ""
+
+#: resources/gtk/settings.glade:552
+msgid "License:"
+msgstr ""
+
+#: resources/gtk/settings.glade:297
+msgid "Main"
+msgstr ""
+
+#: resources/gtk/main.glade:156
+msgid "Menu"
+msgstr ""
+
+#: resources/gtk/settings.glade:407
+msgid "Move down"
+msgstr ""
+
+#: resources/gtk/settings.glade:394
+msgid "Move up"
+msgstr ""
+
+#: resources/gtk/settings.glade:324
+msgid "Name"
+msgstr ""
+
+#: resources/gtk/main.glade:435
+msgid "Play"
+msgstr ""
+
+#: resources/gtk/main.glade:420 resources/gtk/settings.glade:381
+msgid "Remove"
+msgstr ""
+
+#: resources/gtk/main.glade:224
+msgid "Repo"
+msgstr ""
+
+#: resources/gtk/settings.glade:443
+msgid "Repositories"
+msgstr ""
+
+#: resources/gtk/main.glade:75 resources/gtk/main.glade:471
+msgid "Repository"
+msgstr ""
+
+#: resources/gtk/main.glade:86
+msgid "Reset sorting"
+msgstr ""
+
+#: resources/gtk/settings.glade:421
+msgid "Restore default repositories"
+msgstr ""
+
+#: resources/gtk/main.glade:210
+msgid "Search"
+msgstr ""
+
+#: resources/gtk/main.glade:109
+msgid "Settings..."
+msgstr ""
+
+#: resources/gtk/main.glade:271
+msgid "Show only installed games"
+msgstr ""
+
+#: resources/gtk/main.glade:94
+msgid "Sidebar"
+msgstr ""
+
+#: resources/gtk/main.glade:333
+msgid "Size"
+msgstr ""
+
+#: resources/gtk/main.glade:305
+msgid "Title"
+msgstr ""
+
+#: resources/gtk/settings.glade:338
+msgid "URL"
+msgstr ""
+
+#: resources/gtk/main.glade:194 resources/gtk/main.glade:562
+msgid "Update"
+msgstr ""
+
+#: resources/gtk/settings.glade:143
+msgid "Use built-in"
+msgstr ""
+
+#: resources/gtk/main.glade:321 resources/gtk/main.glade:518
+msgid "Version"
+msgstr ""
+
+#: resources/gtk/settings.glade:515
+msgid "Version:"
+msgstr ""
+
+#: resources/gtk/settings.glade:540
+msgid "WWW:"
+msgstr ""
+
+#: resources/gtk/main.glade:267
+msgid "installed"
+msgstr ""

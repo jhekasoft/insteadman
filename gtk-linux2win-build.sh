@@ -79,7 +79,7 @@ env CGO_ENABLED=1 \
 	CC=i686-w64-mingw32-cc \
 	GOOS=$GOOS \
 	GOARCH=$GOARCH \
-	go build -ldflags "-H=windowsgui -s -w -X main.version=$version" -o $output_name $package
+	go build -ldflags "-s -w -X main.version=$version" -o $output_name $package
 
 if [ $? -ne 0 ]; then
     # Remove .syso

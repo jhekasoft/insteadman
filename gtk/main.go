@@ -22,6 +22,7 @@ const (
 
 	LogoFilePath     = "resources/images/logo.png"
 	MainFormFilePath = "resources/gtk/main.glade"
+	I18nLocaleDir    = "resources/locale"
 
 	ComboBoxColumnId    = 0
 	ComboBoxColumnTitle = 1
@@ -37,6 +38,8 @@ const (
 	FontWeightBold   = 700
 
 	EnvDataPath = "DATA_PATH"
+
+	I18nDomain = "insteadman"
 )
 
 var (
@@ -96,9 +99,7 @@ func main() {
 	// OS integrations
 	os_integration.OsIntegrate()
 
-	gettext.BindTextdomain("insteadman", "./")
-	gettext.Textdomain("insteadman")
-
+	//glib.InitI18n("insteadman", "./locale")
 	gtk.Init(nil)
 
 	b, e := gtk.BuilderNew()
@@ -127,6 +128,15 @@ func main() {
 	finder := &interpreterFinder.InterpreterFinder{CurrentDir: currentDir}
 
 	M = &manager.Manager{Config: config, InterpreterFinder: finder}
+
+	// I18n
+	//gettext.SetLocale(gettext.LcAll, "ru_RU.UTF-8")
+	gettext.SetLocale(gettext.LcAll, "")
+	gettext.BindTextdomain(I18nDomain, Configurator.DataResourcePath(I18nLocaleDir))
+	gettext.BindTextdomainCodeset(I18nDomain, "UTF-8")
+	gettext.Textdomain(I18nDomain)
+
+	log.Print(gettext.Gettext("About"))
 
 	e = b.AddFromFile(Configurator.DataResourcePath(MainFormFilePath))
 	if e != nil {

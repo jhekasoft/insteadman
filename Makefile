@@ -107,12 +107,24 @@ gtk-darwin-bundle: # build it from 'jhbuild shell'
 	"./build/InsteadMan-${VERSION}.dmg" \
 	"./build/InsteadMan.app"
 
-prepare-i18n:
+gtk-prepare-i18n:
 	#intltool-extract --type=gettext/glade resources/gtk/main.glade
 	#intltool-extract --type=gettext/glade resources/gtk/settings.glade
 
-	xgettext --sort-output --keyword=translatable -o main.glade.pot resources/gtk/main.glade
-	xgettext --sort-output --keyword=translatable -o settings.glade.pot resources/gtk/settings.glade
+	xgettext --sort-output --keyword=translatable -o resources/locale/insteadman.pot \
+		resources/gtk/main.glade resources/gtk/settings.glade
+
+	# Init if there aren't insteadman.po files
+	# msginit -l ru -o resources/locale/ru/LC_MESSAGES/insteadman.po -i resources/locale/insteadman.pot
+	# msginit -l uk -o resources/locale/uk/LC_MESSAGES/insteadman.po -i resources/locale/insteadman.pot
+
+	# Merge if there are insteadman.po files
+	msgmerge resources/locale/insteadman.pot resources/locale/ru/LC_MESSAGES/insteadman.po
+	msgmerge resources/locale/insteadman.pot resources/locale/uk/LC_MESSAGES/insteadman.po
+
+gtk-compile-i18n:
+	msgfmt resources/locale/ru/LC_MESSAGES/insteadman.po -o resources/locale/ru/LC_MESSAGES/insteadman.mo
+	msgfmt resources/locale/uk/LC_MESSAGES/insteadman.po -o resources/locale/uk/LC_MESSAGES/insteadman.mo
 
 test:
 	go test ./...
