@@ -291,7 +291,7 @@ func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 		return
 	}
 
-	response := dlg.NativeRun()
+	response := dlg.Run()
 	if response == int(gtk.RESPONSE_ACCEPT) {
 		h.win.EntryInstead.SetText(dlg.GetFilename())
 	}
