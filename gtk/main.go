@@ -99,7 +99,6 @@ func main() {
 	// OS integrations
 	os_integration.OsIntegrate()
 
-	//glib.InitI18n("insteadman", "./locale")
 	gtk.Init(nil)
 
 	b, e := gtk.BuilderNew()

@@ -5,11 +5,14 @@
 package=$1
 package_out=$2
 version=$3
+langs=$4
 
-if [[ -z "$package" || -z "$package_out" ]]; then
-  echo "usage: $0 <package> <package out> <version>"
+if [[ -z "$package" || -z "$package_out" || -z "$version" || -z "$langs" ]]; then
+  echo "usage: $0 <package> <package out> <version> \"<lang1> <lang2>\""
   exit 1
 fi
+
+#exit 0
 
 goversioninfo=~/go/bin/goversioninfo
 mingw_path='/usr/i686-w64-mingw32'
@@ -101,9 +104,16 @@ images_path=$resources_path'/images'
 mkdir $resources_path
 mkdir $images_path
 cp -r 'resources/gtk' $resources_path
-cp -r 'resources/locale' $resources_path
 cp 'resources/images/logo.png' $images_path
 cp -r resources/windows/gtk/* $output_path
+
+# Copy gettext locales to resources
+langs_split=(${langs//\ / })
+for lang in "${langs_split[@]}"
+do
+    mkdir -p $resources_path'/locale/'$lang'/LC_MESSAGES'
+    cp 'resources/locale/'$lang'/LC_MESSAGES/insteadman.mo' $resources_path'/locale/'$lang'/LC_MESSAGES/insteadman.mo'
+done
 
 # Copy INSTEAD
 cp -r 'resources/windows/instead' $output_path

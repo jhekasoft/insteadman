@@ -1,6 +1,7 @@
 VERSION=3.1.1
 DESTDIR=
 PREFIX=/usr
+GETTEXT_LANGS=ru uk
 
 all:
 	${MAKE} insteadman
@@ -42,6 +43,12 @@ install: all
 	install -m 0644 resources/images/logo128x128.png $(DESTDIR)$(PREFIX)/share/pixmaps/insteadman.png
 	install -m 0644 resources/unix/insteadman.desktop $(DESTDIR)$(PREFIX)/share/applications/insteadman.desktop
 
+	for lang in $(GETTEXT_LANGS); do \
+		install -d -m 0755 $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES; \
+		install -m 0644 resources/locale/$$lang/LC_MESSAGES/insteadman.mo $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/insteadman.mo; \
+	done
+
+
 uninstall:
 	rm $(DESTDIR)$(PREFIX)/bin/insteadman
 	rm $(DESTDIR)$(PREFIX)/bin/insteadman-gtk
@@ -82,7 +89,7 @@ gtk-linux2win-deps:
     go install github.com/gosexy/gettext
 
 gtk-linux2win:
-	./gtk-linux2win-build.sh ./gtk insteadman-gtk ${VERSION}
+	./gtk-linux2win-build.sh ./gtk insteadman-gtk ${VERSION} "${GETTEXT_LANGS}"
 
 gtk-darwin64:
 	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} darwin amd64
