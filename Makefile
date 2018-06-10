@@ -2,6 +2,14 @@ VERSION=3.1.1
 DESTDIR=
 PREFIX=/usr
 GETTEXT_LANGS=ru uk
+TARGETOS=$(shell uname -s)
+
+CGO_LDFLAGS=
+CGO_CPPFLAGS=
+ifeq ($(TARGETOS),Darwin) # CGO flags for macOS
+CGO_LDFLAGS="-lintl -L/usr/local/opt/gettext/lib"
+CGO_CPPFLAGS="-I/usr/local/opt/gettext/include"
+endif
 
 all:
 	${MAKE} insteadman
@@ -15,6 +23,9 @@ insteadman-gtk-deps:
 	go get github.com/ghodss/yaml
 	go get github.com/pyk/byten
 	go get github.com/gotk3/gotk3/...
+
+	CGO_LDFLAGS=${CGO_LDFLAGS} \
+	CGO_CPPFLAGS=${CGO_CPPFLAGS} \
 	go get github.com/gosexy/gettext
 
 insteadman:
@@ -23,6 +34,9 @@ insteadman:
 
 insteadman-gtk:
 	${MAKE} insteadman-gtk-deps
+
+	CGO_LDFLAGS=${CGO_LDFLAGS} \
+    CGO_CPPFLAGS=${CGO_CPPFLAGS} \
 	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
 
 install: all
