@@ -27,6 +27,32 @@
     <property name="can_focus">False</property>
     <property name="icon_name">go-up-symbolic</property>
   </object>
+  <object class="GtkListStore" id="liststore_languages">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Title -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0"/>
+        <col id="1" translatable="yes">System language</col>
+      </row>
+      <row>
+        <col id="0">en</col>
+        <col id="1" translatable="yes">English</col>
+      </row>
+      <row>
+        <col id="0">ru</col>
+        <col id="1" translatable="yes">Russian (русский)</col>
+      </row>
+      <row>
+        <col id="0">uk</col>
+        <col id="1" translatable="yes">Ukrainian (українська)</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="liststore_repositories">
     <columns>
       <!-- column-name Name -->
@@ -76,13 +102,14 @@
                     <property name="column_spacing">6</property>
                     <child>
                       <object class="GtkLabel">
+                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Language:</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="top_attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -94,16 +121,6 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkComboBox">
-                        <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
                         <property name="top_attach">0</property>
                       </packing>
                     </child>
@@ -117,7 +134,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">0</property>
                       </packing>
                     </child>
                     <child>
@@ -181,7 +198,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -195,7 +212,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">3</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -273,6 +290,27 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="combobox_language">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="model">liststore_languages</property>
+                        <property name="active">0</property>
+                        <property name="id_column">0</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">3</property>
                       </packing>
                     </child>
                     <child>

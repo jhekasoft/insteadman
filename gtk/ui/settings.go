@@ -67,6 +67,9 @@ type SettingsWindow struct {
 	BtnInsteadCheck      *gtk.Button
 	LblInsteadInf        *gtk.Label
 
+	ListStoreLanguage *gtk.ListStore
+	CmbBoxLanguage    *gtk.ComboBox
+
 	BtnCacheClear *gtk.Button
 	LblCacheInf   *gtk.Label
 
@@ -126,6 +129,8 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnInsteadDetect = gtkutils.GetButton(b, "button_instead_detect")
 	win.BtnInsteadCheck = gtkutils.GetButton(b, "button_instead_check")
 	win.LblInsteadInf = gtkutils.GetLabel(b, "label_instead_inf")
+	win.ListStoreLanguage = gtkutils.GetListStore(b, "liststore_language")
+	win.CmbBoxLanguage = gtkutils.GetComboBox(b, "combobox_language")
 
 	win.BtnCacheClear = gtkutils.GetButton(b, "button_cache_clear")
 	win.LblCacheInf = gtkutils.GetLabel(b, "label_cache_inf")
@@ -194,6 +199,11 @@ func (win *SettingsWindow) readSettings() {
 	}
 	win.TglBtnInsteadBuiltin.SetActive(config.UseBuiltinInterpreter)
 	win.toggleBuiltin(!config.UseBuiltinInterpreter || !win.Manager.InterpreterFinder.HaveBuiltIn())
+
+	// Language
+	if config.Lang != "" {
+		win.CmbBoxLanguage.SetActiveID(config.Lang)
+	}
 
 	// Cache
 	win.BtnCacheClear.SetTooltipText("Cache directory: " + win.Manager.CacheDir())

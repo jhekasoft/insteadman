@@ -2,7 +2,7 @@ check_update_on_start: true
 games_path: ""
 insteadman_path: ""
 interpreter_command: ""
-lang: ru
+lang: ""
 repositories:
 - name: instead-games
   url: http://instead-games.ru/xml.php
