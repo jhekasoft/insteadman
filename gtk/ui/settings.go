@@ -168,6 +168,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.BtnInsteadDetect.Connect("clicked", handlers.insteadDetectClicked)
 	win.BtnInsteadCheck.Connect("clicked", handlers.insteadCheckClicked)
 	win.BtnCacheClear.Connect("clicked", handlers.cacheClearClicked)
+	win.CmbBoxLanguage.Connect("changed", handlers.languageChanged)
 	//win.TrSlctnRepositories.Connect("changed", handlers.repositoriesChanged)
 	win.CllRndrTxtName.Connect("edited", handlers.repositoriesNameEdited)
 	win.CllRndrTxtUrl.Connect("edited", handlers.repositoriesUrlEdited)
@@ -394,6 +395,9 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 			log.Fatal("Cache clear. IdleAdd() failed:", e)
 		}
 	}()
+}
+func (h *SettingsWindowHandlers) languageChanged(s *gtk.ComboBox) {
+	h.win.Manager.Config.Lang = s.GetActiveID()
 }
 
 //func (h *SettingsWindowHandlers) repositoriesChanged(s *gtk.TreeSelection) {

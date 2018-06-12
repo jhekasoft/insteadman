@@ -56,6 +56,7 @@ type Configurator struct {
 	FilePath   string
 	CurrentDir string
 	DataPath   string
+	Version    string
 }
 
 func (c *Configurator) insteadManDir() string {
@@ -172,6 +173,12 @@ func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 	var config *InsteadmanConfig
 	yaml.Unmarshal(file, &config)
 
+	// Fix default language for old config
+	// Default language was "ru", set it to empty value (system language)
+	if config.Version == "3.0.0" {
+		config.Lang = ""
+	}
+
 	// TODO: make Calculated* fields like GetInterpreterCommand() func, but like "lazy vars"
 
 	config.CalculatedGamesPath = config.GamesPath
@@ -188,6 +195,11 @@ func (c *Configurator) GetConfig() (*InsteadmanConfig, error) {
 }
 
 func (c *Configurator) SaveConfig(config *InsteadmanConfig) error {
+	// Write InsteadMan version to config
+	if c.Version != "" {
+		config.Version = c.Version
+	}
+
 	bytes, e := yaml.Marshal(config)
 	if e != nil {
 		return e

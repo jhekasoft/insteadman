@@ -301,7 +301,7 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 	currentDir, e := utils.BinAbsDir(executablePath)
 	ExitIfError(e)
 
-	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir}
+	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: version}
 	config, e := c.GetConfig()
 	ExitIfError(e)
 

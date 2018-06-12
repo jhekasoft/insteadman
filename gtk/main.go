@@ -118,7 +118,9 @@ func main() {
 
 	dataPath := os.Getenv(EnvDataPath)
 
-	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir, DataPath: dataPath}
+	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir, DataPath: dataPath,
+		Version: version}
+
 	config, e := Configurator.GetConfig()
 	if e != nil {
 		ui.ShowErrorDlgFatal(e.Error(), WndMain)
@@ -129,7 +131,7 @@ func main() {
 	M = &manager.Manager{Config: config, InterpreterFinder: finder}
 
 	// I18n init
-	i18n.Init(Configurator, I18nDomain)
+	i18n.Init(Configurator, I18nDomain, config.Lang)
 
 	e = b.AddFromFile(Configurator.DataResourcePath(MainFormFilePath))
 	if e != nil {
