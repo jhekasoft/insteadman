@@ -3,7 +3,6 @@ package i18n
 import (
 	"../../core/configurator"
 	"github.com/gosexy/gettext"
-	"os"
 )
 
 const (
@@ -12,7 +11,7 @@ const (
 
 func Init(c *configurator.Configurator, domain string, language string) {
 	if language != "" {
-		os.Setenv("LANGUAGE", language)
+		SetGettextLanguage(language)
 	}
 
 	gettext.SetLocale(gettext.LcAll, "")

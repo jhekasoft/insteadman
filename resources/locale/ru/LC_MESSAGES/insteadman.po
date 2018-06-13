@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: insteadman 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-12 22:54+0300\n"
+"POT-Creation-Date: 2018-06-13 13:10+0300\n"
 "PO-Revision-Date: 2018-06-09 19:47+0300\n"
 "Last-Translator:  <jhekasoft@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: resources/gtk/settings.glade:659
+#: resources/gtk/settings.glade:682
 msgid "About"
 msgstr "О программе"
 
@@ -26,7 +26,7 @@ msgstr "О программе"
 msgid "About..."
 msgstr "О программе..."
 
-#: resources/gtk/settings.glade:406
+#: resources/gtk/settings.glade:429
 msgid "Add"
 msgstr "Добавить"
 
@@ -50,7 +50,7 @@ msgstr "Очистить"
 msgid "Clear filter"
 msgstr "Очистить фильтр"
 
-#: resources/gtk/settings.glade:684 gtk/ui/error.go:24
+#: resources/gtk/settings.glade:707 gtk/ui/error.go:24
 msgid "Close"
 msgstr "Закрыть"
 
@@ -58,7 +58,7 @@ msgstr "Закрыть"
 msgid "Config path:"
 msgstr "Конфигурация:"
 
-#: resources/gtk/settings.glade:455
+#: resources/gtk/settings.glade:478
 msgid "Defaults"
 msgstr "По молчанию"
 
@@ -82,7 +82,7 @@ msgstr "INSTEAD:"
 msgid "Install"
 msgstr "Установить"
 
-#: resources/gtk/settings.glade:506
+#: resources/gtk/settings.glade:529
 msgid "InsteadMan"
 msgstr "InsteadMan"
 
@@ -98,11 +98,11 @@ msgstr "Язык"
 msgid "Language:"
 msgstr "Язык (language):"
 
-#: resources/gtk/settings.glade:590
+#: resources/gtk/settings.glade:613
 msgid "License:"
 msgstr "Лицензия:"
 
-#: resources/gtk/settings.glade:335
+#: resources/gtk/settings.glade:358
 msgid "Main"
 msgstr "Основное"
 
@@ -110,15 +110,15 @@ msgstr "Основное"
 msgid "Menu"
 msgstr "Меню"
 
-#: resources/gtk/settings.glade:445
+#: resources/gtk/settings.glade:468
 msgid "Move down"
 msgstr "Переместить вниз"
 
-#: resources/gtk/settings.glade:432
+#: resources/gtk/settings.glade:455
 msgid "Move up"
 msgstr "Переместить вверх"
 
-#: resources/gtk/settings.glade:362
+#: resources/gtk/settings.glade:385
 msgid "Name"
 msgstr "Имя"
 
@@ -126,7 +126,7 @@ msgstr "Имя"
 msgid "Play"
 msgstr "Играть"
 
-#: resources/gtk/main.glade:420 resources/gtk/settings.glade:419
+#: resources/gtk/main.glade:420 resources/gtk/settings.glade:442
 msgid "Remove"
 msgstr "Удалить"
 
@@ -134,7 +134,7 @@ msgstr "Удалить"
 msgid "Repo"
 msgstr "Репо"
 
-#: resources/gtk/settings.glade:481
+#: resources/gtk/settings.glade:504
 msgid "Repositories"
 msgstr "Репозитории"
 
@@ -146,7 +146,7 @@ msgstr "Репозиторий"
 msgid "Reset sorting"
 msgstr "Сбросить сортировку"
 
-#: resources/gtk/settings.glade:459
+#: resources/gtk/settings.glade:482
 msgid "Restore default repositories"
 msgstr "Восстановить репозитории по умолчанию"
 
@@ -182,7 +182,7 @@ msgstr "Системный язык"
 msgid "Title"
 msgstr "Заголовок"
 
-#: resources/gtk/settings.glade:376
+#: resources/gtk/settings.glade:399
 msgid "URL"
 msgstr "URL"
 
@@ -202,11 +202,11 @@ msgstr "Встроенный"
 msgid "Version"
 msgstr "Версия"
 
-#: resources/gtk/settings.glade:553
+#: resources/gtk/settings.glade:576
 msgid "Version:"
 msgstr "Версия:"
 
-#: resources/gtk/settings.glade:578
+#: resources/gtk/settings.glade:601
 msgid "WWW:"
 msgstr "Сайт:"
 
@@ -214,13 +214,13 @@ msgstr "Сайт:"
 msgid "installed"
 msgstr "установлено"
 
-#: gtk/ui/settings.go:329
-msgid "INSTEAD has detected!"
-msgstr "INSTEAD найден!"
+#: resources/gtk/settings.glade:325
+msgid "restart required"
+msgstr "нужен перезапуск"
 
-#: gtk/ui/settings.go:356
-msgid "INSTEAD built-in check failed!"
-msgstr "Встроенный INSTEAD не прошёл проверку!"
+#: gtk/ui/settings.go:387
+msgid "Cache has been cleared!"
+msgstr "Кэш очищен!"
 
 #: gtk/functions.go:40
 msgid "No installing. No game selected."
@@ -231,21 +231,43 @@ msgstr "Не удалось установить. Игра не выбрана."
 msgid "%s Installing..."
 msgstr "%s Установка..."
 
-#: gtk/ui/settings.go:117
-msgid "No settings window"
-msgstr "Нет окна настроек"
+#: gtk/ui/error.go:23
+msgid "InsteadMan error"
+msgstr "InsteadMan ошибка"
 
 #: gtk/ui/settings.go:298
-msgid "Open"
-msgstr "Открыть"
-
-#: gtk/ui/settings.go:297
 msgid "Choose INSTEAD"
 msgstr "Выберите INSTEAD"
 
-#: gtk/ui/settings.go:386
-msgid "Cache has been cleared!"
-msgstr "Кэш очищен!"
+#: gtk/ui/settings.go:299
+msgid "Open"
+msgstr "Открыть"
+
+#: gtk/ui/settings.go:299
+msgid "Cancel"
+msgstr "Отменить"
+
+# c-format
+#: gtk/functions.go:59
+#, c-format
+msgid "%s %s Installing..."
+msgstr "%s %s Установка..."
+
+#: gtk/ui/settings.go:183
+msgid "Settings"
+msgstr "Настройки"
+
+#: gtk/ui/settings.go:357
+msgid "INSTEAD built-in check failed!"
+msgstr "Встроенный INSTEAD не прошёл проверку!"
+
+#: gtk/ui/settings.go:330
+msgid "INSTEAD has detected!"
+msgstr "INSTEAD найден!"
+
+#: gtk/ui/settings.go:333
+msgid "INSTEAD hasn't detected!"
+msgstr "INSTEAD не найден!"
 
 #: gtk/functions.go:20 gtk/functions.go:35 gtk/functions.go:225
 msgid "INSTEAD has not found. Please add INSTEAD in the Settings."
@@ -255,50 +277,32 @@ msgstr "INSTEAD не найден. Пожалуйста настройте INSTE
 msgid "No running. No game selected."
 msgstr "Не удалось запустить игру. Игра не выбрана."
 
-#: gtk/main.go:386
-#, c-format
-msgid "%s Removing..."
-msgstr "%s Удаление..."
-
-#: gtk/ui/settings.go:182
-msgid "Settings"
-msgstr "Настройки"
-
 #: gtk/functions.go:74
 #, c-format
 msgid "Game hasn't installed (%s). Please check INSTEAD in the Settings."
 msgstr "Игра не установлена (%s). Пожалуйста, проверьте INSTEAD в Настройках."
 
-#: gtk/ui/settings.go:298
-msgid "Cancel"
-msgstr "Отменить"
-
 # c-format
-#: gtk/ui/settings.go:362
-#, c-format
-msgid "INSTEAD %s has found!"
-msgstr "INSTEAD %s найден."
-
-#: gtk/ui/error.go:23
-msgid "InsteadMan error"
-msgstr "InsteadMan ошибка"
-
-#: gtk/ui/settings.go:332
-msgid "INSTEAD hasn't detected!"
-msgstr "INSTEAD не найден!"
-
-#: gtk/ui/settings.go:358
-msgid "INSTEAD check failed!"
-msgstr "INSTEAD не прошёл проверку!"
-
-# c-format
-#: gtk/functions.go:59
-#, c-format
-msgid "%s %s Installing..."
-msgstr "%s %s Установка..."
-
-# c-format
-#: gtk/main.go:334
+#: gtk/main.go:336
 #, c-format
 msgid "Game %s has not found."
 msgstr "Игра %s не найдена."
+
+#: gtk/main.go:388
+#, c-format
+msgid "%s Removing..."
+msgstr "%s Удаление..."
+
+#: gtk/ui/settings.go:359
+msgid "INSTEAD check failed!"
+msgstr "INSTEAD не прошёл проверку!"
+
+#: gtk/ui/settings.go:117
+msgid "No settings window"
+msgstr "Нет окна настроек"
+
+# c-format
+#: gtk/ui/settings.go:363
+#, c-format
+msgid "INSTEAD %s has found!"
+msgstr "INSTEAD %s найден."
