@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: insteadman 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-13 13:10+0300\n"
+"POT-Creation-Date: 2018-06-13 18:15+0300\n"
 "PO-Revision-Date: 2018-06-09 19:48+0300\n"
 "Last-Translator:  <jhekasoft@gmail.com>\n"
 "Language-Team: Ukrainian\n"
@@ -218,9 +218,26 @@ msgstr "встановлено"
 msgid "restart required"
 msgstr "потрібен перезапуск"
 
-#: gtk/ui/settings.go:387
-msgid "Cache has been cleared!"
-msgstr "Кеш очищено!"
+#: gtk/functions.go:74
+#, c-format
+msgid "Game hasn't installed (%s). Please check INSTEAD in the Settings."
+msgstr "Не вдалося встановити гру (%s). Будь ласка, перевірте INSTEAD в Налаштуваннях."
+
+#: gtk/ui/settings.go:183
+msgid "Settings"
+msgstr "Налаштування"
+
+#: gtk/ui/settings.go:298
+msgid "Choose INSTEAD"
+msgstr "Оберіть INSTEAD"
+
+#: gtk/ui/settings.go:299
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: gtk/functions.go:25
+msgid "No running. No game selected."
+msgstr "Не вдалося запустити. Гра не обрана."
 
 #: gtk/functions.go:40
 msgid "No installing. No game selected."
@@ -231,77 +248,63 @@ msgstr "Не вдалося встановити. Гра не обрана."
 msgid "%s Installing..."
 msgstr "%s Встановлення..."
 
-#: gtk/ui/error.go:23
-msgid "InsteadMan error"
-msgstr "InsteadMan помилка"
+#: gtk/ui/settings.go:210
+#, c-format
+msgid "Cache directory: %s"
+msgstr "Каталог з кешем: %s"
 
-#: gtk/ui/settings.go:298
-msgid "Choose INSTEAD"
-msgstr "Оберіть INSTEAD"
+#: gtk/ui/settings.go:330
+msgid "INSTEAD has detected!"
+msgstr "INSTEAD знайдено!"
 
-#: gtk/ui/settings.go:299
-msgid "Open"
-msgstr "Відкрити"
-
-#: gtk/ui/settings.go:299
-msgid "Cancel"
-msgstr "Скасувати"
+#: gtk/ui/settings.go:363
+#, c-format
+msgid "INSTEAD %s has found!"
+msgstr "INSTEAD %s знайдено!"
 
 #: gtk/functions.go:59
 #, c-format
 msgid "%s %s Installing..."
 msgstr "%s %s Встановлення..."
 
-#: gtk/ui/settings.go:183
-msgid "Settings"
-msgstr "Налаштування"
-
-#: gtk/ui/settings.go:357
-msgid "INSTEAD built-in check failed!"
-msgstr "Вбудований INSTEAD не пройшов перевірку!"
-
-#: gtk/ui/settings.go:330
-msgid "INSTEAD has detected!"
-msgstr "INSTEAD знайдено!"
-
-#: gtk/ui/settings.go:333
-msgid "INSTEAD hasn't detected!"
-msgstr "INSTEAD не знайдено!"
-
-#: gtk/functions.go:20 gtk/functions.go:35 gtk/functions.go:225
-msgid "INSTEAD has not found. Please add INSTEAD in the Settings."
-msgstr "INSTEAD не знайдено. Будь ласка, додайте INSTEAD в Налаштуваннях."
-
-#: gtk/functions.go:25
-msgid "No running. No game selected."
-msgstr "Не вдалося запустити. Гра не обрана."
-
-#: gtk/functions.go:74
-#, c-format
-msgid "Game hasn't installed (%s). Please check INSTEAD in the Settings."
-msgstr ""
-"Не вдалося встановити гру (%s). Будь ласка, перевірте INSTEAD в "
-"Налаштуваннях."
-
-#: gtk/main.go:336
+#: gtk/main.go:338
 #, c-format
 msgid "Game %s has not found."
 msgstr "Гра %s не знайдена."
 
-#: gtk/main.go:388
+#: gtk/main.go:390
 #, c-format
 msgid "%s Removing..."
 msgstr "%s Видалення..."
-
-#: gtk/ui/settings.go:359
-msgid "INSTEAD check failed!"
-msgstr "INSTEAD не пройшов перевірку!"
 
 #: gtk/ui/settings.go:117
 msgid "No settings window"
 msgstr "Нема вікна з налаштуваннями"
 
-#: gtk/ui/settings.go:363
-#, c-format
-msgid "INSTEAD %s has found!"
-msgstr "INSTEAD %s знайдено!"
+#: gtk/ui/settings.go:299
+msgid "Open"
+msgstr "Відкрити"
+
+#: gtk/ui/settings.go:333
+msgid "INSTEAD hasn't detected!"
+msgstr "INSTEAD не знайдено!"
+
+#: gtk/ui/settings.go:357
+msgid "INSTEAD built-in check failed!"
+msgstr "Вбудований INSTEAD не пройшов перевірку!"
+
+#: gtk/ui/settings.go:387
+msgid "Cache has been cleared!"
+msgstr "Кеш очищено!"
+
+#: gtk/ui/error.go:23
+msgid "InsteadMan error"
+msgstr "InsteadMan помилка"
+
+#: gtk/functions.go:20 gtk/functions.go:35 gtk/functions.go:225
+msgid "INSTEAD has not found. Please add INSTEAD in the Settings."
+msgstr "INSTEAD не знайдено. Будь ласка, додайте INSTEAD в Налаштуваннях."
+
+#: gtk/ui/settings.go:359
+msgid "INSTEAD check failed!"
+msgstr "INSTEAD не пройшов перевірку!"

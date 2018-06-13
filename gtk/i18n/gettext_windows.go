@@ -10,6 +10,7 @@ import "os"
 func SetGettextLanguage(language string) {
 	os.Setenv("LANGUAGE", language)
 
+	// We should use putenv() because os.Setenv hasn't effect
 	cstr := C.CString("LANGUAGE=" + language)
 	C.putenv((*C.char)(cstr))
 }

@@ -207,7 +207,7 @@ func (win *SettingsWindow) readSettings() {
 	}
 
 	// Cache
-	win.BtnCacheClear.SetTooltipText("Cache directory: " + win.Manager.CacheDir())
+	win.BtnCacheClear.SetTooltipText(fmt.Sprintf(i18n.T("Cache directory: %s"), win.Manager.CacheDir()))
 
 	// Config path
 	win.LblConfigPath.SetText(win.Configurator.FilePath)
