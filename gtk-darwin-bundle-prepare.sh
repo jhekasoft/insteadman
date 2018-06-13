@@ -36,7 +36,7 @@ mkdir -p $tmp_resources_path
 ./gtk-copy-icons.sh $JHBUILD_PREFIX $tmp_icons_path
 
 # Copy INSTEAD
-cp -r $instead_app_path'/Contents/Frameworks' $tmp_contents_path'/'
+cp -R $instead_app_path'/Contents/Frameworks' $tmp_contents_path'/' # Copy with symlinks
 cp -r $instead_app_path'/Contents/Resources/__private__' $tmp_resources_path'/'
 cp $instead_app_path'/Contents/MacOS/sdl-instead' $tmp_macos_path'/sdl-instead'
 
