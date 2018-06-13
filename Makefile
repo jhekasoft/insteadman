@@ -1,14 +1,19 @@
-VERSION=3.1.1
+VERSION=3.1.2
 DESTDIR=
 PREFIX=/usr
 GETTEXT_LANGS=ru uk
 TARGETOS=$(shell uname -s)
 
-CGO_LDFLAGS=
-CGO_CPPFLAGS=
+CGO_LDFLAGS=""
+CGO_CPPFLAGS=""
 ifeq ($(TARGETOS),Darwin) # CGO flags for macOS
+ifneq ($(JHBUILD_PREFIX),) # CGO flags for jhbuild
+CGO_LDFLAGS="-lintl -L${HOME}/gtk/inst/lib"
+CGO_CPPFLAGS="-I${HOME}/gtk/inst/include"
+else # CGO flags for default shell
 CGO_LDFLAGS="-lintl -L/usr/local/opt/gettext/lib"
 CGO_CPPFLAGS="-I/usr/local/opt/gettext/include"
+endif
 endif
 
 all:

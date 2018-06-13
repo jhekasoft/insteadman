@@ -1,6 +1,7 @@
 package configurator
 
 import (
+	"../utils"
 	"github.com/ghodss/yaml"
 	"io/ioutil"
 	"os"
@@ -50,12 +51,14 @@ const (
 	skeletonDir       = "skeleton"
 	gamesDirName      = "games"
 	insteadManDirName = "insteadman"
+	localeDir         = "locale"
 )
 
 type Configurator struct {
 	FilePath   string
 	CurrentDir string
 	DataPath   string
+	LocalePath string
 	Version    string
 }
 
@@ -128,6 +131,20 @@ func (c *Configurator) DataResourcePath(relPath string) string {
 
 	// If resource hasn't found then return relative path of resource
 	return relPath
+}
+
+func (c *Configurator) DataLocalePath() string {
+	resourcesLocaleDir, e := filepath.Abs(filepath.Join(c.CurrentDir, "resources", localeDir))
+	if e == nil && utils.PathExist(resourcesLocaleDir) {
+		return resourcesLocaleDir
+	}
+
+	if c.LocalePath != "" {
+		return c.LocalePath
+	}
+
+	unixLocaleDir, _ := filepath.Abs(filepath.Join(c.CurrentDir, "..", "share", "locale"))
+	return unixLocaleDir
 }
 
 func (c *Configurator) GetSkeletonConfig() (config *InsteadmanConfig, e error) {

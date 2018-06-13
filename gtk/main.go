@@ -37,7 +37,8 @@ const (
 	FontWeightNormal = 400
 	FontWeightBold   = 700
 
-	EnvDataPath = "DATA_PATH"
+	EnvDataPath   = "DATA_PATH"
+	EnvLocalePath = "LOCALE_PATH"
 
 	I18nDomain = "insteadman"
 )
@@ -117,9 +118,10 @@ func main() {
 	}
 
 	dataPath := os.Getenv(EnvDataPath)
+	localePath := os.Getenv(EnvLocalePath)
 
 	Configurator = &configurator.Configurator{FilePath: "", CurrentDir: currentDir, DataPath: dataPath,
-		Version: version}
+		LocalePath: localePath, Version: version}
 
 	config, e := Configurator.GetConfig()
 	if e != nil {
@@ -131,7 +133,7 @@ func main() {
 	M = &manager.Manager{Config: config, InterpreterFinder: finder}
 
 	// I18n init
-	i18n.Init(Configurator, I18nDomain, config.Lang)
+	i18n.Init(Configurator.DataLocalePath(), I18nDomain, config.Lang)
 
 	e = b.AddFromFile(Configurator.DataResourcePath(MainFormFilePath))
 	if e != nil {

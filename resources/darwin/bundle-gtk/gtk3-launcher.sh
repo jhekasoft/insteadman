@@ -22,6 +22,7 @@ bundle_bin="$bundle_res"/bin
 bundle_data="$bundle_res"/share
 bundle_etc="$bundle_res"/etc
 bundle_insteadman_data="$bundle_data"/insteadman
+bundle_locale="$bundle_data"/locale
 
 
 export XDG_CONFIG_DIRS="$bundle_etc"/xdg
@@ -30,6 +31,7 @@ export GTK_DATA_PREFIX="$bundle_res"
 export GTK_EXE_PREFIX="$bundle_res"
 export GTK_PATH="$bundle_res"
 export DATA_PATH="$bundle_insteadman_data"
+export LOCALE_PATH="$bundle_locale"
 
 # PANGO_* is no longer needed for pango >= 1.38
 export PANGO_RC_FILE="$bundle_etc/pango/pangorc"
@@ -42,7 +44,7 @@ if [ `uname -r | cut -d . -f 1` -ge 10 ]; then
 fi
 
 APP=$name
-I18NDIR="$bundle_data/locale"
+I18NDIR=$bundle_locale
 # Set the locale-related variables appropriately:
 unset LANG LC_MESSAGES LC_MONETARY LC_COLLATE
 
