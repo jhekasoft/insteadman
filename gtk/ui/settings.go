@@ -23,13 +23,6 @@ var (
 	SettingsWin *SettingsWindow
 )
 
-func GetSettings(manager *manager.Manager, configurator *configurator.Configurator, version string) *SettingsWindow {
-	if SettingsWin != nil && SettingsWin.Window.IsVisible() {
-		return SettingsWin
-	}
-	return SettingsWindowNew(manager, configurator, version)
-}
-
 func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configurator, version string,
 	parent *gtk.Window) {
 
@@ -44,7 +37,7 @@ func ShowSettingWin(manager *manager.Manager, configurator *configurator.Configu
 func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configurator, version string,
 	parent *gtk.Window) {
 
-	SettingsWin = GetSettings(manager, configurator, version)
+	GetSettings(manager, configurator, version)
 	if parent != nil {
 		SettingsWin.Window.SetTransientFor(parent)
 	}
@@ -54,9 +47,18 @@ func ShowAboutWin(manager *manager.Manager, configurator *configurator.Configura
 	SettingsWin.NtbkCategories.SetCurrentPage(aboutTabNum)
 }
 
+// Singleton
+func GetSettings(manager *manager.Manager, configurator *configurator.Configurator, version string) *SettingsWindow {
+	if SettingsWin != nil && SettingsWin.Window.IsVisible() {
+		return SettingsWin
+	}
+	SettingsWin = SettingsWindowNew(manager, configurator, version)
+	return SettingsWin
+}
+
 type SettingsWindow struct {
 	Window *gtk.Window
-	e      error
+	//e      error
 
 	NtbkCategories *gtk.Notebook
 
@@ -312,6 +314,7 @@ func (h *SettingsWindowHandlers) insteadBrowseClicked(s *gtk.Button) {
 	s.SetSensitive(true)
 }
 
+/* Handlers */
 func (h *SettingsWindowHandlers) insteadBuiltinClicked(s *gtk.ToggleButton) {
 	h.win.Manager.Config.UseBuiltinInterpreter = s.GetActive()
 	h.win.readSettings()
