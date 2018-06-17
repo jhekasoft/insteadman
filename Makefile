@@ -158,7 +158,13 @@ gtk-compile-i18n:
 	msgfmt resources/locale/uk/LC_MESSAGES/insteadman.po -o resources/locale/uk/LC_MESSAGES/insteadman.mo
 
 test:
-	go test ./...
+	go test ./core/...
+	go test ./cli/...
+
+gtk-test:
+	CGO_LDFLAGS=${CGO_LDFLAGS} \
+    CGO_CPPFLAGS=${CGO_CPPFLAGS} \
+	go test ./gtk/...
 
 clean:
 	rm -f insteadman

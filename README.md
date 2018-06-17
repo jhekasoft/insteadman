@@ -105,3 +105,9 @@ Run tests:
 ```bash
 make test
 ```
+
+Run GTK tests (with CGO):
+
+```bash
+make gtk-test
+```

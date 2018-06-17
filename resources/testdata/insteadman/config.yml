@@ -6,7 +6,7 @@ gtk:
   main_width: 0
 insteadman_path: ../../resources/testdata/insteadman/
 interpreter_command: ""
-lang: ru
+lang: ""
 repositories:
 - name: instead-games
   url: http://instead-games.ru/xml.php
