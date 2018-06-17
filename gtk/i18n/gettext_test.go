@@ -1,18 +1,18 @@
 package i18n
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestT(t *testing.T) {
 	translates := map[string]map[string]string{
 		"uk": {
-			"About": "Про програму",
+			"About":            "Про програму",
 			"%s Installing...": "%s Встановлення...",
 		},
 		"ru": {
-			"About": "О программе",
+			"About":            "О программе",
 			"%s Installing...": "%s Установка...",
 		},
 	}
@@ -24,6 +24,5 @@ func TestT(t *testing.T) {
 			assert.Equal(t, T(key), mustBeTranslate)
 		}
 	}
-
 
 }

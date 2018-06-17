@@ -478,37 +478,41 @@ func (win *MainWindow) updateGameInfo(g *manager.Game) {
 
 	// Image
 	go func() {
-		gameImagePath, e := win.Manager.GetGameImage(g)
-		if e == nil && gameImagePath != "" {
-			win.PixBufGameImage, e = gdk.PixbufNewFromFileAtScale(gameImagePath, 210, 210, true) // todo: size to constants
-			if e == nil {
-				_, e := glib.IdleAdd(func() {
-					// Set image if there is current game (user hasn't changed selected game)
-					if win.CurGame != nil && g.Id == win.CurGame.Id {
-						win.ImgGame.SetFromPixbuf(win.PixBufGameImage)
-					}
-				})
+		win.updateGameImage(g)
+	}()
+}
 
-				if e != nil {
-					log.Fatal("Change game image. IdleAdd() failed:", e)
-				}
-			}
-		}
-
-		if e != nil {
-			log.Printf("Image error: %s", e)
-		}
-
-		if e != nil || gameImagePath == "" {
+func (win *MainWindow) updateGameImage(g *manager.Game) {
+	gameImagePath, e := win.Manager.GetGameImage(g)
+	if e == nil && gameImagePath != "" {
+		win.PixBufGameImage, e = gdk.PixbufNewFromFileAtScale(gameImagePath, 210, 210, true) // todo: size to constants
+		if e == nil {
 			_, e := glib.IdleAdd(func() {
-				win.ImgGame.SetFromPixbuf(win.PixBufGameDefaultImage)
+				// Set image if there is current game (user hasn't changed selected game)
+				if win.CurGame != nil && g.Id == win.CurGame.Id {
+					win.ImgGame.SetFromPixbuf(win.PixBufGameImage)
+				}
 			})
 
 			if e != nil {
 				log.Fatal("Change game image. IdleAdd() failed:", e)
 			}
 		}
-	}()
+	}
+
+	if e != nil {
+		log.Printf("Image error: %s", e)
+	}
+
+	if e != nil || gameImagePath == "" {
+		_, e := glib.IdleAdd(func() {
+			win.ImgGame.SetFromPixbuf(win.PixBufGameDefaultImage)
+		})
+
+		if e != nil {
+			log.Fatal("Change game image. IdleAdd() failed:", e)
+		}
+	}
 }
 
 func (win *MainWindow) runGame(g *manager.Game) {

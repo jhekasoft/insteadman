@@ -166,6 +166,11 @@ gtk-test:
     CGO_CPPFLAGS=${CGO_CPPFLAGS} \
 	go test ./gtk/...
 
+report:
+	go vet ./{core,cli}/...
+	gocyclo -over 15 .
+	golint ./...
+
 clean:
 	rm -f insteadman
 	rm -f insteadman-gtk

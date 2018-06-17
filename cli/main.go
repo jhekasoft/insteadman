@@ -14,44 +14,48 @@ var version = "3"
 
 func main() {
 	m, c := initManagerAndConfigurator()
-
 	needRepositoriesUpdate := !m.HasDownloadedRepositories()
-
 	argsWithoutProg := os.Args[1:]
+	command := strings.ToLower(GetCommand(argsWithoutProg))
 
-	switch strings.ToLower(GetCommand(argsWithoutProg)) {
+	switch command {
+	case "list":
+	case "search":
+	case "langs":
+		if needRepositoriesUpdate {
+			update(m)
+		}
+
+	case "run":
+	case "install":
+		m, _ = checkInterpreterAndReinit(m, c)
+	}
+
+	runCommand(command, argsWithoutProg, m, c)
+}
+
+func runCommand(command string, args []string, m *manager.Manager, c *configurator.Configurator) {
+	switch command {
 	case "update":
 		update(m)
 
 	case "list":
-		if needRepositoriesUpdate {
-			update(m)
-		}
-
-		list(m, argsWithoutProg)
+		list(m, args)
 
 	case "search":
-		if needRepositoriesUpdate {
-			update(m)
-		}
-
-		search(m, argsWithoutProg)
+		search(m, args)
 
 	case "show":
-		show(m, argsWithoutProg)
+		show(m, args)
 
 	case "run":
-		m, _ = checkInterpreterAndReinit(m, c)
-
-		run(m, argsWithoutProg)
+		run(m, args)
 
 	case "install":
-		m, _ = checkInterpreterAndReinit(m, c)
-
-		install(m, argsWithoutProg)
+		install(m, args)
 
 	case "remove":
-		remove(m, argsWithoutProg)
+		remove(m, args)
 
 	case "findinterpreter":
 		findInterpreter(m, c)
@@ -60,10 +64,6 @@ func main() {
 		repositories(m)
 
 	case "langs":
-		if needRepositoriesUpdate {
-			update(m)
-		}
-
 		langs(m)
 
 	case "configpath":
