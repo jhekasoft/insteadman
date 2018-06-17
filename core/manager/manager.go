@@ -2,7 +2,7 @@ package manager
 
 import (
 	"../configurator"
-	"../interpreter_finder"
+	"../interpreterfinder"
 	"../utils"
 	"encoding/xml"
 	"errors"
@@ -31,7 +31,7 @@ const (
 
 type Manager struct {
 	Config            *configurator.InsteadmanConfig
-	InterpreterFinder *interpreterFinder.InterpreterFinder
+	InterpreterFinder *interpreterfinder.InterpreterFinder
 	CurrentRunningCmd *exec.Cmd
 }
 
@@ -483,7 +483,7 @@ func (m *Manager) IsBuiltinInterpreterCommand() bool {
 
 func (m *Manager) InterpreterCommand() string {
 	if m.Config.UseBuiltinInterpreter {
-		builtInCmd := m.InterpreterFinder.FindBuiltin()
+		builtInCmd := m.InterpreterFinder.FindBuiltIn()
 		if builtInCmd != "" {
 			return configurator.ExpandInterpreterCommand(builtInCmd)
 		}

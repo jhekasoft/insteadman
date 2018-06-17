@@ -1,6 +1,6 @@
 // +build !darwin
 
-package os_integration
+package osintegration
 
 import "github.com/gotk3/gotk3/gtk"
 

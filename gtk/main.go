@@ -2,11 +2,11 @@ package main
 
 import (
 	"../core/configurator"
-	"../core/interpreter_finder"
+	"../core/interpreterfinder"
 	"../core/manager"
 	"../core/utils"
 	"./i18n"
-	"./os_integration"
+	"./osintegration"
 	"./ui"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
@@ -31,7 +31,7 @@ func main() {
 	runtime.LockOSThread()
 
 	// OS integrations
-	os_integration.OsIntegrate()
+	osintegration.OsIntegrate()
 
 	gtk.Init(nil)
 
@@ -56,7 +56,7 @@ func main() {
 		ui.ShowErrorDlgFatal(e.Error(), nil)
 	}
 
-	finder := &interpreterFinder.InterpreterFinder{CurrentDir: currentDir}
+	finder := &interpreterfinder.InterpreterFinder{CurrentDir: currentDir}
 
 	mn := &manager.Manager{Config: config, InterpreterFinder: finder}
 

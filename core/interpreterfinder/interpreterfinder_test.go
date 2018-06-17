@@ -1,4 +1,4 @@
-package interpreterFinder
+package interpreterfinder
 
 import (
 	"github.com/stretchr/testify/assert"

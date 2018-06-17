@@ -1,6 +1,6 @@
 // +build darwin
 
-package os_integration
+package osintegration
 
 /*
 #cgo CFLAGS: -x objective-c

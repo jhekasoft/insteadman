@@ -4,6 +4,7 @@ import (
 	"github.com/gosexy/gettext"
 )
 
+// Init initializes gettext with domain and language
 func Init(localeDir, domain, language string) {
 	if language != "" {
 		SetGettextLanguage(language)
@@ -15,6 +16,7 @@ func Init(localeDir, domain, language string) {
 	gettext.Textdomain(domain)
 }
 
+// T translates message and returns translated string
 func T(message string) string {
 	return gettext.Gettext(message)
 }

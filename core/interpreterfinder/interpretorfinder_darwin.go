@@ -1,6 +1,6 @@
 // +build darwin
 
-package interpreterFinder
+package interpreterfinder
 
 import (
 	"os/exec"

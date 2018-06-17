@@ -2,7 +2,7 @@ package ui
 
 import (
 	"../i18n"
-	"../os_integration"
+	"../osintegration"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
@@ -42,7 +42,7 @@ func showErrorDlg(txt string, fatal bool, parent *gtk.Window) {
 	dlg.SetKeepAbove(true)
 
 	// OS integrations for window
-	os_integration.OsIntegrateDialog(dlg)
+	osintegration.OsIntegrateDialog(dlg)
 
 	dlg.Run()
 	dlg.Destroy()

@@ -2,7 +2,7 @@ package manager
 
 import (
 	"../configurator"
-	"../interpreter_finder"
+	"../interpreterfinder"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -57,7 +57,7 @@ func TestInstallGame(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := new(interpreterFinder.InterpreterFinder)
+	finder := new(interpreterfinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
@@ -85,7 +85,7 @@ func TestRunGame(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := new(interpreterFinder.InterpreterFinder)
+	finder := new(interpreterfinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath
@@ -143,7 +143,7 @@ func TestGetGameImage(t *testing.T) {
 	assert.NoError(t, e)
 
 	// Find installed INSTEAD and use it in config
-	finder := new(interpreterFinder.InterpreterFinder)
+	finder := new(interpreterfinder.InterpreterFinder)
 	interpreterPath := finder.Find()
 	assert.NotNil(t, interpreterPath)
 	config.InterpreterCommand = *interpreterPath

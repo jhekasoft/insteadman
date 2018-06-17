@@ -1,6 +1,6 @@
 // +build windows
 
-package interpreterFinder
+package interpreterfinder
 
 import (
 	"syscall"

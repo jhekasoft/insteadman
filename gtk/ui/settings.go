@@ -4,7 +4,7 @@ import (
 	"../../core/configurator"
 	"../../core/manager"
 	"../i18n"
-	"../os_integration"
+	"../osintegration"
 	gtkutils "../utils"
 	"fmt"
 	"github.com/gotk3/gotk3/glib"
@@ -185,7 +185,7 @@ func SettingsWindowNew(manager *manager.Manager, configurator *configurator.Conf
 	win.Window.SetTitle(i18n.T("Settings"))
 
 	// OS integrations for window
-	os_integration.OsIntegrateWindow(win.Window)
+	osintegration.OsIntegrateWindow(win.Window)
 
 	return win
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"../core/configurator"
-	"../core/interpreter_finder"
+	"../core/interpreterfinder"
 	"../core/manager"
 	"../core/utils"
 	"fmt"
@@ -305,7 +305,7 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 	config, e := c.GetConfig()
 	ExitIfError(e)
 
-	finder := &interpreterFinder.InterpreterFinder{CurrentDir: currentDir}
+	finder := &interpreterfinder.InterpreterFinder{CurrentDir: currentDir}
 
 	m := manager.Manager{Config: config, InterpreterFinder: finder}
 

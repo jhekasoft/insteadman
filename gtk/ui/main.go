@@ -5,7 +5,7 @@ import (
 	"../../core/manager"
 	"../../core/utils"
 	"../i18n"
-	"../os_integration"
+	"../osintegration"
 	gtkutils "../utils"
 	"fmt"
 	"github.com/gosexy/gettext"
@@ -236,7 +236,7 @@ func MainWindowNew(manager *manager.Manager, configurator *configurator.Configur
 	win.Window.SetTitle(title)
 
 	// OS integrations for window
-	os_integration.OsIntegrateWindow(win.Window)
+	osintegration.OsIntegrateWindow(win.Window)
 
 	return win
 }
