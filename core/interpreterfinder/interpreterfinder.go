@@ -1,11 +1,12 @@
 package interpreterfinder
 
 import (
-	"../configurator"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/jhekasoft/insteadman3/core/configurator"
 )
 
 // InterpreterFinder provides finding INSTEAD interpreter in the filesystem

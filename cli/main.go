@@ -1,13 +1,14 @@
 package main
 
 import (
-	"../core/configurator"
-	"../core/interpreterfinder"
-	"../core/manager"
-	"../core/utils"
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman3/core/manager"
+	"github.com/jhekasoft/insteadman3/core/utils"
 )
 
 var version = "3"

@@ -1,9 +1,6 @@
 package manager
 
 import (
-	"../configurator"
-	"../interpreterfinder"
-	"../utils"
 	"encoding/xml"
 	"errors"
 	"io"
@@ -16,6 +13,10 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman3/core/utils"
 )
 
 const (

@@ -1,10 +1,11 @@
 package manager
 
 import (
-	"../configurator"
-	"../interpreterfinder"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/interpreterfinder"
+	"github.com/stretchr/testify/assert"
 )
 
 const (

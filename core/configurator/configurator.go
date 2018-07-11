@@ -1,11 +1,12 @@
 package configurator
 
 import (
-	"../utils"
-	"github.com/ghodss/yaml"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/ghodss/yaml"
+	"github.com/jhekasoft/insteadman3/core/utils"
 )
 
 type InsteadmanConfig struct {

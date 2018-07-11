@@ -1,17 +1,18 @@
 package main
 
 import (
-	"../core/configurator"
-	"../core/interpreterfinder"
-	"../core/manager"
-	"../core/utils"
-	"./i18n"
-	"./osintegration"
-	"./ui"
-	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
 	"runtime"
+
+	"github.com/gotk3/gotk3/gtk"
+	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman3/core/manager"
+	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/jhekasoft/insteadman3/gtk/i18n"
+	"github.com/jhekasoft/insteadman3/gtk/osintegration"
+	"github.com/jhekasoft/insteadman3/gtk/ui"
 )
 
 const (

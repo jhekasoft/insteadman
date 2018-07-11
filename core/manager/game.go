@@ -1,8 +1,6 @@
 package manager
 
 import (
-	"../utils"
-	"github.com/pyk/byten"
 	"html"
 	"io/ioutil"
 	"os"
@@ -10,6 +8,9 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/pyk/byten"
 )
 
 type RepositoryGameList struct {

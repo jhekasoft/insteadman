@@ -1,15 +1,16 @@
 package ui
 
 import (
-	"../../core/configurator"
-	"../../core/manager"
-	"../i18n"
-	"../osintegration"
-	gtkutils "../utils"
 	"fmt"
+	"log"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"log"
+	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/manager"
+	"github.com/jhekasoft/insteadman3/gtk/i18n"
+	"github.com/jhekasoft/insteadman3/gtk/osintegration"
+	gtkutils "github.com/jhekasoft/insteadman3/gtk/utils"
 )
 
 const (

@@ -1,20 +1,21 @@
 package ui
 
 import (
-	"../../core/configurator"
-	"../../core/manager"
-	"../../core/utils"
-	"../i18n"
-	"../osintegration"
-	gtkutils "../utils"
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/gosexy/gettext"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/gotk3/gotk3/pango"
-	"log"
-	"strings"
+	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/manager"
+	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/jhekasoft/insteadman3/gtk/i18n"
+	"github.com/jhekasoft/insteadman3/gtk/osintegration"
+	gtkutils "github.com/jhekasoft/insteadman3/gtk/utils"
 )
 
 const (

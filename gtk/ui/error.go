@@ -1,11 +1,12 @@
 package ui
 
 import (
-	"../i18n"
-	"../osintegration"
-	"github.com/gotk3/gotk3/gtk"
 	"log"
 	"os"
+
+	"github.com/gotk3/gotk3/gtk"
+	"github.com/jhekasoft/insteadman3/gtk/i18n"
+	"github.com/jhekasoft/insteadman3/gtk/osintegration"
 )
 
 func ShowErrorDlgFatal(txt string, parent *gtk.Window) {
