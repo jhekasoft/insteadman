@@ -24,6 +24,18 @@ Download: https://github.com/jhekasoft/insteadman3/releases.
 Build
 -----
 
+Download `insteadman3`:
+
+```
+go get github.com/jhekasoft/insteadman3
+```
+
+Go to the `insteadman3` directory:
+
+```
+cd ~/go/src/github.com/jhekasoft/insteadman3/
+```
+
 Build CLI and GTK-versions:
 
 ```bash
