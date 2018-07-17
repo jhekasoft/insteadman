@@ -1,4 +1,4 @@
-![InsteadMan](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/logo32x32.png "InsteadMan") 
+![InsteadMan](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/logo32x32.png "InsteadMan")
 InsteadMan 3
 ============
 
@@ -6,33 +6,32 @@ InsteadMan 3
 
 This is new version that is writing with go lang
 
-Old version: https://github.com/jhekasoft/insteadman2
+Old version: <https://github.com/jhekasoft/insteadman2>
 
 GUI (GTK+ 3)
 ---
 
 ![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/gtk-3_0_2-screenshot.png "InsteadMan GUI (GTK)")
 
-
 CLI
 ---
 
 ![InsteadMan GUI](https://github.com/jhekasoft/insteadman3/raw/master/resources/images/cli-3_0_2-screenshot.png "InsteadMan CLI")
 
-Download: https://github.com/jhekasoft/insteadman3/releases.
+Download: <https://github.com/jhekasoft/insteadman3/releases.>
 
 Build
 -----
 
 Download `insteadman3`:
 
-```
+```bash
 go get github.com/jhekasoft/insteadman3
 ```
 
 Go to the `insteadman3` directory:
 
-```
+```bash
 cd ~/go/src/github.com/jhekasoft/insteadman3/
 ```
 
@@ -50,7 +49,6 @@ Run GTK (GUI):
 ```bash
 ./insteadman-gtk
 ```
-
 
 Run CLI:
 
