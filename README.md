@@ -26,7 +26,7 @@ Build
 Download `insteadman3`:
 
 ```bash
-go get github.com/jhekasoft/insteadman3
+go get github.com/jhekasoft/insteadman3/...
 ```
 
 Go to the `insteadman3` directory:
