@@ -33,6 +33,10 @@ insteadman-gtk-deps:
 	CGO_CPPFLAGS=${CGO_CPPFLAGS} \
 	go get github.com/gosexy/gettext
 
+insteadman-fyne-deps:
+	go get fyne.io/fyne/widget
+	go get fyne.io/fyne/app
+
 insteadman:
 	${MAKE} insteadman-deps
 	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman ./cli
@@ -43,6 +47,10 @@ insteadman-gtk:
 	CGO_LDFLAGS=${CGO_LDFLAGS} \
     CGO_CPPFLAGS=${CGO_CPPFLAGS} \
 	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
+
+insteadman-fyne:
+	${MAKE} insteadman-fyne-deps
+	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-fyne ./fyne
 
 install: all
 	install -d -m 0755 $(DESTDIR)$(PREFIX)/bin/
@@ -175,4 +183,6 @@ clean:
 	rm -f insteadman
 	rm -f insteadman-gtk
 	rm -f insteadman-gtk.exe
+	rm -f insteadman-fyne
+	rm -f insteadman-fyne.exe
 	rm -rf build/*

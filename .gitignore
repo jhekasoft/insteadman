@@ -4,6 +4,8 @@
 /insteadman-cli
 /insteadman-gtk
 /insteadman-gtk.exe
+/insteadman-fyne
+/insteadman-fyne.exe
 /cache
 /resources/testdata/insteadman/cache
 /build
