@@ -4,17 +4,14 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/jhekasoft/insteadman3/core/manager"
-
-	"fyne.io/fyne/theme"
-
+	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/layout"
-
-	"fyne.io/fyne"
+	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 
 	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/manager"
 )
 
 // SettingsScreen is structure for Settings screen
@@ -25,6 +22,7 @@ type SettingsScreen struct {
 	Version      string
 	Window       fyne.Window
 	Screen       fyne.CanvasObject
+	tabs         *widget.TabContainer
 }
 
 // NewSettingsScreen is constructor for Settings screen
@@ -35,20 +33,22 @@ func NewSettingsScreen(
 	version string,
 	window fyne.Window) *SettingsScreen {
 	scr := SettingsScreen{
-		manager,
-		configurator,
-		mainIcon,
-		version,
-		window,
-		nil,
+		Manager:      manager,
+		Configurator: configurator,
+		MainIcon:     mainIcon,
+		Version:      version,
+		Window:       window,
 	}
+
+	scr.tabs = widget.NewTabContainer(
+		widget.NewTabItem("Main", scr.makeMainTab()),
+		widget.NewTabItem("Repositories", scr.makeRepositoriesTab()),
+		widget.NewTabItem("About", scr.makeAboutTab()),
+	)
 
 	scr.Screen = fyne.NewContainerWithLayout(
 		layout.NewVBoxLayout(),
-		widget.NewTabContainer(
-			widget.NewTabItem("Main", scr.makeMainTab()),
-			widget.NewTabItem("About", scr.makeAboutTab()),
-		),
+		scr.tabs,
 		layout.NewSpacer(),
 		widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
 			scr.Window.Close()
@@ -56,6 +56,18 @@ func NewSettingsScreen(
 	)
 
 	return &scr
+}
+
+func (win *SettingsScreen) SetMainTab() {
+	win.tabs.SelectTabIndex(0)
+}
+
+func (win *SettingsScreen) SetRepositoriesTab() {
+	win.tabs.SelectTabIndex(1)
+}
+
+func (win *SettingsScreen) SetAboutTab() {
+	win.tabs.SelectTabIndex(2)
 }
 
 func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
@@ -67,7 +79,7 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	path.SetPlaceHolder("INSTEAD path")
 	path.SetText(config.InterpreterCommand)
 
-	pathInfo := widget.NewLabel("")
+	pathInfo := widget.NewLabelWithStyle("", fyne.TextAlignLeading, fyne.TextStyle{Italic: true})
 	pathInfo.Hide()
 
 	browseButton := widget.NewButton("Browse...", nil)
@@ -130,6 +142,10 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	return form
 }
 
+func (win *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
+	return widget.NewLabel("Repos")
+}
+
 func (win *SettingsScreen) makeAboutTab() fyne.CanvasObject {
 	mainIcon := win.MainIcon
 	version := win.Version
@@ -143,11 +159,12 @@ func (win *SettingsScreen) makeAboutTab() fyne.CanvasObject {
 	return fyne.NewContainerWithLayout(
 		layout.NewCenterLayout(),
 		widget.NewHBox(
-			fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(120, 120)), canvas.NewImageFromResource(mainIcon)),
+			fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(160, 160)), canvas.NewImageFromResource(mainIcon)),
 			widget.NewVBox(
-				widget.NewLabel("InsteadMan"),
+				widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 				widget.NewLabel("Version: "+version),
-				widget.NewHyperlinkWithStyle(siteURL, link, fyne.TextAlignCenter, fyne.TextStyle{}),
+				widget.NewHyperlink(siteURL, link),
+				widget.NewLabel("License: MIT"),
 				widget.NewLabel("© 2015-2020 InsteadMan"),
 			),
 		),
