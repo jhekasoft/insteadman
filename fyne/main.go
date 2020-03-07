@@ -8,8 +8,6 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
 
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
@@ -18,6 +16,7 @@ import (
 	"github.com/jhekasoft/insteadman3/fyne/screens"
 )
 
+// It will change at building
 var version = "3"
 
 func main() {
@@ -47,11 +46,14 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 	var settingsScreen *screens.SettingsScreen = nil
 
 	w := app.NewWindow("InsteadMan")
-	entry := widget.NewEntry()
-	w.SetContent(widget.NewVBox(
-		entry,
-		widget.NewLabel(mn.Config.CalculatedGamesPath),
-		widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), func() {
+	// TODO: improve settings open functions
+	mainScreen := screens.NewMainScreen(
+		mn,
+		c,
+		insteadManIcon(c),
+		version,
+		w,
+		func() {
 			if sw == nil {
 				sw, settingsScreen = newSettingsWin(app, mn, c, version)
 				sw.SetOnClosed(func() {
@@ -61,8 +63,8 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 			}
 			settingsScreen.SetMainTab()
 			sw.Show()
-		}),
-		widget.NewButtonWithIcon("About", theme.InfoIcon(), func() {
+		},
+		func() {
 			if sw == nil {
 				sw, settingsScreen = newSettingsWin(app, mn, c, version)
 				sw.SetOnClosed(func() {
@@ -72,11 +74,9 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 			}
 			settingsScreen.SetAboutTab()
 			sw.Show()
-		}),
-		widget.NewButton("Quit", func() {
-			app.Quit()
-		}),
-	))
+		},
+	)
+	w.SetContent(mainScreen.Screen)
 	w.CenterOnScreen()
 
 	return w
