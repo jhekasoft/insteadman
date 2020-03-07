@@ -2,12 +2,15 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/dialog"
 
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
@@ -38,6 +41,11 @@ func main() {
 
 	w := newMainWin(app, mn, c)
 	w.SetMaster()
+
+	if mn.InterpreterCommand() == "" {
+		findInterpreter(mn, c, w)
+	}
+
 	w.ShowAndRun()
 }
 
@@ -110,4 +118,25 @@ func insteadManIcon(configurator *configurator.Configurator) fyne.Resource {
 	exitIfError(e)
 
 	return fyne.NewStaticResource("insteadman", b)
+}
+
+func findInterpreter(m *manager.Manager, c *configurator.Configurator, w fyne.Window) {
+	path := m.InterpreterFinder.Find()
+
+	if path == nil {
+		e := errors.New("INSTEAD has not found. Please add INSTEAD in the Settings.")
+		dialog.ShowError(e, w)
+		return
+	}
+
+	log.Printf("INSTEAD has found: %s", *path)
+
+	m.Config.InterpreterCommand = *path
+	e := c.SaveConfig(m.Config)
+	if e != nil {
+		dialog.ShowError(e, w)
+		return
+	}
+
+	log.Print("Path has saved")
 }
