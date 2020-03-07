@@ -17,7 +17,52 @@ import (
 	"github.com/jhekasoft/insteadman3/core/configurator"
 )
 
-func makeMainTab(config *configurator.InsteadmanConfig, configurator *configurator.Configurator, manager *manager.Manager) fyne.CanvasObject {
+// SettingsScreen is structure for Settings screen
+type SettingsScreen struct {
+	Manager      *manager.Manager
+	Configurator *configurator.Configurator
+	MainIcon     fyne.Resource
+	Version      string
+	Window       fyne.Window
+	Screen       fyne.CanvasObject
+}
+
+// NewSettingsScreen is constructor for Settings screen
+func NewSettingsScreen(
+	manager *manager.Manager,
+	configurator *configurator.Configurator,
+	mainIcon fyne.Resource,
+	version string,
+	window fyne.Window) *SettingsScreen {
+	scr := SettingsScreen{
+		manager,
+		configurator,
+		mainIcon,
+		version,
+		window,
+		nil,
+	}
+
+	scr.Screen = fyne.NewContainerWithLayout(
+		layout.NewVBoxLayout(),
+		widget.NewTabContainer(
+			widget.NewTabItem("Main", scr.makeMainTab()),
+			widget.NewTabItem("About", scr.makeAboutTab()),
+		),
+		layout.NewSpacer(),
+		widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
+			scr.Window.Close()
+		}),
+	)
+
+	return &scr
+}
+
+func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
+	manager := win.Manager
+	config := win.Manager.Config
+	configurator := win.Configurator
+
 	path := widget.NewEntry()
 	path.SetPlaceHolder("INSTEAD path")
 	path.SetText(config.InterpreterCommand)
@@ -85,7 +130,10 @@ func makeMainTab(config *configurator.InsteadmanConfig, configurator *configurat
 	return form
 }
 
-func makeAboutTab(mainIcon fyne.Resource, version string) fyne.CanvasObject {
+func (win *SettingsScreen) makeAboutTab() fyne.CanvasObject {
+	mainIcon := win.MainIcon
+	version := win.Version
+
 	siteURL := "https://jhekasoft.github.io/insteadman/"
 	link, err := url.Parse(siteURL)
 	if err != nil {
@@ -103,23 +151,5 @@ func makeAboutTab(mainIcon fyne.Resource, version string) fyne.CanvasObject {
 				widget.NewLabel("© 2015-2020 InsteadMan"),
 			),
 		),
-	)
-}
-
-// SettingsScreen is screen with settings
-func SettingsScreen(
-	config *configurator.InsteadmanConfig,
-	configurator *configurator.Configurator,
-	manager *manager.Manager,
-	mainIcon fyne.Resource,
-	version string) fyne.CanvasObject {
-	return fyne.NewContainerWithLayout(
-		layout.NewVBoxLayout(),
-		widget.NewTabContainer(
-			widget.NewTabItem("Main", makeMainTab(config, configurator, manager)),
-			widget.NewTabItem("About", makeAboutTab(mainIcon, version)),
-		),
-		layout.NewSpacer(),
-		widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), nil),
 	)
 }

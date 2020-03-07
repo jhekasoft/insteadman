@@ -44,7 +44,8 @@ func main() {
 		widget.NewLabel(config.CalculatedGamesPath),
 		widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), func() {
 			sw := app.NewWindow("Settings")
-			sw.SetContent(screens.SettingsScreen(config, &c, mn, insteadManIcon(c), version))
+			settingsScreen := screens.NewSettingsScreen(mn, &c, insteadManIcon(c), version, sw)
+			sw.SetContent(settingsScreen.Screen)
 			sw.Show()
 		}),
 		widget.NewButton("Quit", func() {
