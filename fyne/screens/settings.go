@@ -1,7 +1,10 @@
 package screens
 
 import (
+	"fmt"
 	"net/url"
+
+	"github.com/jhekasoft/insteadman3/core/manager"
 
 	"fyne.io/fyne/theme"
 
@@ -14,57 +17,109 @@ import (
 	"github.com/jhekasoft/insteadman3/core/configurator"
 )
 
-func makeMainTab(config *configurator.InsteadmanConfig, configurator *configurator.Configurator) fyne.Widget {
-	instead := widget.NewEntry()
-	instead.SetPlaceHolder("INSTEAD path")
-	instead.SetText(config.InterpreterCommand)
+func makeMainTab(config *configurator.InsteadmanConfig, configurator *configurator.Configurator, manager *manager.Manager) fyne.CanvasObject {
+	path := widget.NewEntry()
+	path.SetPlaceHolder("INSTEAD path")
+	path.SetText(config.InterpreterCommand)
 
-	insteadButtons := fyne.NewContainerWithLayout(
+	pathInfo := widget.NewLabel("")
+	pathInfo.Hide()
+
+	browseButton := widget.NewButton("Browse...", nil)
+	browseButton.Disable()
+	pathButtons := fyne.NewContainerWithLayout(
 		layout.NewAdaptiveGridLayout(4),
-		widget.NewButton("Browse...", nil),
+		browseButton,
 		widget.NewButton("Use built-in", nil),
-		widget.NewButtonWithIcon("Detect", theme.SearchIcon(), nil),
-		widget.NewButtonWithIcon("Check", theme.ConfirmIcon(), nil),
+		widget.NewButtonWithIcon("Detect", theme.SearchIcon(), func() {
+			pathInfo.SetText("Detecting...")
+			pathInfo.Show()
+			command := manager.InterpreterFinder.Find()
+			if command != nil {
+				path.SetText(*command)
+				pathInfo.SetText("INSTEAD has detected!")
+			} else {
+				pathInfo.SetText("INSTEAD hasn't detected!")
+			}
+		}),
+		widget.NewButtonWithIcon("Check", theme.ConfirmIcon(), func() {
+			version, checkErr := manager.InterpreterFinder.Check(manager.InterpreterCommand())
+			var txt string
+			if checkErr != nil {
+				if manager.IsBuiltinInterpreterCommand() {
+					txt = "INSTEAD built-in check failed!"
+				} else {
+					txt = "INSTEAD check failed!"
+				}
+			} else {
+				txt = fmt.Sprintf("INSTEAD %s has found!", version)
+			}
+			pathInfo.SetText(txt)
+			pathInfo.Show()
+		}),
 	)
 
-	language := widget.NewSelect([]string{"system", "English", "Russian", "Ukrainian"}, nil)
+	language := widget.NewSelect([]string{"system", "en", "ru", "uk"}, nil)
+
+	// Language
+	if config.Lang != "" {
+		language.SetSelected(config.Lang)
+	}
 
 	cleanCache := widget.NewButtonWithIcon("Clean", theme.DeleteIcon(), nil)
 
+	configPathEntry := widget.NewEntry()
+	configPathEntry.SetText(configurator.FilePath)
+	configPathEntry.Disable()
+
 	form := &widget.Form{}
-	form.Append("INSTEAD path", instead)
-	form.Append("", insteadButtons)
+	form.Append("INSTEAD path", widget.NewVBox(
+		path,
+		pathButtons,
+		pathInfo,
+	))
 	form.Append("Language", language)
 	form.Append("Cache", cleanCache)
-	form.Append("Config path", widget.NewLabel(configurator.FilePath))
+	form.Append("Config path", configPathEntry)
 
 	return form
 }
 
-func makeAboutTab(mainIcon fyne.Resource) fyne.Widget {
+func makeAboutTab(mainIcon fyne.Resource, version string) fyne.CanvasObject {
 	siteURL := "https://jhekasoft.github.io/insteadman/"
 	link, err := url.Parse(siteURL)
 	if err != nil {
 		fyne.LogError("Could not parse URL", err)
 	}
 
-	return widget.NewHBox(
-		fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(120, 120)), canvas.NewImageFromResource(mainIcon)),
-		widget.NewVBox(
-			widget.NewLabel("InsteadMan"),
-			widget.NewHyperlinkWithStyle(siteURL, link, fyne.TextAlignCenter, fyne.TextStyle{}),
-			widget.NewLabel("© 2015-2020 InsteadMan"),
+	return fyne.NewContainerWithLayout(
+		layout.NewCenterLayout(),
+		widget.NewHBox(
+			fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(120, 120)), canvas.NewImageFromResource(mainIcon)),
+			widget.NewVBox(
+				widget.NewLabel("InsteadMan"),
+				widget.NewLabel("Version: "+version),
+				widget.NewHyperlinkWithStyle(siteURL, link, fyne.TextAlignCenter, fyne.TextStyle{}),
+				widget.NewLabel("© 2015-2020 InsteadMan"),
+			),
 		),
 	)
 }
 
 // SettingsScreen is screen with settings
-func SettingsScreen(config *configurator.InsteadmanConfig, configurator *configurator.Configurator, mainIcon fyne.Resource) fyne.CanvasObject {
+func SettingsScreen(
+	config *configurator.InsteadmanConfig,
+	configurator *configurator.Configurator,
+	manager *manager.Manager,
+	mainIcon fyne.Resource,
+	version string) fyne.CanvasObject {
 	return fyne.NewContainerWithLayout(
-		layout.NewMaxLayout(),
+		layout.NewVBoxLayout(),
 		widget.NewTabContainer(
-			widget.NewTabItem("Main", makeMainTab(config, configurator)),
-			widget.NewTabItem("About", makeAboutTab(mainIcon)),
+			widget.NewTabItem("Main", makeMainTab(config, configurator, manager)),
+			widget.NewTabItem("About", makeAboutTab(mainIcon, version)),
 		),
+		layout.NewSpacer(),
+		widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), nil),
 	)
 }

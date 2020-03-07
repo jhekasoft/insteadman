@@ -12,6 +12,8 @@ import (
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
 	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman3/core/manager"
 	"github.com/jhekasoft/insteadman3/core/utils"
 	"github.com/jhekasoft/insteadman3/fyne/screens"
 )
@@ -28,11 +30,11 @@ func main() {
 	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: version}
 	config, e := c.GetConfig()
 	ExitIfError(e)
-
-	fmt.Printf("Config: %v\n", config)
+	finder := &interpreterfinder.InterpreterFinder{CurrentDir: currentDir}
+	mn := &manager.Manager{Config: config, InterpreterFinder: finder}
 
 	app := app.New()
-	// app.SetIcon(theme.FyneLogo())
+	app.SetIcon(insteadManIcon(c))
 
 	entry := widget.NewEntry()
 
@@ -42,7 +44,7 @@ func main() {
 		widget.NewLabel(config.CalculatedGamesPath),
 		widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), func() {
 			sw := app.NewWindow("Settings")
-			sw.SetContent(screens.SettingsScreen(config, &c, insteadManIcon(c)))
+			sw.SetContent(screens.SettingsScreen(config, &c, mn, insteadManIcon(c), version))
 			sw.Show()
 		}),
 		widget.NewButton("Quit", func() {
