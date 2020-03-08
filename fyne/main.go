@@ -35,7 +35,7 @@ func main() {
 	finder := &interpreterfinder.InterpreterFinder{CurrentDir: currentDir}
 	mn := &manager.Manager{Config: config, InterpreterFinder: finder}
 
-	app := app.New()
+	app := app.NewWithID("insteadman3-fyne")
 	app.SetIcon(insteadManIcon(c))
 	// app.Settings().SetTheme(theme.LightTheme())
 
@@ -85,6 +85,7 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 		},
 	)
 	w.SetContent(mainScreen.Screen)
+	w.Resize(fyne.NewSize(400, 400))
 	w.CenterOnScreen()
 
 	return w

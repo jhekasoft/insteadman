@@ -71,13 +71,9 @@ func (win *SettingsScreen) SetAboutTab() {
 }
 
 func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
-	manager := win.Manager
-	config := win.Manager.Config
-	configurator := win.Configurator
-
 	path := widget.NewEntry()
 	path.SetPlaceHolder("INSTEAD path")
-	path.SetText(config.InterpreterCommand)
+	path.SetText(win.Manager.Config.InterpreterCommand)
 
 	pathInfo := widget.NewLabelWithStyle("", fyne.TextAlignLeading, fyne.TextStyle{Italic: true})
 	pathInfo.Hide()
@@ -91,7 +87,7 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 		widget.NewButtonWithIcon("Detect", theme.SearchIcon(), func() {
 			pathInfo.SetText("Detecting...")
 			pathInfo.Show()
-			command := manager.InterpreterFinder.Find()
+			command := win.Manager.InterpreterFinder.Find()
 			if command != nil {
 				path.SetText(*command)
 				pathInfo.SetText("INSTEAD has detected!")
@@ -100,10 +96,10 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 			}
 		}),
 		widget.NewButtonWithIcon("Check", theme.ConfirmIcon(), func() {
-			version, checkErr := manager.InterpreterFinder.Check(manager.InterpreterCommand())
+			version, checkErr := win.Manager.InterpreterFinder.Check(win.Manager.InterpreterCommand())
 			var txt string
 			if checkErr != nil {
-				if manager.IsBuiltinInterpreterCommand() {
+				if win.Manager.IsBuiltinInterpreterCommand() {
 					txt = "INSTEAD built-in check failed!"
 				} else {
 					txt = "INSTEAD check failed!"
@@ -119,14 +115,14 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	language := widget.NewSelect([]string{"system", "en", "ru", "uk"}, nil)
 
 	// Language
-	if config.Lang != "" {
-		language.SetSelected(config.Lang)
+	if win.Manager.Config.Lang != "" {
+		language.SetSelected(win.Manager.Config.Lang)
 	}
 
 	cleanCache := widget.NewButtonWithIcon("Clean", theme.DeleteIcon(), nil)
 
 	configPathEntry := widget.NewEntry()
-	configPathEntry.SetText(configurator.FilePath)
+	configPathEntry.SetText(win.Configurator.FilePath)
 	configPathEntry.Disable()
 
 	form := &widget.Form{}
