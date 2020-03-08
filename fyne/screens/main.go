@@ -1,8 +1,13 @@
 package screens
 
 import (
+	"bufio"
+	"io/ioutil"
+	"os"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
@@ -47,24 +52,21 @@ func NewMainScreen(
 		widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
 	)
 
+	games, e := scr.Manager.GetSortedGamesByDateDesc()
+	if e != nil {
+		dialog.ShowError(e, scr.Window)
+	}
+
+	container := fyne.NewContainerWithLayout(
+		layout.NewFixedGridLayout(fyne.NewSize(150, 200)),
+	)
+	// var items []fyne.CanvasObject = nil
+	for _, game := range games {
+		container.AddObject(gameItem(&game, scr))
+		// items = append(items, gameItem(game.Title, mainIcon))
+	}
 	scroll := widget.NewScrollContainer(
-		fyne.NewContainerWithLayout(
-			layout.NewFixedGridLayout(fyne.NewSize(100, 130)),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-			gameItem(mainIcon),
-		),
+		container,
 	)
 	scroll.Resize(fyne.NewSize(400, 400))
 
@@ -77,13 +79,34 @@ func NewMainScreen(
 	return &scr
 }
 
-func gameItem(mainIcon fyne.Resource) fyne.CanvasObject {
+func gameItem(g *manager.Game, scr MainScreen) fyne.CanvasObject {
+	var icon fyne.Resource = nil
+	var b []byte = nil
+
+	fileName, e := scr.Manager.GetGameImage(g)
+	if e == nil {
+		iconFile, e := os.Open(scr.Configurator.DataResourcePath(fileName))
+		if e == nil {
+			r := bufio.NewReader(iconFile)
+
+			b, e = ioutil.ReadAll(r)
+		}
+
+		if e != nil {
+			dialog.ShowError(e, scr.Window)
+			icon = scr.MainIcon
+		} else {
+			icon = fyne.NewStaticResource("game_"+g.Name, b)
+		}
+	}
+
 	return widget.NewVBox(
 		fyne.NewContainerWithLayout(
-			layout.NewFixedGridLayout(fyne.NewSize(90, 90)),
-			canvas.NewImageFromResource(mainIcon),
+			layout.NewFixedGridLayout(fyne.NewSize(140, 140)),
+			canvas.NewImageFromResource(icon),
 		),
-		// widget.NewButton("Лифтёр 2", nil),
-		widget.NewLabelWithStyle("Лифтёр 2", fyne.TextAlignCenter, fyne.TextStyle{}),
+		// widget.NewButton(title, nil),
+		widget.NewLabel(g.Title),
+		// widget.NewLabelWithStyle(title, fyne.TextAlignCenter, fyne.TextStyle{}),
 	)
 }
