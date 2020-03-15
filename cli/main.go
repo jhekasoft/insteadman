@@ -273,7 +273,15 @@ func printConfigPath(c *configurator.Configurator) {
 }
 
 func printHelpAndExit() {
-	fmt.Printf("InsteadMan CLI %s — INSTEAD games manager\n\n"+
+	asciiArt := `
+ ___           _                 _ __  __             
+|_ _|_ __  ___| |_ ___  __ _  __| |  \/  | __ _ _ __  
+ | || '_ \/ __| __/ _ \/ _, |/ _, | |\/| |/ _, | '_ \ 
+ | || | | \__ \ ||  __/ (_| | (_| | |  | | (_| | | | |
+|___|_| |_|___/\__\___|\__,_|\__,_|_|  |_|\__,_|_| |_|
+`
+
+	fmt.Printf(asciiArt+"\nInsteadMan CLI %s — INSTEAD games manager (launcher)\n\n"+
 		"Usage:\n"+
 		"    insteadman-cli [command] [keyword]\n\n"+
 		"Commands:\n"+
