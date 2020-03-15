@@ -23,6 +23,7 @@ all:
 insteadman-deps:
 	go get github.com/ghodss/yaml
 	go get github.com/pyk/byten
+	go get github.com/fatih/color
 
 insteadman-gtk-deps:
 	go get github.com/ghodss/yaml

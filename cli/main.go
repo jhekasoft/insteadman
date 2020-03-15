@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
 	"github.com/jhekasoft/insteadman3/core/manager"
@@ -137,17 +138,17 @@ func install(m *manager.Manager, args []string) {
 
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
-	fmt.Printf("Downloading and installing game %s...", game.Title)
+	fmt.Printf("Downloading and installing game %s...", FmtName(game.Title))
 
 	installProgress := func(size uint64) {
 		percents := utils.Percents(size, uint64(game.Size))
-		fmt.Printf("\rDownloading and installing game %s... %s", game.Title, percents)
+		fmt.Printf("\rDownloading and installing game %s... %s", FmtName(game.Title), color.GreenString(percents))
 	}
 
 	e = m.InstallGame(&game, installProgress)
 	ExitIfError(e)
 
-	fmt.Printf("\nGame %s has installed.\n", game.Title)
+	fmt.Printf("\nGame %s has installed.\n", FmtName(game.Title))
 }
 
 func show(m *manager.Manager, args []string) {
@@ -165,23 +166,25 @@ func show(m *manager.Manager, args []string) {
 
 	installedTxt := ""
 	if game.Installed {
-		installedTxt = "[installed]"
+		installedTxt = FmtInstalled("[installed]")
 	}
 
 	// Print game information
-	fmt.Printf("%s (%s) %s %s\n", game.Title, game.Name, game.HumanSize(), installedTxt)
-	fmt.Printf("Version: %s\n", game.HumanVersion())
+	fmt.Printf(
+		"%s (%s) %s %s\n",
+		FmtTitle(game.Title), FmtName(game.Name), FmtSize(game.HumanSize()), installedTxt)
+	fmt.Printf("Version: %s\n", FmtVersion(game.HumanVersion()))
 	if game.Languages != nil {
-		fmt.Printf("Languages: %s\n", strings.Join(game.Languages, ", "))
+		fmt.Printf("Languages: %s\n", FmtLang(strings.Join(game.Languages, ", ")))
 	}
 	if game.RepositoryName != "" {
-		fmt.Printf("Repository: %s\n", game.RepositoryName)
+		fmt.Printf("Repository: %s\n", FmtRepo(game.RepositoryName))
 	}
 	if game.Descurl != "" {
-		fmt.Printf("More: %s\n", game.Descurl)
+		fmt.Printf("More: %s\n", FmtURL(game.Descurl))
 	}
 	if game.Description != "" {
-		fmt.Printf("Desctiprion:\n%s\n", game.Description)
+		fmt.Printf("\n"+color.New(color.Bold).Sprint("Descriprion")+":\n%s\n", game.Description)
 	}
 }
 
@@ -199,7 +202,7 @@ func run(m *manager.Manager, args []string) {
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
 	if !game.Installed {
-		fmt.Printf("Game %s isn't installed.\n", game.Title)
+		fmt.Printf("Game %s isn't installed.\n", FmtName(game.Title))
 		fmt.Printf("Please run for installation:\n"+
 			"insteadman install %s\n", game.Name)
 		os.Exit(1)
@@ -208,7 +211,7 @@ func run(m *manager.Manager, args []string) {
 	e = m.RunGame(&game)
 	ExitIfError(e)
 
-	fmt.Printf("Running %s game...\n", game.Title)
+	fmt.Printf("Running %s game...\n", FmtName(game.Title))
 }
 
 func remove(m *manager.Manager, args []string) {
@@ -224,12 +227,12 @@ func remove(m *manager.Manager, args []string) {
 
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
-	fmt.Printf("Removing game %s...\n", game.Title)
+	fmt.Printf("Removing game %s...\n", FmtName(game.Title))
 
 	e = m.RemoveGame(&game)
 	ExitIfError(e)
 
-	fmt.Printf("Game %s has removed.\n", game.Title)
+	fmt.Printf("Game %s has removed.\n", FmtName(game.Title))
 }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
@@ -251,7 +254,7 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 
 func repositories(m *manager.Manager) {
 	for _, repo := range m.GetRepositories() {
-		fmt.Printf("%s (%s)\n", repo.Name, repo.Url)
+		fmt.Printf("%s (%s)\n", FmtRepo(repo.Name), repo.Url)
 	}
 }
 
@@ -260,7 +263,7 @@ func langs(m *manager.Manager) {
 	ExitIfError(e)
 
 	for _, lang := range m.FindLangs(games) {
-		fmt.Printf("%s\n", lang)
+		fmt.Printf("%s\n", FmtLang(lang))
 	}
 }
 
@@ -281,23 +284,50 @@ func printHelpAndExit() {
 |___|_| |_|___/\__\___|\__,_|\__,_|_|  |_|\__,_|_| |_|
 `
 
-	fmt.Printf(asciiArt+"\nInsteadMan CLI %s — INSTEAD games manager (launcher)\n\n"+
-		"Usage:\n"+
-		"    insteadman-cli [command] [keyword]\n\n"+
-		"Commands:\n"+
-		"update\n    Update game's repositories\n"+
-		"list --repo=[name] --lang=[lang] --installed\n    Print list of games with filtering\n"+
-		"search [keyword] --repo=[name] --lang=[lang] --installed\n    Search game by name and title with filtering\n"+
-		"show [keywork]\n    Show information about game by keyword\n"+
-		"install [keyword]\n    Install game by keyword\n"+
-		"run [keywork]\n    Run game by keyword\n"+
-		"remove [keywork]\n    Remove game by keyword\n"+
-		"findInterpreter\n    Find INSTEAD interpreter and save path to the config\n"+
-		"repositories\n    Print available repositories\n"+
-		"langs\n    Print available game languages\n"+
-		"configPath\n    Print config path\n"+
-		"version\n    Print current version of the application\n\n"+
-		"More info: http://jhekasoft.github.io/insteadman/\n", version)
+	color.Cyan(asciiArt)
+	fmt.Printf("\n"+color.New(color.Bold).Sprint("InsteadMan CLI")+" %s — INSTEAD games manager (launcher)\n\n", version)
+	fmt.Print(color.New(color.FgCyan, color.Bold).Sprint("Usage") + ":\n" +
+		"    insteadman-cli [command] [keyword]\n\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("Commands") + ":\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("update") +
+		"\n    Update game's repositories\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("list") + color.CyanString(" --repo=[name] --lang=[lang] --installed") +
+		"\n    Print list of games with filtering\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("search") + color.CyanString(" [keyword] --repo=[name] --lang=[lang] --installed") +
+		"\n    Search game by name and title with filtering\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("show") + color.CyanString(" [keyword]") +
+		"\n    Show information about game by keyword\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("install") + color.CyanString(" [keyword]") +
+		"\n    Install game by keyword\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("run") + color.CyanString(" [keyword]") +
+		"\n    Run game by keyword\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("remove") + color.CyanString(" [keyword]") +
+		"\n    Remove game by keyword\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("findInterpreter") +
+		"\n    Find INSTEAD interpreter and save path to the config\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("repositories") +
+		"\n    Print available repositories\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("langs") +
+		"\n    Print available game languages\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("configPath") +
+		"\n    Print config path\n" +
+
+		color.New(color.FgCyan, color.Bold).Sprint("version") +
+		"\n    Print current version of the application\n\n" +
+
+		"More info: " + FmtURL("http://jhekasoft.github.io/insteadman/") + "\n")
 	os.Exit(1)
 }
 
@@ -334,16 +364,18 @@ func printGames(games []manager.Game) {
 	for _, game := range games {
 		installed := ""
 		if game.Installed {
-			installed = "[installed]"
+			installed = FmtInstalled("[installed]")
 		}
-		fmt.Printf("%v, %v, %v %v %v\n", game.Title, game.Name, game.RepositoryName, game.Languages, installed)
+		fmt.Printf(
+			"%s, %s, %s "+FmtLang("%v")+" %s\n",
+			FmtTitle(game.Title), FmtName(game.Name), FmtRepo(game.RepositoryName), game.Languages, installed)
 
 	}
 }
 
 func getOrExitIfNoGame(filteredGames []manager.Game, keyword string) manager.Game {
 	if len(filteredGames) < 1 {
-		fmt.Printf("Game %s has not found\n", keyword)
+		fmt.Printf("Game %s has not found\n", FmtName(keyword))
 		os.Exit(1)
 	}
 
