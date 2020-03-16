@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -12,11 +10,12 @@ import (
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/dialog"
 
+	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/data"
+	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screens"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
 	"github.com/jhekasoft/insteadman3/core/manager"
 	"github.com/jhekasoft/insteadman3/core/utils"
-	"github.com/jhekasoft/insteadman3/fyne/screens"
 )
 
 // It will change at building
@@ -36,7 +35,7 @@ func main() {
 	mn := &manager.Manager{Config: config, InterpreterFinder: finder}
 
 	app := app.NewWithID("insteadman3-fyne")
-	app.SetIcon(insteadManIcon(c))
+	app.SetIcon(data.InsteadManLogo)
 	// app.Settings().SetTheme(theme.LightTheme())
 
 	w := newMainWin(app, mn, c)
@@ -58,7 +57,7 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 	mainScreen := screens.NewMainScreen(
 		mn,
 		c,
-		insteadManIcon(c),
+		data.InsteadManLogo,
 		version,
 		w,
 		func() {
@@ -93,7 +92,7 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 
 func newSettingsWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator, version string) (fyne.Window, *screens.SettingsScreen) {
 	w := app.NewWindow("Settings")
-	settingsScreen := screens.NewSettingsScreen(mn, c, insteadManIcon(c), version, w)
+	settingsScreen := screens.NewSettingsScreen(mn, c, data.InsteadManLogo, version, w)
 	w.SetContent(settingsScreen.Screen)
 	w.CenterOnScreen()
 
@@ -109,17 +108,17 @@ func exitIfError(e error) {
 	os.Exit(1)
 }
 
-func insteadManIcon(configurator *configurator.Configurator) fyne.Resource {
-	iconFile, e := os.Open(configurator.DataResourcePath("../resources/images/logo.png"))
-	exitIfError(e)
+// func insteadManIcon(configurator *configurator.Configurator) fyne.Resource {
+// 	iconFile, e := os.Open(configurator.DataResourcePath("../resources/images/logo.png"))
+// 	exitIfError(e)
 
-	r := bufio.NewReader(iconFile)
+// 	r := bufio.NewReader(iconFile)
 
-	b, e := ioutil.ReadAll(r)
-	exitIfError(e)
+// 	b, e := ioutil.ReadAll(r)
+// 	exitIfError(e)
 
-	return fyne.NewStaticResource("insteadman", b)
-}
+// 	return fyne.NewStaticResource("insteadman", b)
+// }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator, w fyne.Window) {
 	path := m.InterpreterFinder.Find()

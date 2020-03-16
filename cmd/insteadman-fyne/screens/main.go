@@ -52,19 +52,19 @@ func NewMainScreen(
 		widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
 	)
 
-	games, e := scr.Manager.GetSortedGamesByDateDesc()
-	if e != nil {
-		dialog.ShowError(e, scr.Window)
-	}
+	// games, e := scr.Manager.GetSortedGamesByDateDesc()
+	// if e != nil {
+	// 	dialog.ShowError(e, scr.Window)
+	// }
 
 	container := fyne.NewContainerWithLayout(
 		layout.NewFixedGridLayout(fyne.NewSize(150, 200)),
 	)
 	// var items []fyne.CanvasObject = nil
-	for _, game := range games {
-		container.AddObject(gameItem(&game, scr))
-		// items = append(items, gameItem(game.Title, mainIcon))
-	}
+	// for _, game := range games {
+	// 	container.AddObject(gameItem(&game, scr))
+	// 	// items = append(items, gameItem(game.Title, mainIcon))
+	// }
 	scroll := widget.NewScrollContainer(
 		container,
 	)
