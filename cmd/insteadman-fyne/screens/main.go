@@ -43,37 +43,59 @@ func NewMainScreen(
 
 	search := widget.NewEntry()
 	search.SetPlaceHolder("Search")
-	toolbar := fyne.NewContainerWithLayout(
-		layout.NewGridLayoutWithColumns(5),
-		widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
-		search,
+	buttons := fyne.NewContainerWithLayout(
+		layout.NewGridLayoutWithColumns(4),
 		widget.NewCheck("Installed", nil),
+		widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
 		widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), showSettings),
 		widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
 	)
-
-	// games, e := scr.Manager.GetSortedGamesByDateDesc()
-	// if e != nil {
-	// 	dialog.ShowError(e, scr.Window)
-	// }
-
-	container := fyne.NewContainerWithLayout(
-		layout.NewFixedGridLayout(fyne.NewSize(150, 200)),
+	toolbar := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(nil, nil, nil, buttons),
+		search,
+		buttons,
 	)
+
+	games, e := scr.Manager.GetSortedGamesByDateDesc()
+	if e != nil {
+		dialog.ShowError(e, scr.Window)
+	}
+
+	var items []fyne.CanvasObject
+	for _, game := range games {
+		// items = append(items, widget.NewLabel(game.Title))
+		var installedIcon fyne.Resource
+		if game.Installed {
+			installedIcon = theme.CheckButtonCheckedIcon()
+		}
+
+		button := widget.NewButtonWithIcon(game.Title, installedIcon, nil)
+		items = append(items, button)
+	}
+	container := widget.NewVBox(items...)
+	// container := fyne.NewContainerWithLayout(
+	// 	layout.NewFixedGridLayout(fyne.NewSize(150, 200)),
+	// )
 	// var items []fyne.CanvasObject = nil
 	// for _, game := range games {
-	// 	container.AddObject(gameItem(&game, scr))
-	// 	// items = append(items, gameItem(game.Title, mainIcon))
+	// 	container.Append(widget.NewButtonWithIcon(game.Title, theme.CheckButtonCheckedIcon(), nil))
+	// 	// container.AddObject(gameItem(&game, scr))
+	// 	// items = append(items, gameItem(game.Title, MainIcon))
 	// }
 	scroll := widget.NewScrollContainer(
 		container,
 	)
 	scroll.Resize(fyne.NewSize(400, 400))
 
+	info := widget.NewVBox(
+		widget.NewLabel("Лифтёр 2"),
+	)
+
 	scr.Screen = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(toolbar, nil, nil, nil),
+		layout.NewBorderLayout(toolbar, nil, nil, info),
 		toolbar,
 		scroll,
+		info,
 	)
 
 	return &scr
