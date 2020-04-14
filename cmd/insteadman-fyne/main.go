@@ -84,7 +84,7 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 		},
 	)
 	w.SetContent(mainScreen.Screen)
-	w.Resize(fyne.NewSize(400, 400))
+	w.Resize(fyne.NewSize(0, 400))
 	w.CenterOnScreen()
 
 	return w

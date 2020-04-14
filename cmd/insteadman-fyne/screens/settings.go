@@ -27,14 +27,14 @@ type SettingsScreen struct {
 
 // NewSettingsScreen is constructor for Settings screen
 func NewSettingsScreen(
-	manager *manager.Manager,
-	configurator *configurator.Configurator,
+	m *manager.Manager,
+	c *configurator.Configurator,
 	mainIcon fyne.Resource,
 	version string,
 	window fyne.Window) *SettingsScreen {
 	scr := SettingsScreen{
-		Manager:      manager,
-		Configurator: configurator,
+		Manager:      m,
+		Configurator: c,
 		MainIcon:     mainIcon,
 		Version:      version,
 		Window:       window,

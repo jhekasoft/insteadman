@@ -26,16 +26,16 @@ type MainScreen struct {
 
 // NewMainScreen is constructor for main screen
 func NewMainScreen(
-	manager *manager.Manager,
-	configurator *configurator.Configurator,
+	m *manager.Manager,
+	c *configurator.Configurator,
 	mainIcon fyne.Resource,
 	version string,
 	window fyne.Window,
 	showSettings func(),
 	showAbout func()) *MainScreen {
 	scr := MainScreen{
-		Manager:      manager,
-		Configurator: configurator,
+		Manager:      m,
+		Configurator: c,
 		MainIcon:     mainIcon,
 		Version:      version,
 		Window:       window,
@@ -44,8 +44,8 @@ func NewMainScreen(
 	search := widget.NewEntry()
 	search.SetPlaceHolder("Search")
 	buttons := fyne.NewContainerWithLayout(
-		layout.NewGridLayoutWithColumns(4),
-		widget.NewCheck("Installed", nil),
+		layout.NewGridLayoutWithColumns(3),
+		// widget.NewCheck("Installed", nil),
 		widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
 		widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), showSettings),
 		widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
@@ -56,21 +56,22 @@ func NewMainScreen(
 		buttons,
 	)
 
-	games, e := scr.Manager.GetSortedGamesByDateDesc()
+	games, e := scr.Manager.GetSortedGames()
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
 	}
+	games = manager.FilterGames(games, nil, nil, nil, true)
 
 	var items []fyne.CanvasObject
 	for _, game := range games {
-		// items = append(items, widget.NewLabel(game.Title))
-		var installedIcon fyne.Resource
-		if game.Installed {
-			installedIcon = theme.CheckButtonCheckedIcon()
-		}
+		items = append(items, widget.NewLabel(game.Title))
+		// var installedIcon fyne.Resource
+		// if game.Installed {
+		// 	installedIcon = theme.CheckButtonCheckedIcon()
+		// }
 
-		button := widget.NewButtonWithIcon(game.Title, installedIcon, nil)
-		items = append(items, button)
+		// button := widget.NewButtonWithIcon(game.Title, installedIcon, nil)
+		// items = append(items, button)
 	}
 	container := widget.NewVBox(items...)
 	// container := fyne.NewContainerWithLayout(
@@ -82,10 +83,10 @@ func NewMainScreen(
 	// 	// container.AddObject(gameItem(&game, scr))
 	// 	// items = append(items, gameItem(game.Title, MainIcon))
 	// }
-	scroll := widget.NewScrollContainer(
+	scroll := widget.NewVScrollContainer(
 		container,
 	)
-	scroll.Resize(fyne.NewSize(400, 400))
+	// scroll.Resize(fyne.NewSize(400, 400))
 
 	info := widget.NewVBox(
 		widget.NewLabel("Лифтёр 2"),
