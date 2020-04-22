@@ -3,6 +3,7 @@ package screens
 import (
 	"bufio"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"fyne.io/fyne"
@@ -14,6 +15,26 @@ import (
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
+
+type tappableLabel struct {
+	widget.Label
+}
+
+func newTappableLabel(text string) *tappableLabel {
+	label := &tappableLabel{}
+	label.ExtendBaseWidget(label)
+	label.SetText(text)
+
+	return label
+}
+
+func (t *tappableLabel) Tapped(_ *fyne.PointEvent) {
+	log.Println("I have been tapped")
+}
+
+func (t *tappableLabel) TappedSecondary(_ *fyne.PointEvent) {
+	log.Println("I have been tapped 2")
+}
 
 type MainScreen struct {
 	Manager      *manager.Manager
@@ -44,11 +65,11 @@ func NewMainScreen(
 	search := widget.NewEntry()
 	search.SetPlaceHolder("Search")
 	buttons := fyne.NewContainerWithLayout(
-		layout.NewGridLayoutWithColumns(3),
+		layout.NewGridLayoutWithColumns(1),
 		// widget.NewCheck("Installed", nil),
-		widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
-		widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), showSettings),
-		widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
+		// widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
+		widget.NewButtonWithIcon("", theme.SettingsIcon(), showSettings),
+		// widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
 	)
 	toolbar := fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, nil, nil, buttons),
@@ -64,7 +85,7 @@ func NewMainScreen(
 
 	var items []fyne.CanvasObject
 	for _, game := range games {
-		items = append(items, widget.NewLabel(game.Title))
+		// items = append(items, newTappableLabel(game.Title))
 		// var installedIcon fyne.Resource
 		// if game.Installed {
 		// 	installedIcon = theme.CheckButtonCheckedIcon()
@@ -72,6 +93,7 @@ func NewMainScreen(
 
 		// button := widget.NewButtonWithIcon(game.Title, installedIcon, nil)
 		// items = append(items, button)
+		items = append(items, widget.NewButton(game.Title, nil))
 	}
 	container := widget.NewVBox(items...)
 	// container := fyne.NewContainerWithLayout(
