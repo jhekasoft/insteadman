@@ -12,8 +12,6 @@ import (
 	"github.com/jhekasoft/insteadman3/core/utils"
 )
 
-var version = "3"
-
 func main() {
 	m, c := initManagerAndConfigurator()
 	needRepositoriesUpdate := !m.HasDownloadedRepositories()
@@ -268,7 +266,7 @@ func langs(m *manager.Manager) {
 }
 
 func printVersion() {
-	fmt.Println(version)
+	fmt.Println(manager.Version)
 }
 
 func printConfigPath(c *configurator.Configurator) {
@@ -285,7 +283,7 @@ func printHelpAndExit() {
 `
 
 	color.Cyan(asciiArt)
-	fmt.Printf("\n"+color.New(color.Bold).Sprint("InsteadMan CLI")+" %s — INSTEAD games manager (launcher)\n\n", version)
+	fmt.Printf("\n"+color.New(color.Bold).Sprint("InsteadMan CLI")+" %s — INSTEAD games manager (launcher)\n\n", manager.Version)
 	fmt.Print(color.New(color.FgCyan, color.Bold).Sprint("Usage") + ":\n" +
 		"    insteadman-cli [command] [keyword]\n\n" +
 
@@ -340,7 +338,7 @@ func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator)
 	currentDir, e := utils.BinAbsDir(executablePath)
 	ExitIfError(e)
 
-	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: version}
+	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: manager.Version}
 	config, e := c.GetConfig()
 	ExitIfError(e)
 

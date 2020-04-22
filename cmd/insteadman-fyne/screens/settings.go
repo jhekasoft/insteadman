@@ -19,7 +19,6 @@ type SettingsScreen struct {
 	Manager      *manager.Manager
 	Configurator *configurator.Configurator
 	MainIcon     fyne.Resource
-	Version      string
 	Window       fyne.Window
 	Screen       fyne.CanvasObject
 	tabs         *widget.TabContainer
@@ -30,13 +29,11 @@ func NewSettingsScreen(
 	m *manager.Manager,
 	c *configurator.Configurator,
 	mainIcon fyne.Resource,
-	version string,
 	window fyne.Window) *SettingsScreen {
 	scr := SettingsScreen{
 		Manager:      m,
 		Configurator: c,
 		MainIcon:     mainIcon,
-		Version:      version,
 		Window:       window,
 	}
 
@@ -144,7 +141,6 @@ func (win *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
 
 func (win *SettingsScreen) makeAboutTab() fyne.CanvasObject {
 	mainIcon := win.MainIcon
-	version := win.Version
 
 	siteURL := "https://jhekasoft.github.io/insteadman/"
 	link, err := url.Parse(siteURL)
@@ -158,7 +154,7 @@ func (win *SettingsScreen) makeAboutTab() fyne.CanvasObject {
 			fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(160, 160)), canvas.NewImageFromResource(mainIcon)),
 			widget.NewVBox(
 				widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
-				widget.NewLabel("Version: "+version),
+				widget.NewLabel("Version: "+manager.Version),
 				widget.NewHyperlink(siteURL, link),
 				widget.NewLabel("License: MIT"),
 				widget.NewLabel("© 2015-2020 InsteadMan"),

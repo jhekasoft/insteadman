@@ -40,7 +40,6 @@ type MainScreen struct {
 	Manager      *manager.Manager
 	Configurator *configurator.Configurator
 	MainIcon     fyne.Resource
-	Version      string
 	Window       fyne.Window
 	Screen       fyne.CanvasObject
 }
@@ -50,7 +49,6 @@ func NewMainScreen(
 	m *manager.Manager,
 	c *configurator.Configurator,
 	mainIcon fyne.Resource,
-	version string,
 	window fyne.Window,
 	showSettings func(),
 	showAbout func()) *MainScreen {
@@ -58,7 +56,6 @@ func NewMainScreen(
 		Manager:      m,
 		Configurator: c,
 		MainIcon:     mainIcon,
-		Version:      version,
 		Window:       window,
 	}
 

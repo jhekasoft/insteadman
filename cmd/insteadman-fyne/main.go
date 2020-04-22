@@ -18,9 +18,6 @@ import (
 	"github.com/jhekasoft/insteadman3/core/utils"
 )
 
-// It will change at building
-var version = "3"
-
 func main() {
 	executablePath, e := os.Executable()
 	exitIfError(e)
@@ -28,7 +25,7 @@ func main() {
 	currentDir, e := utils.BinAbsDir(executablePath)
 	exitIfError(e)
 
-	c := &configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: version}
+	c := &configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: manager.Version}
 	config, e := c.GetConfig()
 	exitIfError(e)
 	finder := &interpreterfinder.InterpreterFinder{CurrentDir: currentDir}
@@ -49,8 +46,8 @@ func main() {
 }
 
 func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) fyne.Window {
-	var sw fyne.Window = nil
-	var settingsScreen *screens.SettingsScreen = nil
+	var sw fyne.Window
+	var settingsScreen *screens.SettingsScreen
 
 	w := app.NewWindow("InsteadMan")
 	// TODO: improve settings open functions
@@ -58,11 +55,10 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 		mn,
 		c,
 		data.InsteadManLogo,
-		version,
 		w,
 		func() {
 			if sw == nil {
-				sw, settingsScreen = newSettingsWin(app, mn, c, version)
+				sw, settingsScreen = newSettingsWin(app, mn, c)
 				sw.SetOnClosed(func() {
 					w.RequestFocus()
 					sw = nil
@@ -73,7 +69,7 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 		},
 		func() {
 			if sw == nil {
-				sw, settingsScreen = newSettingsWin(app, mn, c, version)
+				sw, settingsScreen = newSettingsWin(app, mn, c)
 				sw.SetOnClosed(func() {
 					w.RequestFocus()
 					sw = nil
@@ -84,15 +80,15 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 		},
 	)
 	w.SetContent(mainScreen.Screen)
-	w.Resize(fyne.NewSize(0, 400))
+	w.Resize(fyne.NewSize(1, 400))
 	w.CenterOnScreen()
 
 	return w
 }
 
-func newSettingsWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator, version string) (fyne.Window, *screens.SettingsScreen) {
+func newSettingsWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) (fyne.Window, *screens.SettingsScreen) {
 	w := app.NewWindow("Settings")
-	settingsScreen := screens.NewSettingsScreen(mn, c, data.InsteadManLogo, version, w)
+	settingsScreen := screens.NewSettingsScreen(mn, c, data.InsteadManLogo, w)
 	w.SetContent(settingsScreen.Screen)
 	w.CenterOnScreen()
 

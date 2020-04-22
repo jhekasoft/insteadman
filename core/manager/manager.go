@@ -28,6 +28,8 @@ const (
 
 	SortByTitleAsc = "title"
 	SortByDateDesc = "date"
+
+	Version = "3.2"
 )
 
 type Manager struct {
