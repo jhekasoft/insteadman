@@ -11,7 +11,7 @@ import (
 	"fyne.io/fyne/dialog"
 
 	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/data"
-	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screens"
+	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screen"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
 	"github.com/jhekasoft/insteadman3/core/manager"
@@ -47,11 +47,11 @@ func main() {
 
 func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) fyne.Window {
 	var sw fyne.Window
-	var settingsScreen *screens.SettingsScreen
+	var settingsScreen *screen.SettingsScreen
 
 	w := app.NewWindow("InsteadMan")
 	// TODO: improve settings open functions
-	mainScreen := screens.NewMainScreen(
+	mainScreen := screen.NewMainScreen(
 		mn,
 		c,
 		data.InsteadManLogo,
@@ -86,9 +86,9 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 	return w
 }
 
-func newSettingsWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) (fyne.Window, *screens.SettingsScreen) {
+func newSettingsWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) (fyne.Window, *screen.SettingsScreen) {
 	w := app.NewWindow("Settings")
-	settingsScreen := screens.NewSettingsScreen(mn, c, data.InsteadManLogo, w)
+	settingsScreen := screen.NewSettingsScreen(mn, c, data.InsteadManLogo, w)
 	w.SetContent(settingsScreen.Screen)
 	w.CenterOnScreen()
 
