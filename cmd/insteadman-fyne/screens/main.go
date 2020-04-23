@@ -3,7 +3,6 @@ package screens
 import (
 	"bufio"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"fyne.io/fyne"
@@ -15,26 +14,6 @@ import (
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
-
-type tappableLabel struct {
-	widget.Label
-}
-
-func newTappableLabel(text string) *tappableLabel {
-	label := &tappableLabel{}
-	label.ExtendBaseWidget(label)
-	label.SetText(text)
-
-	return label
-}
-
-func (t *tappableLabel) Tapped(_ *fyne.PointEvent) {
-	log.Println("I have been tapped")
-}
-
-func (t *tappableLabel) TappedSecondary(_ *fyne.PointEvent) {
-	log.Println("I have been tapped 2")
-}
 
 type MainScreen struct {
 	Manager      *manager.Manager
@@ -61,28 +40,30 @@ func NewMainScreen(
 
 	search := widget.NewEntry()
 	search.SetPlaceHolder("Search")
-	buttons := fyne.NewContainerWithLayout(
-		layout.NewGridLayoutWithColumns(1),
-		// widget.NewCheck("Installed", nil),
-		// widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
-		widget.NewButtonWithIcon("", theme.SettingsIcon(), showSettings),
-		// widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
-	)
-	toolbar := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(nil, nil, nil, buttons),
-		search,
-		buttons,
-	)
+	// buttons := fyne.NewContainerWithLayout(
+	// 	layout.NewGridLayoutWithColumns(1),
+	// 	// widget.NewCheck("Installed", nil),
+	// 	// widget.NewButtonWithIcon("Update", theme.ViewRefreshIcon(), nil),
+	// 	widget.NewButtonWithIcon("", theme.SettingsIcon(), showSettings),
+	// 	// widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
+	// )
+	// toolbar := fyne.NewContainerWithLayout(
+	// 	layout.NewBorderLayout(nil, nil, nil, buttons),
+	// 	buttons,
+	// )
 
 	games, e := scr.Manager.GetSortedGames()
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
 	}
-	games = manager.FilterGames(games, nil, nil, nil, true)
+	games = manager.FilterGames(games, nil, nil, nil, false)
 
 	var items []fyne.CanvasObject
 	for _, game := range games {
-		// items = append(items, newTappableLabel(game.Title))
+		label := widget.NewLabel(game.Title)
+		label.Wrapping = fyne.TextWrapWord
+		label.Resize(fyne.NewSize(100, 20))
+		items = append(items, label)
 		// var installedIcon fyne.Resource
 		// if game.Installed {
 		// 	installedIcon = theme.CheckButtonCheckedIcon()
@@ -90,7 +71,10 @@ func NewMainScreen(
 
 		// button := widget.NewButtonWithIcon(game.Title, installedIcon, nil)
 		// items = append(items, button)
-		items = append(items, widget.NewButton(game.Title, nil))
+		// currentGame := game // capture
+		// items = append(items, widget.NewButton(game.Title, func() {
+		// 	scr.Manager.RunGame(&currentGame)
+		// }))
 	}
 	container := widget.NewVBox(items...)
 	// container := fyne.NewContainerWithLayout(
@@ -105,18 +89,58 @@ func NewMainScreen(
 	scroll := widget.NewVScrollContainer(
 		container,
 	)
-	// scroll.Resize(fyne.NewSize(400, 400))
+	// scroll.Resize(fyne.NewSize(1, 400))
 
+	desc := widget.NewLabel("Лифтёр 3 описание большое очень")
+	// desc.Resize(fyne.NewSize(100, 100))
+	desc.Wrapping = fyne.TextWrapWord
 	info := widget.NewVBox(
-		widget.NewLabel("Лифтёр 2"),
+		widget.NewLabelWithStyle("Лифтёр 3", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+		desc,
 	)
 
-	scr.Screen = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(toolbar, nil, nil, info),
-		toolbar,
-		scroll,
-		info,
+	// buttons := fyne.NewContainerWithLayout(
+	// 	layout.NewGridLayoutWithColumns(2),
+	// 	widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), showSettings),
+	// 	widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
+	// )
+	toolbar := widget.NewToolbar(
+		widget.NewToolbarSpacer(),
+		widget.NewToolbarAction(theme.InfoIcon(), showAbout),
+		widget.NewToolbarAction(theme.SettingsIcon(), showSettings),
 	)
+	infoContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(toolbar, nil, nil, nil),
+		info,
+		toolbar,
+	)
+
+	// buttons := fyne.NewContainerWithLayout(
+	// 	layout.NewGridLayoutWithColumns(2),
+	// 	// widget.NewCheck("Installed", nil),
+	// 	widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), nil),
+	// 	widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), showSettings),
+	// 	// widget.NewButtonWithIcon("About", theme.InfoIcon(), showAbout),
+	// )
+
+	installButton := widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), nil)
+	mainContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(search, installButton, nil, nil),
+		search,
+		scroll,
+		installButton,
+	)
+
+	scr.Screen = widget.NewHSplitContainer(
+		mainContainer,
+		infoContainer,
+	)
+	// fyne.NewContainerWithLayout(
+	// 	layout.NewBorderLayout(nil, nil, nil, infoContainer),
+	// 	// toolbar,
+	// 	mainContainer,
+	// 	infoContainer,
+	// )
 
 	return &scr
 }
