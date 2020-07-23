@@ -43,7 +43,7 @@ func NewMainScreen(
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
 	}
-	games = manager.FilterGames(games, nil, nil, nil, true)
+	games = manager.FilterGames(games, nil, nil, nil, false)
 
 	var items []fyne.CanvasObject
 	for _, game := range games {
