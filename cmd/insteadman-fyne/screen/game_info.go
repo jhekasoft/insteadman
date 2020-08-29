@@ -8,24 +8,47 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
+	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
 
 type GameInfoScreen struct {
-	Manager      *manager.Manager
-	Configurator *configurator.Configurator
-	MainIcon     fyne.Resource
-	Title        *widget.Label
-	Desc         *widget.Label
-	Screen       fyne.CanvasObject
-	Image        *widget.Icon
+	Manager       *manager.Manager
+	Configurator  *configurator.Configurator
+	MainIcon      fyne.Resource
+	Title         *widget.Label
+	Desc          *widget.Label
+	Screen        fyne.CanvasObject
+	Image         *widget.Icon
+	Hyperlink     *widget.Hyperlink
+	InstallButton *widget.Button
+	RunButton     *widget.Button
+	DeleteButton  *widget.Button
+	Game          *manager.Game
 }
 
 func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
+	scr.Game = g
+
 	scr.Title.SetText(g.Title)
 	scr.Desc.SetText(g.Description)
+
+	if g.Descurl != "" {
+		scr.Hyperlink.SetURLFromString(g.Descurl)
+		scr.Hyperlink.Show()
+	}
+
+	if g.Installed {
+		scr.InstallButton.Hide()
+		scr.RunButton.Show()
+		scr.DeleteButton.Show()
+	} else {
+		scr.InstallButton.Show()
+		scr.RunButton.Hide()
+		scr.DeleteButton.Hide()
+	}
 
 	var icon fyne.Resource = nil
 	var b []byte = nil
@@ -62,19 +85,51 @@ func NewGameInfoScreen(
 	}
 
 	scr.Image = widget.NewIcon(mainIcon)
-	imageContainer := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(nil, nil, nil, nil),
-		scr.Image,
-	)
 	scr.Title = widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 	scr.Desc = widget.NewLabel("Выберите игру слева в списке")
 	scr.Desc.Wrapping = fyne.TextWrapWord
 
-	scr.Screen = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(scr.Title, scr.Desc, nil, nil),
-		scr.Title,
-		imageContainer,
+	descScroll := widget.NewVScrollContainer(
 		scr.Desc,
+	)
+	// descScroll.SetMinSize(fyne.NewSize(0, 100))
+
+	scr.Hyperlink = widget.NewHyperlink("Website", nil)
+	scr.Hyperlink.Hide()
+	scr.InstallButton = widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), func() {
+		scr.Manager.InstallGame(scr.Game, nil)
+	})
+	scr.InstallButton.Style = widget.PrimaryButton
+	scr.InstallButton.Hide()
+	scr.RunButton = widget.NewButtonWithIcon("Run", theme.MediaPlayIcon(), func() {
+		scr.Manager.RunGame(scr.Game)
+	})
+	scr.RunButton.Style = widget.PrimaryButton
+	scr.RunButton.Hide()
+	scr.DeleteButton = widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
+		scr.Manager.RemoveGame(scr.Game)
+	})
+	scr.DeleteButton.Hide()
+	buttonsContainer := fyne.NewContainerWithLayout(
+		layout.NewHBoxLayout(),
+		scr.InstallButton,
+		scr.RunButton,
+		scr.DeleteButton,
+		scr.Hyperlink,
+	)
+
+	contentContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(nil, buttonsContainer, nil, nil),
+		descScroll,
+		buttonsContainer,
+	)
+
+	allContainer := widget.NewVSplitContainer(scr.Image, contentContainer)
+
+	scr.Screen = fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(scr.Title, nil, nil, nil),
+		scr.Title,
+		allContainer,
 	)
 
 	return &scr

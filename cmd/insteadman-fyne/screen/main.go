@@ -52,7 +52,6 @@ func NewMainScreen(
 			// scr.Manager.RunGame(&currentGame)
 			info.UpdateInfo(&currentGame)
 		})
-		label.Wrapping = fyne.TextWrapWord
 		label.Resize(fyne.NewSize(100, 20))
 		items = append(items, label)
 	}
@@ -74,12 +73,10 @@ func NewMainScreen(
 		toolbar,
 	)
 
-	installButton := widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), nil)
 	mainContainer := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(search, installButton, nil, nil),
+		layout.NewBorderLayout(search, nil, nil, nil),
 		search,
 		scroll,
-		installButton,
 	)
 
 	scr.Screen = widget.NewHSplitContainer(

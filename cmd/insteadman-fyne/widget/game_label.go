@@ -16,6 +16,9 @@ func NewGameLabel(game *manager.Game, tapped func()) *GameLabel {
 	item := &GameLabel{}
 	item.ExtendBaseWidget(item)
 	item.SetText(game.Title)
+	item.TextStyle = fyne.TextStyle{Bold: game.Installed}
+	// item.Alignment = widget.ButtonAlignLeading
+	item.Wrapping = fyne.TextWrapWord
 	item.Game = game
 	item.OnTapped = tapped
 
