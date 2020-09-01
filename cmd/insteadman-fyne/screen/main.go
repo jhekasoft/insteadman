@@ -61,34 +61,29 @@ func NewMainScreen(
 	)
 	// scroll.Resize(fyne.NewSize(1, 400))
 
-	toolbar := widget.NewToolbar(
-		widget.NewToolbarSpacer(),
-		widget.NewToolbarAction(theme.InfoIcon(), showAbout),
-		widget.NewToolbarAction(theme.SettingsIcon(), showSettings),
-	)
-
-	infoContainer := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(toolbar, nil, nil, nil),
-		info.Screen,
-		toolbar,
-	)
-
 	mainContainer := fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(search, nil, nil, nil),
 		search,
 		scroll,
 	)
 
-	scr.Screen = widget.NewHSplitContainer(
-		mainContainer,
-		infoContainer,
+	toolbar := widget.NewToolbar(
+		widget.NewToolbarAction(theme.ViewRefreshIcon(), nil),
+		widget.NewToolbarSpacer(),
+		widget.NewToolbarAction(theme.InfoIcon(), showAbout),
+		widget.NewToolbarAction(theme.SettingsIcon(), showSettings),
 	)
-	// fyne.NewContainerWithLayout(
-	// 	layout.NewBorderLayout(nil, nil, nil, infoContainer),
-	// 	// toolbar,
-	// 	mainContainer,
-	// 	infoContainer,
-	// )
+
+	contentContainer := widget.NewHSplitContainer(
+		mainContainer,
+		info.Screen,
+	)
+
+	scr.Screen = fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(toolbar, nil, nil, nil),
+		toolbar,
+		contentContainer,
+	)
 
 	return &scr
 }

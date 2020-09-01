@@ -119,16 +119,16 @@ func NewGameInfoScreen(
 	)
 
 	contentContainer := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(nil, buttonsContainer, nil, nil),
+		layout.NewBorderLayout(scr.Title, buttonsContainer, nil, nil),
 		descScroll,
+		scr.Title,
 		buttonsContainer,
 	)
 
 	allContainer := widget.NewVSplitContainer(scr.Image, contentContainer)
 
 	scr.Screen = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(scr.Title, nil, nil, nil),
-		scr.Title,
+		layout.NewBorderLayout(nil, nil, nil, nil),
 		allContainer,
 	)
 
