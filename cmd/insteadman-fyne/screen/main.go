@@ -34,7 +34,7 @@ func NewMainScreen(
 		Window:       window,
 	}
 
-	info := NewGameInfoScreen(m, c, mainIcon)
+	info := NewGameInfoScreen(m, c, mainIcon, scr.Window)
 
 	search := widget.NewEntry()
 	search.SetPlaceHolder("Search")

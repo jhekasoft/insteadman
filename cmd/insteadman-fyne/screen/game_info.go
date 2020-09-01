@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
@@ -77,7 +78,8 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 func NewGameInfoScreen(
 	m *manager.Manager,
 	c *configurator.Configurator,
-	mainIcon fyne.Resource) *GameInfoScreen {
+	mainIcon fyne.Resource,
+	window fyne.Window) *GameInfoScreen {
 	scr := GameInfoScreen{
 		Manager:      m,
 		Configurator: c,
@@ -97,7 +99,16 @@ func NewGameInfoScreen(
 	scr.Hyperlink = widget.NewHyperlink("Website", nil)
 	scr.Hyperlink.Hide()
 	scr.InstallButton = widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), func() {
-		scr.Manager.InstallGame(scr.Game, nil)
+		progDialog := dialog.NewProgress("Installing "+scr.Game.Title, "Installing...", window)
+		progDialog.Show()
+		scr.Manager.InstallGame(scr.Game, func(size uint64) {
+			percents := float64(size) / float64(scr.Game.Size)
+			progDialog.SetValue(percents)
+			if float64(size) >= float64(scr.Game.Size) {
+				progDialog.SetValue(1)
+				progDialog.Hide()
+			}
+		})
 	})
 	scr.InstallButton.Style = widget.PrimaryButton
 	scr.InstallButton.Hide()
