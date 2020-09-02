@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -21,6 +22,9 @@ type GameInfoScreen struct {
 	MainIcon      fyne.Resource
 	Title         *widget.Label
 	Desc          *widget.Label
+	Version       *widget.Label
+	Lang          *widget.Label
+	Repository    *widget.Label
 	Screen        fyne.CanvasObject
 	Image         *widget.Icon
 	Hyperlink     *widget.Hyperlink
@@ -36,11 +40,19 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 	scr.Title.SetText(g.Title)
 	scr.Desc.SetText(g.Description)
 
+	// Labels
+	scr.Version.SetText(g.Version)
+	scr.Lang.SetText(strings.Join(g.Languages, ", "))
+	scr.Repository.SetText(g.RepositoryName)
+
+	// URL
 	if g.Descurl != "" {
 		scr.Hyperlink.SetURLFromString(g.Descurl)
 		scr.Hyperlink.Show()
 	}
 
+	// Buttons
+	// TODO: add Update button
 	if g.Installed {
 		scr.InstallButton.Hide()
 		scr.RunButton.Show()
@@ -121,12 +133,18 @@ func NewGameInfoScreen(
 		scr.Manager.RemoveGame(scr.Game)
 	})
 	scr.DeleteButton.Hide()
+	scr.Version = widget.NewLabel("")
+	scr.Lang = widget.NewLabel("")
+	scr.Repository = widget.NewLabel("")
 	buttonsContainer := fyne.NewContainerWithLayout(
 		layout.NewHBoxLayout(),
 		scr.InstallButton,
 		scr.RunButton,
 		scr.DeleteButton,
 		scr.Hyperlink,
+		scr.Version,
+		scr.Lang,
+		scr.Repository,
 	)
 
 	contentContainer := fyne.NewContainerWithLayout(
