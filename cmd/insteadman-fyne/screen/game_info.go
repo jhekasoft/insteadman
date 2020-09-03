@@ -32,6 +32,7 @@ type GameInfoScreen struct {
 	RunButton     *widget.Button
 	DeleteButton  *widget.Button
 	Game          *manager.Game
+	UpdateF       func()
 }
 
 func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
@@ -121,6 +122,13 @@ func NewGameInfoScreen(
 				progDialog.Hide()
 			}
 		})
+		// TODO: Check error
+		scr.Game.Installed = true
+		scr.UpdateInfo(scr.Game)
+
+		if scr.UpdateF != nil {
+			scr.UpdateF()
+		}
 	})
 	scr.InstallButton.Style = widget.PrimaryButton
 	scr.InstallButton.Hide()
@@ -131,6 +139,13 @@ func NewGameInfoScreen(
 	scr.RunButton.Hide()
 	scr.DeleteButton = widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
 		scr.Manager.RemoveGame(scr.Game)
+
+		// TODO: Check error
+		scr.Game.Installed = false
+		scr.UpdateInfo(scr.Game)
+		if scr.UpdateF != nil {
+			scr.UpdateF()
+		}
 	})
 	scr.DeleteButton.Hide()
 	scr.Version = widget.NewLabel("")

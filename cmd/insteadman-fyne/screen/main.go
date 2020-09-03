@@ -12,33 +12,16 @@ import (
 )
 
 type MainScreen struct {
-	Manager      *manager.Manager
-	Configurator *configurator.Configurator
-	MainIcon     fyne.Resource
-	Window       fyne.Window
-	Screen       fyne.CanvasObject
+	Manager        *manager.Manager
+	Configurator   *configurator.Configurator
+	MainIcon       fyne.Resource
+	GamesContainer *widget.Box
+	GameInfo       *GameInfoScreen
+	Window         fyne.Window
+	Screen         fyne.CanvasObject
 }
 
-// NewMainScreen is constructor for main screen
-func NewMainScreen(
-	m *manager.Manager,
-	c *configurator.Configurator,
-	mainIcon fyne.Resource,
-	window fyne.Window,
-	showSettings func(),
-	showAbout func()) *MainScreen {
-	scr := MainScreen{
-		Manager:      m,
-		Configurator: c,
-		MainIcon:     mainIcon,
-		Window:       window,
-	}
-
-	info := NewGameInfoScreen(m, c, mainIcon, scr.Window)
-
-	search := widget.NewEntry()
-	search.SetPlaceHolder("Search")
-
+func (scr *MainScreen) RefreshList() {
 	games, e := scr.Manager.GetSortedGames()
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
@@ -50,14 +33,43 @@ func NewMainScreen(
 		currentGame := game // capture
 		label := customWidget.NewGameLabel(&currentGame, func() {
 			// scr.Manager.RunGame(&currentGame)
-			info.UpdateInfo(&currentGame)
+			scr.GameInfo.UpdateInfo(&currentGame)
 		})
 		label.Resize(fyne.NewSize(100, 20))
 		items = append(items, label)
 	}
-	container := widget.NewVBox(items...)
+	scr.GamesContainer.Children = items
+	scr.GamesContainer.Refresh()
+}
+
+// NewMainScreen is constructor for main screen
+func NewMainScreen(
+	m *manager.Manager,
+	c *configurator.Configurator,
+	mainIcon fyne.Resource,
+	window fyne.Window,
+	showSettings func(),
+	showAbout func()) *MainScreen {
+	scr := MainScreen{
+		Manager:        m,
+		Configurator:   c,
+		MainIcon:       mainIcon,
+		GamesContainer: widget.NewVBox(),
+		GameInfo:       NewGameInfoScreen(m, c, mainIcon, window),
+		Window:         window,
+	}
+
+	scr.GameInfo.UpdateF = scr.RefreshList
+
+	search := widget.NewEntry()
+	search.SetPlaceHolder("Search")
+
+	// TODO: move to the goroutine
+	scr.Manager.UpdateRepositories()
+	scr.RefreshList()
+
 	scroll := widget.NewVScrollContainer(
-		container,
+		scr.GamesContainer,
 	)
 	// scroll.Resize(fyne.NewSize(1, 400))
 
@@ -68,7 +80,10 @@ func NewMainScreen(
 	)
 
 	toolbar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ViewRefreshIcon(), nil),
+		widget.NewToolbarAction(theme.ViewRefreshIcon(), func() {
+			scr.Manager.UpdateRepositories()
+			scr.RefreshList()
+		}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.InfoIcon(), showAbout),
 		widget.NewToolbarAction(theme.SettingsIcon(), showSettings),
@@ -76,7 +91,7 @@ func NewMainScreen(
 
 	contentContainer := widget.NewHSplitContainer(
 		mainContainer,
-		info.Screen,
+		scr.GameInfo.Screen,
 	)
 
 	scr.Screen = fyne.NewContainerWithLayout(
@@ -87,35 +102,3 @@ func NewMainScreen(
 
 	return &scr
 }
-
-// func gameItem(g *manager.Game, scr MainScreen) fyne.CanvasObject {
-// 	var icon fyne.Resource = nil
-// 	var b []byte = nil
-
-// 	fileName, e := scr.Manager.GetGameImage(g)
-// 	if e == nil {
-// 		iconFile, e := os.Open(scr.Configurator.DataResourcePath(fileName))
-// 		if e == nil {
-// 			r := bufio.NewReader(iconFile)
-
-// 			b, e = ioutil.ReadAll(r)
-// 		}
-
-// 		if e != nil {
-// 			dialog.ShowError(e, scr.Window)
-// 			icon = scr.MainIcon
-// 		} else {
-// 			icon = fyne.NewStaticResource("game_"+g.Name, b)
-// 		}
-// 	}
-
-// 	return widget.NewVBox(
-// 		fyne.NewContainerWithLayout(
-// 			layout.NewFixedGridLayout(fyne.NewSize(140, 140)),
-// 			canvas.NewImageFromResource(icon),
-// 		),
-// 		// widget.NewButton(title, nil),
-// 		widget.NewLabel(g.Title),
-// 		// widget.NewLabelWithStyle(title, fyne.TextAlignCenter, fyne.TextStyle{}),
-// 	)
-// }
