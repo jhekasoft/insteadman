@@ -6,7 +6,6 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
-	customWidget "github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/widget"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
@@ -15,7 +14,8 @@ type MainScreen struct {
 	Manager        *manager.Manager
 	Configurator   *configurator.Configurator
 	MainIcon       fyne.Resource
-	GamesContainer *widget.Box
+	MainContainer  *fyne.Container
+	GamesContainer *widget.List
 	GameInfo       *GameInfoScreen
 	Window         fyne.Window
 	Screen         fyne.CanvasObject
@@ -28,18 +28,36 @@ func (scr *MainScreen) RefreshList() {
 	}
 	games = manager.FilterGames(games, nil, nil, nil, false)
 
-	var items []fyne.CanvasObject
-	for _, game := range games {
-		currentGame := game // capture
-		label := customWidget.NewGameLabel(&currentGame, func() {
-			// scr.Manager.RunGame(&currentGame)
-			scr.GameInfo.UpdateInfo(&currentGame)
-		})
-		label.Resize(fyne.NewSize(100, 20))
-		items = append(items, label)
+	scr.GamesContainer = widget.NewList(
+		func() int {
+			return len(games)
+		},
+		func() fyne.CanvasObject {
+			return fyne.NewContainerWithLayout(
+				layout.NewHBoxLayout(),
+				widget.NewLabel("Game"),
+				layout.NewSpacer(),
+				widget.NewIcon(nil),
+			)
+		},
+		func(index int, item fyne.CanvasObject) {
+			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(games[index].Title)
+
+			iconRes := theme.ConfirmIcon()
+			if !games[index].Installed {
+				iconRes = nil
+			}
+			item.(*fyne.Container).Objects[2].(*widget.Icon).SetResource(iconRes)
+		},
+	)
+
+	scr.GamesContainer.OnItemSelected = func(index int) {
+		scr.GameInfo.UpdateInfo(&games[index])
 	}
-	scr.GamesContainer.Children = items
-	scr.GamesContainer.Refresh()
+
+	if scr.MainContainer != nil {
+		scr.MainContainer.Refresh()
+	}
 }
 
 // NewMainScreen is constructor for main screen
@@ -54,7 +72,7 @@ func NewMainScreen(
 		Manager:        m,
 		Configurator:   c,
 		MainIcon:       mainIcon,
-		GamesContainer: widget.NewVBox(),
+		GamesContainer: nil,
 		GameInfo:       NewGameInfoScreen(m, c, mainIcon, window),
 		Window:         window,
 	}
@@ -68,15 +86,10 @@ func NewMainScreen(
 	scr.Manager.UpdateRepositories()
 	scr.RefreshList()
 
-	scroll := widget.NewVScrollContainer(
-		scr.GamesContainer,
-	)
-	// scroll.Resize(fyne.NewSize(1, 400))
-
-	mainContainer := fyne.NewContainerWithLayout(
+	scr.MainContainer = fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(search, nil, nil, nil),
 		search,
-		scroll,
+		scr.GamesContainer,
 	)
 
 	toolbar := widget.NewToolbar(
@@ -90,7 +103,7 @@ func NewMainScreen(
 	)
 
 	contentContainer := widget.NewHSplitContainer(
-		mainContainer,
+		scr.MainContainer,
 		scr.GameInfo.Screen,
 	)
 

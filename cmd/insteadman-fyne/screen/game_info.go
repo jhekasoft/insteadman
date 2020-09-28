@@ -26,6 +26,7 @@ type GameInfoScreen struct {
 	Lang          *widget.Label
 	Repository    *widget.Label
 	Screen        fyne.CanvasObject
+	Container     *widget.SplitContainer
 	Image         *widget.Icon
 	Hyperlink     *widget.Hyperlink
 	InstallButton *widget.Button
@@ -86,6 +87,10 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 	}
 
 	scr.Image.SetResource(icon)
+
+	// if scr.Container != nil {
+	// 	scr.Container.Refresh()
+	// }
 }
 
 func NewGameInfoScreen(
@@ -151,6 +156,7 @@ func NewGameInfoScreen(
 	scr.Version = widget.NewLabel("")
 	scr.Lang = widget.NewLabel("")
 	scr.Repository = widget.NewLabel("")
+	scr.Repository.Wrapping = fyne.TextWrapWord
 	buttonsContainer := fyne.NewContainerWithLayout(
 		layout.NewHBoxLayout(),
 		scr.InstallButton,
@@ -169,11 +175,11 @@ func NewGameInfoScreen(
 		buttonsContainer,
 	)
 
-	allContainer := widget.NewVSplitContainer(scr.Image, contentContainer)
+	scr.Container = widget.NewVSplitContainer(scr.Image, contentContainer)
 
 	scr.Screen = fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, nil, nil, nil),
-		allContainer,
+		scr.Container,
 	)
 
 	return &scr
