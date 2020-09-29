@@ -1,6 +1,8 @@
 package screen
 
 import (
+	"fmt"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
@@ -15,6 +17,7 @@ type MainScreen struct {
 	Configurator   *configurator.Configurator
 	MainIcon       fyne.Resource
 	MainContainer  *fyne.Container
+	SearchEntry    *widget.Entry
 	GamesContainer *widget.List
 	GameInfo       *GameInfoScreen
 	Window         fyne.Window
@@ -26,7 +29,13 @@ func (scr *MainScreen) RefreshList() {
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
 	}
-	games = manager.FilterGames(games, nil, nil, nil, false)
+
+	var keyword *string
+	if scr.SearchEntry.Text != "" {
+		keyword = &scr.SearchEntry.Text
+	}
+	games = manager.FilterGames(games, keyword, nil, nil, false)
+	fmt.Println(games)
 
 	scr.GamesContainer = widget.NewList(
 		func() int {
@@ -54,10 +63,14 @@ func (scr *MainScreen) RefreshList() {
 	scr.GamesContainer.OnItemSelected = func(index int) {
 		scr.GameInfo.UpdateInfo(&games[index])
 	}
+	scr.GamesContainer.Show()
+	scr.GamesContainer.Refresh()
 
 	if scr.MainContainer != nil {
 		scr.MainContainer.Refresh()
 	}
+
+	// scr.Window.Canvas().Refresh(scr.Window.Content())
 }
 
 // NewMainScreen is constructor for main screen
@@ -69,26 +82,28 @@ func NewMainScreen(
 	showSettings func(),
 	showAbout func()) *MainScreen {
 	scr := MainScreen{
-		Manager:        m,
-		Configurator:   c,
-		MainIcon:       mainIcon,
-		GamesContainer: nil,
-		GameInfo:       NewGameInfoScreen(m, c, mainIcon, window),
-		Window:         window,
+		Manager:      m,
+		Configurator: c,
+		MainIcon:     mainIcon,
+		GameInfo:     NewGameInfoScreen(m, c, mainIcon, window),
+		Window:       window,
 	}
 
 	scr.GameInfo.UpdateF = scr.RefreshList
 
-	search := widget.NewEntry()
-	search.SetPlaceHolder("Search")
+	scr.SearchEntry = widget.NewEntry()
+	scr.SearchEntry.SetPlaceHolder("Search")
+	scr.SearchEntry.OnChanged = func(s string) {
+		scr.RefreshList()
+	}
 
 	// TODO: move to the goroutine
 	scr.Manager.UpdateRepositories()
 	scr.RefreshList()
 
 	scr.MainContainer = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(search, nil, nil, nil),
-		search,
+		layout.NewBorderLayout(scr.SearchEntry, nil, nil, nil),
+		scr.SearchEntry,
 		scr.GamesContainer,
 	)
 
