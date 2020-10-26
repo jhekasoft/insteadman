@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/jhekasoft/insteadman3/cmd/insteadman/cli"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
 	"github.com/jhekasoft/insteadman3/core/manager"
@@ -16,7 +17,7 @@ func main() {
 	m, c := initManagerAndConfigurator()
 	needRepositoriesUpdate := !m.HasDownloadedRepositories()
 	argsWithoutProg := os.Args[1:]
-	command := strings.ToLower(GetCommand(argsWithoutProg))
+	command := strings.ToLower(cli.GetCommand(argsWithoutProg))
 
 	switch command {
 	case "list":
@@ -94,7 +95,7 @@ func update(m *manager.Manager) {
 
 func list(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGamesByDateDesc()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
 	// Parse args without "list" command
 	repository, lang, onlyInstalled := getGamesFilterValues(args[1:])
@@ -108,9 +109,9 @@ func list(m *manager.Manager, args []string) {
 
 func search(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGames()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	keyword := GetCommandArg(args)
+	keyword := cli.GetCommandArg(args)
 	if keyword == nil {
 		printHelpAndExit()
 	}
@@ -125,9 +126,9 @@ func search(m *manager.Manager, args []string) {
 
 func install(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGames()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	keyword := GetCommandArg(args)
+	keyword := cli.GetCommandArg(args)
 	if keyword == nil {
 		printHelpAndExit()
 	}
@@ -136,24 +137,24 @@ func install(m *manager.Manager, args []string) {
 
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
-	fmt.Printf("Downloading and installing game %s...", FmtName(game.Title))
+	fmt.Printf("Downloading and installing game %s...", cli.FmtName(game.Title))
 
 	installProgress := func(size uint64) {
 		percents := utils.Percents(size, uint64(game.Size))
-		fmt.Printf("\rDownloading and installing game %s... %s", FmtName(game.Title), color.GreenString(percents))
+		fmt.Printf("\rDownloading and installing game %s... %s", cli.FmtName(game.Title), color.GreenString(percents))
 	}
 
 	e = m.InstallGame(&game, installProgress)
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	fmt.Printf("\nGame %s has installed.\n", FmtName(game.Title))
+	fmt.Printf("\nGame %s has installed.\n", cli.FmtName(game.Title))
 }
 
 func show(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGames()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	keyword := GetCommandArg(args)
+	keyword := cli.GetCommandArg(args)
 	if keyword == nil {
 		printHelpAndExit()
 	}
@@ -164,22 +165,22 @@ func show(m *manager.Manager, args []string) {
 
 	installedTxt := ""
 	if game.Installed {
-		installedTxt = FmtInstalled("[installed]")
+		installedTxt = cli.FmtInstalled("[installed]")
 	}
 
 	// Print game information
 	fmt.Printf(
 		"%s (%s) %s %s\n",
-		FmtTitle(game.Title), FmtName(game.Name), FmtSize(game.HumanSize()), installedTxt)
-	fmt.Printf("Version: %s\n", FmtVersion(game.HumanVersion()))
+		cli.FmtTitle(game.Title), cli.FmtName(game.Name), cli.FmtSize(game.HumanSize()), installedTxt)
+	fmt.Printf("Version: %s\n", cli.FmtVersion(game.HumanVersion()))
 	if game.Languages != nil {
-		fmt.Printf("Languages: %s\n", FmtLang(strings.Join(game.Languages, ", ")))
+		fmt.Printf("Languages: %s\n", cli.FmtLang(strings.Join(game.Languages, ", ")))
 	}
 	if game.RepositoryName != "" {
-		fmt.Printf("Repository: %s\n", FmtRepo(game.RepositoryName))
+		fmt.Printf("Repository: %s\n", cli.FmtRepo(game.RepositoryName))
 	}
 	if game.Descurl != "" {
-		fmt.Printf("More: %s\n", FmtURL(game.Descurl))
+		fmt.Printf("More: %s\n", cli.FmtURL(game.Descurl))
 	}
 	if game.Description != "" {
 		fmt.Printf("\n"+color.New(color.Bold).Sprint("Descriprion")+":\n%s\n", game.Description)
@@ -188,9 +189,9 @@ func show(m *manager.Manager, args []string) {
 
 func run(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGames()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	keyword := GetCommandArg(args)
+	keyword := cli.GetCommandArg(args)
 	if keyword == nil {
 		printHelpAndExit()
 	}
@@ -200,23 +201,23 @@ func run(m *manager.Manager, args []string) {
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
 	if !game.Installed {
-		fmt.Printf("Game %s isn't installed.\n", FmtName(game.Title))
+		fmt.Printf("Game %s isn't installed.\n", cli.FmtName(game.Title))
 		fmt.Printf("Please run for installation:\n"+
 			"insteadman install %s\n", game.Name)
 		os.Exit(1)
 	}
 
 	e = m.RunGame(&game)
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	fmt.Printf("Running %s game...\n", FmtName(game.Title))
+	fmt.Printf("Running %s game...\n", cli.FmtName(game.Title))
 }
 
 func remove(m *manager.Manager, args []string) {
 	games, e := m.GetSortedGames()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	keyword := GetCommandArg(args)
+	keyword := cli.GetCommandArg(args)
 	if keyword == nil {
 		printHelpAndExit()
 	}
@@ -225,12 +226,12 @@ func remove(m *manager.Manager, args []string) {
 
 	game := getOrExitIfNoGame(filteredGames, *keyword)
 
-	fmt.Printf("Removing game %s...\n", FmtName(game.Title))
+	fmt.Printf("Removing game %s...\n", cli.FmtName(game.Title))
 
 	e = m.RemoveGame(&game)
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
-	fmt.Printf("Game %s has removed.\n", FmtName(game.Title))
+	fmt.Printf("Game %s has removed.\n", cli.FmtName(game.Title))
 }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
@@ -245,23 +246,23 @@ func findInterpreter(m *manager.Manager, c *configurator.Configurator) {
 
 	m.Config.InterpreterCommand = *path
 	e := c.SaveConfig(m.Config)
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
 	fmt.Println("Path has saved")
 }
 
 func repositories(m *manager.Manager) {
 	for _, repo := range m.GetRepositories() {
-		fmt.Printf("%s (%s)\n", FmtRepo(repo.Name), repo.Url)
+		fmt.Printf("%s (%s)\n", cli.FmtRepo(repo.Name), repo.Url)
 	}
 }
 
 func langs(m *manager.Manager) {
 	games, e := m.GetSortedGames()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
 	for _, lang := range m.FindLangs(games) {
-		fmt.Printf("%s\n", FmtLang(lang))
+		fmt.Printf("%s\n", cli.FmtLang(lang))
 	}
 }
 
@@ -325,7 +326,7 @@ func printHelpAndExit() {
 		color.New(color.FgCyan, color.Bold).Sprint("version") +
 		"\n    Print current version of the application\n\n" +
 
-		"More info: " + FmtURL("http://jhekasoft.github.io/insteadman/") + "\n")
+		"More info: " + cli.FmtURL("http://jhekasoft.github.io/insteadman/") + "\n")
 	os.Exit(1)
 }
 
@@ -333,14 +334,14 @@ func printHelpAndExit() {
 
 func initManagerAndConfigurator() (*manager.Manager, *configurator.Configurator) {
 	executablePath, e := os.Executable()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
 	currentDir, e := utils.BinAbsDir(executablePath)
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
 	c := configurator.Configurator{FilePath: "", CurrentDir: currentDir, Version: manager.Version}
 	config, e := c.GetConfig()
-	ExitIfError(e)
+	cli.ExitIfError(e)
 
 	finder := &interpreterfinder.InterpreterFinder{CurrentDir: currentDir}
 
@@ -362,18 +363,18 @@ func printGames(games []manager.Game) {
 	for _, game := range games {
 		installed := ""
 		if game.Installed {
-			installed = FmtInstalled("[installed]")
+			installed = cli.FmtInstalled("[installed]")
 		}
 		fmt.Printf(
-			"%s, %s, %s "+FmtLang("%v")+" %s\n",
-			FmtTitle(game.Title), FmtName(game.Name), FmtRepo(game.RepositoryName), game.Languages, installed)
+			"%s, %s, %s "+cli.FmtLang("%v")+" %s\n",
+			cli.FmtTitle(game.Title), cli.FmtName(game.Name), cli.FmtRepo(game.RepositoryName), game.Languages, installed)
 
 	}
 }
 
 func getOrExitIfNoGame(filteredGames []manager.Game, keyword string) manager.Game {
 	if len(filteredGames) < 1 {
-		fmt.Printf("Game %s has not found\n", FmtName(keyword))
+		fmt.Printf("Game %s has not found\n", cli.FmtName(keyword))
 		os.Exit(1)
 	}
 
@@ -387,9 +388,9 @@ func getOrExitIfNoGame(filteredGames []manager.Game, keyword string) manager.Gam
 }
 
 func getGamesFilterValues(args []string) (*string, *string, bool) {
-	repository := FindStringArg("--repository", args)
-	lang := FindStringArg("--lang", args)
-	onlyInstalled := FindBoolArg("--installed", args)
+	repository := cli.FindStringArg("--repository", args)
+	lang := cli.FindStringArg("--lang", args)
+	onlyInstalled := cli.FindBoolArg("--installed", args)
 
 	return repository, lang, onlyInstalled
 }

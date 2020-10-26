@@ -1,9 +1,10 @@
-package main
+package cli
 
 import (
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetCommand(t *testing.T) {
@@ -50,7 +51,7 @@ func TestFindBoolArg(t *testing.T) {
 
 func TestFindStringlArg(t *testing.T) {
 	commands := map[string]string{
-		"search cat --lang=en":                                   "en",
+		"search cat --lang=en": "en",
 		"search dog --installed --lang=ru --repository=official": "ru",
 		"list --lang=en --installed":                             "en",
 	}
