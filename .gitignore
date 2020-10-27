@@ -6,6 +6,10 @@
 /insteadman-gtk.exe
 /insteadman-fyne
 /insteadman-fyne.exe
+/cmd/insteadman/insteadman
+/cmd/insteadman/insteadman.exe
+/cmd/insteadman-fyne/insteadman-fyne
+/cmd/insteadman-fyne/insteadman-fyne.exe
 /cache
 /resources/testdata/insteadman/cache
 /build
