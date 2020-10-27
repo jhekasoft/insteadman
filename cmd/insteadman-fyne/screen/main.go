@@ -1,8 +1,6 @@
 package screen
 
 import (
-	"fmt"
-
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
@@ -35,21 +33,18 @@ func (scr *MainScreen) RefreshList() {
 		keyword = &scr.SearchEntry.Text
 	}
 	games = manager.FilterGames(games, keyword, nil, nil, false)
-	fmt.Println(games)
 
-	scr.GamesContainer = widget.NewList(
-		func() int {
+	// scr.GamesContainer = nil
+	if scr.GamesContainer != nil {
+		scr.GamesContainer.Length = func() int {
 			return len(games)
-		},
-		func() fyne.CanvasObject {
-			return fyne.NewContainerWithLayout(
-				layout.NewHBoxLayout(),
-				widget.NewLabel("Game"),
-				layout.NewSpacer(),
-				widget.NewIcon(nil),
-			)
-		},
-		func(index int, item fyne.CanvasObject) {
+		}
+		scr.GamesContainer.UpdateItem = func(index int, item fyne.CanvasObject) {
+			// fmt.Println(index)
+			if len(games) < index+1 {
+				item.(*fyne.Container).Objects[0].(*widget.Label).SetText("")
+				return
+			}
 			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(games[index].Title)
 
 			iconRes := theme.ConfirmIcon()
@@ -57,20 +52,14 @@ func (scr *MainScreen) RefreshList() {
 				iconRes = nil
 			}
 			item.(*fyne.Container).Objects[2].(*widget.Icon).SetResource(iconRes)
-		},
-	)
+		}
+	}
 
-	scr.GamesContainer.OnItemSelected = func(index int) {
+	scr.GamesContainer.OnSelected = func(index int) {
 		scr.GameInfo.UpdateInfo(&games[index])
 	}
-	scr.GamesContainer.Show()
+
 	scr.GamesContainer.Refresh()
-
-	if scr.MainContainer != nil {
-		scr.MainContainer.Refresh()
-	}
-
-	// scr.Window.Canvas().Refresh(scr.Window.Content())
 }
 
 // NewMainScreen is constructor for main screen
@@ -96,6 +85,22 @@ func NewMainScreen(
 	scr.SearchEntry.OnChanged = func(s string) {
 		scr.RefreshList()
 	}
+
+	scr.GamesContainer = widget.NewList(
+		func() int {
+			return 0
+		},
+		func() fyne.CanvasObject {
+			return fyne.NewContainerWithLayout(
+				layout.NewHBoxLayout(),
+				widget.NewLabel("Game"),
+				layout.NewSpacer(),
+				widget.NewIcon(nil),
+			)
+		},
+		func(index int, item fyne.CanvasObject) {
+		},
+	)
 
 	// TODO: move to the goroutine
 	scr.Manager.UpdateRepositories()
