@@ -55,22 +55,22 @@ func NewSettingsScreen(
 	return &scr
 }
 
-func (win *SettingsScreen) SetMainTab() {
-	win.tabs.SelectTabIndex(0)
+func (scr *SettingsScreen) SetMainTab() {
+	scr.tabs.SelectTabIndex(0)
 }
 
-func (win *SettingsScreen) SetRepositoriesTab() {
-	win.tabs.SelectTabIndex(1)
+func (scr *SettingsScreen) SetRepositoriesTab() {
+	scr.tabs.SelectTabIndex(1)
 }
 
-func (win *SettingsScreen) SetAboutTab() {
-	win.tabs.SelectTabIndex(2)
+func (scr *SettingsScreen) SetAboutTab() {
+	scr.tabs.SelectTabIndex(2)
 }
 
-func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
+func (scr *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	path := widget.NewEntry()
 	path.SetPlaceHolder("INSTEAD path")
-	path.SetText(win.Manager.Config.InterpreterCommand)
+	path.SetText(scr.Manager.Config.InterpreterCommand)
 
 	pathInfo := widget.NewLabelWithStyle("", fyne.TextAlignLeading, fyne.TextStyle{Italic: true})
 	pathInfo.Hide()
@@ -84,7 +84,7 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 		widget.NewButtonWithIcon("Detect", theme.SearchIcon(), func() {
 			pathInfo.SetText("Detecting...")
 			pathInfo.Show()
-			command := win.Manager.InterpreterFinder.Find()
+			command := scr.Manager.InterpreterFinder.Find()
 			if command != nil {
 				path.SetText(*command)
 				pathInfo.SetText("INSTEAD has detected!")
@@ -93,10 +93,10 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 			}
 		}),
 		widget.NewButtonWithIcon("Check", theme.ConfirmIcon(), func() {
-			version, checkErr := win.Manager.InterpreterFinder.Check(win.Manager.InterpreterCommand())
+			version, checkErr := scr.Manager.InterpreterFinder.Check(scr.Manager.InterpreterCommand())
 			var txt string
 			if checkErr != nil {
-				if win.Manager.IsBuiltinInterpreterCommand() {
+				if scr.Manager.IsBuiltinInterpreterCommand() {
 					txt = "INSTEAD built-in check failed!"
 				} else {
 					txt = "INSTEAD check failed!"
@@ -112,14 +112,14 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	language := widget.NewSelect([]string{"system", "en", "ru", "uk"}, nil)
 
 	// Language
-	if win.Manager.Config.Lang != "" {
-		language.SetSelected(win.Manager.Config.Lang)
+	if scr.Manager.Config.Lang != "" {
+		language.SetSelected(scr.Manager.Config.Lang)
 	}
 
 	cleanCache := widget.NewButtonWithIcon("Clean", theme.DeleteIcon(), nil)
 
 	configPathEntry := widget.NewEntry()
-	configPathEntry.SetText(win.Configurator.FilePath)
+	configPathEntry.SetText(scr.Configurator.FilePath)
 	configPathEntry.Disable()
 
 	form := &widget.Form{}
@@ -135,12 +135,29 @@ func (win *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	return form
 }
 
-func (win *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
-	return widget.NewLabel("Repos")
+func (scr *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
+	repositories := scr.Manager.GetRepositories()
+
+	return widget.NewList(
+		func() int {
+			return len(repositories)
+		},
+		func() fyne.CanvasObject {
+			return fyne.NewContainerWithLayout(
+				layout.NewGridLayoutWithColumns(2),
+				widget.NewEntry(),
+				widget.NewEntry(),
+			)
+		},
+		func(index int, item fyne.CanvasObject) {
+			item.(*fyne.Container).Objects[0].(*widget.Entry).SetText(repositories[index].Name)
+			item.(*fyne.Container).Objects[1].(*widget.Entry).SetText(repositories[index].Url)
+		},
+	)
 }
 
-func (win *SettingsScreen) makeAboutTab() fyne.CanvasObject {
-	mainIcon := win.MainIcon
+func (scr *SettingsScreen) makeAboutTab() fyne.CanvasObject {
+	mainIcon := scr.MainIcon
 
 	siteURL := "https://jhekasoft.github.io/insteadman/"
 	link, err := url.Parse(siteURL)

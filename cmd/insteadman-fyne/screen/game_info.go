@@ -117,9 +117,9 @@ func NewGameInfoScreen(
 	scr.Hyperlink = widget.NewHyperlink("Website", nil)
 	scr.Hyperlink.Hide()
 	scr.InstallButton = widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), func() {
-		progDialog := dialog.NewProgress("Installing "+scr.Game.Title, "Installing...", window)
+		progDialog := dialog.NewProgress(scr.Game.Title, "Installing...", window)
 		progDialog.Show()
-		scr.Manager.InstallGame(scr.Game, func(size uint64) {
+		err := scr.Manager.InstallGame(scr.Game, func(size uint64) {
 			percents := float64(size) / float64(scr.Game.Size)
 			progDialog.SetValue(percents)
 			if float64(size) >= float64(scr.Game.Size) {
@@ -127,7 +127,13 @@ func NewGameInfoScreen(
 				progDialog.Hide()
 			}
 		})
-		// TODO: Check error
+
+		if err != nil {
+			progDialog.Hide()
+			dialog.ShowError(err, window)
+			return
+		}
+
 		scr.Game.Installed = true
 		scr.UpdateInfo(scr.Game)
 

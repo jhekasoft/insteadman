@@ -34,32 +34,29 @@ func (scr *MainScreen) RefreshList() {
 	}
 	games = manager.FilterGames(games, keyword, nil, nil, false)
 
-	// scr.GamesContainer = nil
 	if scr.GamesContainer != nil {
 		scr.GamesContainer.Length = func() int {
 			return len(games)
 		}
 		scr.GamesContainer.UpdateItem = func(index int, item fyne.CanvasObject) {
-			// fmt.Println(index)
-			if len(games) < index+1 {
-				item.(*fyne.Container).Objects[0].(*widget.Label).SetText("")
-				return
-			}
+			// Title
 			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(games[index].Title)
 
-			iconRes := theme.ConfirmIcon()
-			if !games[index].Installed {
-				iconRes = nil
+			// Icon
+			icon := item.(*fyne.Container).Objects[2].(*widget.Icon)
+			icon.Hide()
+			if games[index].Installed {
+				icon.SetResource(theme.ConfirmIcon())
+				icon.Show()
 			}
-			item.(*fyne.Container).Objects[2].(*widget.Icon).SetResource(iconRes)
 		}
-	}
 
-	scr.GamesContainer.OnSelected = func(index int) {
-		scr.GameInfo.UpdateInfo(&games[index])
-	}
+		scr.GamesContainer.OnSelected = func(index int) {
+			scr.GameInfo.UpdateInfo(&games[index])
+		}
 
-	scr.GamesContainer.Refresh()
+		scr.GamesContainer.Refresh()
+	}
 }
 
 // NewMainScreen is constructor for main screen
@@ -114,8 +111,13 @@ func NewMainScreen(
 
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ViewRefreshIcon(), func() {
+			loadingDialog := dialog.NewProgressInfinite("Refreshing", "Refreshing games...", window)
+			loadingDialog.Show()
+
 			scr.Manager.UpdateRepositories()
 			scr.RefreshList()
+
+			loadingDialog.Hide()
 		}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.InfoIcon(), showAbout),
