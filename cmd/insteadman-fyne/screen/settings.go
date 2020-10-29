@@ -43,13 +43,14 @@ func NewSettingsScreen(
 		widget.NewTabItem("About", scr.makeAboutTab()),
 	)
 
+	okButton := widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
+		scr.Window.Close()
+	})
+
 	scr.Screen = fyne.NewContainerWithLayout(
-		layout.NewVBoxLayout(),
+		layout.NewBorderLayout(nil, okButton, nil, nil),
 		scr.tabs,
-		layout.NewSpacer(),
-		widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
-			scr.Window.Close()
-		}),
+		okButton,
 	)
 
 	return &scr
@@ -138,21 +139,45 @@ func (scr *SettingsScreen) makeMainTab() fyne.CanvasObject {
 func (scr *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
 	repositories := scr.Manager.GetRepositories()
 
-	return widget.NewList(
+	listHeader := widget.NewVBox(
+		fyne.NewContainerWithLayout(
+			layout.NewGridLayoutWithColumns(2),
+			widget.NewLabelWithStyle("Name", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+			widget.NewLabelWithStyle("URL", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+		),
+		widget.NewSeparator(),
+	)
+
+	list := widget.NewList(
 		func() int {
 			return len(repositories)
 		},
 		func() fyne.CanvasObject {
 			return fyne.NewContainerWithLayout(
 				layout.NewGridLayoutWithColumns(2),
-				widget.NewEntry(),
-				widget.NewEntry(),
+				widget.NewLabel(""),
+				widget.NewLabel(""),
 			)
 		},
 		func(index int, item fyne.CanvasObject) {
-			item.(*fyne.Container).Objects[0].(*widget.Entry).SetText(repositories[index].Name)
-			item.(*fyne.Container).Objects[1].(*widget.Entry).SetText(repositories[index].Url)
+			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(repositories[index].Name)
+			item.(*fyne.Container).Objects[1].(*widget.Label).SetText(repositories[index].Url)
 		},
+	)
+
+	toolbar := widget.NewToolbar(
+		widget.NewToolbarAction(theme.ContentAddIcon(), nil),
+		widget.NewToolbarAction(theme.ContentRemoveIcon(), nil),
+		widget.NewToolbarAction(theme.MoveUpIcon(), nil),
+		widget.NewToolbarAction(theme.MoveDownIcon(), nil),
+		widget.NewToolbarAction(theme.DocumentCreateIcon(), nil),
+	)
+
+	return fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(listHeader, toolbar, nil, nil),
+		listHeader,
+		list,
+		toolbar,
 	)
 }
 

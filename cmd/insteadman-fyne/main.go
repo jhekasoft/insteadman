@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 
@@ -46,35 +45,19 @@ func main() {
 }
 
 func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) fyne.Window {
-	var sw fyne.Window
-	var settingsScreen *screen.SettingsScreen
-
 	w := app.NewWindow("InsteadMan")
-	// TODO: improve settings open functions
 	mainScreen := screen.NewMainScreen(
 		mn,
 		c,
 		data.InsteadManLogo,
 		w,
 		func() {
-			if sw == nil {
-				sw, settingsScreen = newSettingsWin(app, mn, c)
-				sw.SetOnClosed(func() {
-					w.RequestFocus()
-					sw = nil
-				})
-			}
+			sw, settingsScreen := newSettingsWin(app, mn, c)
 			settingsScreen.SetMainTab()
 			sw.Show()
 		},
 		func() {
-			if sw == nil {
-				sw, settingsScreen = newSettingsWin(app, mn, c)
-				sw.SetOnClosed(func() {
-					w.RequestFocus()
-					sw = nil
-				})
-			}
+			sw, settingsScreen := newSettingsWin(app, mn, c)
 			settingsScreen.SetAboutTab()
 			sw.Show()
 		},
@@ -100,27 +83,15 @@ func exitIfError(e error) {
 		return
 	}
 
-	fmt.Printf("Error: %v\n", e)
+	log.Printf("Error: %v\n", e)
 	os.Exit(1)
 }
-
-// func insteadManIcon(configurator *configurator.Configurator) fyne.Resource {
-// 	iconFile, e := os.Open(configurator.DataResourcePath("../resources/images/logo.png"))
-// 	exitIfError(e)
-
-// 	r := bufio.NewReader(iconFile)
-
-// 	b, e := ioutil.ReadAll(r)
-// 	exitIfError(e)
-
-// 	return fyne.NewStaticResource("insteadman", b)
-// }
 
 func findInterpreter(m *manager.Manager, c *configurator.Configurator, w fyne.Window) {
 	path := m.InterpreterFinder.Find()
 
 	if path == nil {
-		e := errors.New("INSTEAD has not found. Please add INSTEAD in the Settings.")
+		e := errors.New("INSTEAD has not found. Please add INSTEAD in the Settings")
 		dialog.ShowError(e, w)
 		return
 	}

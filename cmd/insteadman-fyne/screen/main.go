@@ -20,12 +20,14 @@ type MainScreen struct {
 	GameInfo       *GameInfoScreen
 	Window         fyne.Window
 	Screen         fyne.CanvasObject
+	Games          []manager.Game
 }
 
 func (scr *MainScreen) RefreshList() {
 	games, e := scr.Manager.GetSortedGamesByDateDesc()
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
+		return
 	}
 
 	var keyword *string
@@ -33,28 +35,9 @@ func (scr *MainScreen) RefreshList() {
 		keyword = &scr.SearchEntry.Text
 	}
 	games = manager.FilterGames(games, keyword, nil, nil, false)
+	scr.Games = games
 
 	if scr.GamesContainer != nil {
-		scr.GamesContainer.Length = func() int {
-			return len(games)
-		}
-		scr.GamesContainer.UpdateItem = func(index int, item fyne.CanvasObject) {
-			// Title
-			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(games[index].Title)
-
-			// Icon
-			icon := item.(*fyne.Container).Objects[2].(*widget.Icon)
-			icon.Hide()
-			if games[index].Installed {
-				icon.SetResource(theme.ConfirmIcon())
-				icon.Show()
-			}
-		}
-
-		scr.GamesContainer.OnSelected = func(index int) {
-			scr.GameInfo.UpdateInfo(&games[index])
-		}
-
 		scr.GamesContainer.Refresh()
 	}
 }
@@ -85,7 +68,7 @@ func NewMainScreen(
 
 	scr.GamesContainer = widget.NewList(
 		func() int {
-			return 0
+			return len(scr.Games)
 		},
 		func() fyne.CanvasObject {
 			return fyne.NewContainerWithLayout(
@@ -96,8 +79,22 @@ func NewMainScreen(
 			)
 		},
 		func(index int, item fyne.CanvasObject) {
+			// Title
+			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(scr.Games[index].Title)
+
+			// Icon
+			icon := item.(*fyne.Container).Objects[2].(*widget.Icon)
+			icon.Hide()
+			if scr.Games[index].Installed {
+				icon.SetResource(theme.ConfirmIcon())
+				icon.Show()
+			}
 		},
 	)
+
+	scr.GamesContainer.OnSelected = func(index int) {
+		scr.GameInfo.UpdateInfo(&scr.Games[index])
+	}
 
 	// TODO: move to the goroutine
 	scr.Manager.UpdateRepositories()
