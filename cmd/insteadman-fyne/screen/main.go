@@ -23,7 +23,7 @@ type MainScreen struct {
 }
 
 func (scr *MainScreen) RefreshList() {
-	games, e := scr.Manager.GetSortedGames()
+	games, e := scr.Manager.GetSortedGamesByDateDesc()
 	if e != nil {
 		dialog.ShowError(e, scr.Window)
 	}
