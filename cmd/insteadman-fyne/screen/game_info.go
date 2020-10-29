@@ -25,6 +25,7 @@ type GameInfoScreen struct {
 	Version       *widget.Label
 	Lang          *widget.Label
 	Repository    *widget.Label
+	Size          *widget.Label
 	Screen        fyne.CanvasObject
 	Container     *widget.SplitContainer
 	Image         *widget.Icon
@@ -53,6 +54,9 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 		scr.Hyperlink.Show()
 	}
 
+	scr.Size.SetText(g.HumanSize())
+	scr.Size.Show()
+
 	// Buttons
 	// TODO: add Update button
 	if g.Installed {
@@ -65,8 +69,10 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 		scr.DeleteButton.Hide()
 	}
 
-	var icon fyne.Resource = nil
+	var icon fyne.Resource = scr.MainIcon
 	var b []byte = nil
+
+	scr.Image.SetResource(icon)
 
 	fileName, e := scr.Manager.GetGameImage(g)
 	if e == nil {
@@ -80,13 +86,11 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 		if e != nil {
 			// dialog.ShowError(e, scr.Window)
 			fmt.Printf("Error: %v\n", e)
-			icon = scr.MainIcon
 		} else {
 			icon = fyne.NewStaticResource("game_"+g.Name, b)
+			scr.Image.SetResource(icon)
 		}
 	}
-
-	scr.Image.SetResource(icon)
 
 	// if scr.Container != nil {
 	// 	scr.Container.Refresh()
@@ -108,6 +112,8 @@ func NewGameInfoScreen(
 	scr.Title = widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 	scr.Desc = widget.NewLabel("Выберите игру слева в списке")
 	scr.Desc.Wrapping = fyne.TextWrapWord
+	scr.Size = widget.NewLabel("")
+	scr.Size.Hide()
 
 	descScroll := widget.NewVScrollContainer(
 		scr.Desc,
@@ -171,6 +177,7 @@ func NewGameInfoScreen(
 		scr.Hyperlink,
 		scr.Version,
 		scr.Lang,
+		scr.Size,
 		scr.Repository,
 	)
 
