@@ -44,8 +44,11 @@ func NewSettingsScreen(
 	)
 
 	okButton := widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
-		scr.Window.Close()
+		// Don't use Close() because it will crash app
+		scr.Window.Hide()
+		scr.Window = nil
 	})
+	okButton.Style = widget.PrimaryButton
 
 	scr.Screen = fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, okButton, nil, nil),
@@ -69,25 +72,36 @@ func (scr *SettingsScreen) SetAboutTab() {
 }
 
 func (scr *SettingsScreen) makeMainTab() fyne.CanvasObject {
-	path := widget.NewEntry()
-	path.SetPlaceHolder("INSTEAD path")
-	path.SetText(scr.Manager.Config.InterpreterCommand)
+	language := widget.NewSelect([]string{"system", "en", "ru", "uk"}, nil)
+	if scr.Manager.Config.Lang != "" {
+		language.SetSelected(scr.Manager.Config.Lang)
+	}
+
+	pathEntry := widget.NewEntry()
+	pathEntry.SetPlaceHolder("INSTEAD path")
+	pathEntry.SetText(scr.Manager.Config.InterpreterCommand)
+	pathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), nil)
+	pathContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(nil, nil, nil, pathBrowseButton),
+		pathEntry,
+		pathBrowseButton,
+	)
 
 	pathInfo := widget.NewLabelWithStyle("", fyne.TextAlignLeading, fyne.TextStyle{Italic: true})
 	pathInfo.Hide()
 
-	browseButton := widget.NewButton("Browse...", nil)
-	browseButton.Disable()
+	// browseButton := widget.NewButton("Browse...", nil)
+	// browseButton.Disable()
 	pathButtons := fyne.NewContainerWithLayout(
-		layout.NewAdaptiveGridLayout(4),
-		browseButton,
+		layout.NewAdaptiveGridLayout(3),
+		// browseButton,
 		widget.NewButton("Use built-in", nil),
 		widget.NewButtonWithIcon("Detect", theme.SearchIcon(), func() {
 			pathInfo.SetText("Detecting...")
 			pathInfo.Show()
 			command := scr.Manager.InterpreterFinder.Find()
 			if command != nil {
-				path.SetText(*command)
+				pathEntry.SetText(*command)
 				pathInfo.SetText("INSTEAD has detected!")
 			} else {
 				pathInfo.SetText("INSTEAD hasn't detected!")
@@ -110,28 +124,34 @@ func (scr *SettingsScreen) makeMainTab() fyne.CanvasObject {
 		}),
 	)
 
-	language := widget.NewSelect([]string{"system", "en", "ru", "uk"}, nil)
+	path := widget.NewVBox(
+		pathContainer,
+		pathButtons,
+		pathInfo,
+	)
 
-	// Language
-	if scr.Manager.Config.Lang != "" {
-		language.SetSelected(scr.Manager.Config.Lang)
-	}
+	gamesPathEntry := widget.NewEntry()
+	gamesPathEntry.SetPlaceHolder(scr.Manager.Config.CalculatedGamesPath)
+	gamesPathEntry.SetText(scr.Manager.Config.GamesPath)
+	gamesPathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), nil)
+	gamesPath := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(nil, nil, nil, gamesPathBrowseButton),
+		gamesPathEntry,
+		gamesPathBrowseButton,
+	)
 
-	cleanCache := widget.NewButtonWithIcon("Clean", theme.DeleteIcon(), nil)
+	clearCache := widget.NewButtonWithIcon("Clear", theme.DeleteIcon(), nil)
 
 	configPathEntry := widget.NewEntry()
 	configPathEntry.SetText(scr.Configurator.FilePath)
 	configPathEntry.Disable()
 
 	form := &widget.Form{}
-	form.Append("INSTEAD path", widget.NewVBox(
-		path,
-		pathButtons,
-		pathInfo,
-	))
 	form.Append("Language", language)
-	form.Append("Cache", cleanCache)
+	form.Append("INSTEAD path", path)
+	form.Append("Games path", gamesPath)
 	form.Append("Config path", configPathEntry)
+	form.Append("Cache", clearCache)
 
 	return form
 }
@@ -166,11 +186,13 @@ func (scr *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
 	)
 
 	toolbar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ContentAddIcon(), nil),
-		widget.NewToolbarAction(theme.ContentRemoveIcon(), nil),
-		widget.NewToolbarAction(theme.MoveUpIcon(), nil),
-		widget.NewToolbarAction(theme.MoveDownIcon(), nil),
 		widget.NewToolbarAction(theme.DocumentCreateIcon(), nil),
+		widget.NewToolbarAction(theme.ContentAddIcon(), nil),
+		widget.NewToolbarAction(theme.DeleteIcon(), nil),
+		// widget.NewToolbarAction(theme.MoveUpIcon(), nil),
+		// widget.NewToolbarAction(theme.MoveDownIcon(), nil),
+		widget.NewToolbarSpacer(),
+		widget.NewToolbarAction(theme.ContentUndoIcon(), nil),
 	)
 
 	return fyne.NewContainerWithLayout(
