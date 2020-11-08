@@ -36,3 +36,6 @@ insteadman-fyne-win:
 		-v "$(PWD)":/tmp/build \
 		x1unix/go-mingw:$(GO_VERSION) \
 		/bin/sh -c "cd /tmp/build && go build -ldflags \"-H=windowsgui -s -w\" -o insteadman-fyne.exe ./cmd/insteadman-fyne"
+
+insteadman-fyne-win-setup:
+	docker run --rm -i -v $(PWD)/build/windows:/work amake/innosetup setup.iss
