@@ -3,10 +3,13 @@ package screen
 import (
 	"fmt"
 	"net/url"
+	"path"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
+	"fyne.io/fyne/storage"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 
@@ -80,7 +83,36 @@ func (scr *SettingsScreen) makeMainTab() fyne.CanvasObject {
 	pathEntry := widget.NewEntry()
 	pathEntry.SetPlaceHolder("INSTEAD path")
 	pathEntry.SetText(scr.Manager.Config.InterpreterCommand)
-	pathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), nil)
+	pathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), func() {
+		// TODO: Move to function
+		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
+			if err == nil && reader == nil {
+				return
+			}
+			if err != nil {
+				dialog.ShowError(err, scr.Window)
+				return
+			}
+			if reader == nil {
+				return
+			}
+
+			pathEntry.SetText(reader.URI().String())
+
+			err = reader.Close()
+			if err != nil {
+				fyne.LogError("Failed to close stream", err)
+			}
+		}, scr.Window)
+		fileURL := storage.NewFileURI(path.Dir(scr.Manager.Config.InterpreterCommand))
+		dir, err := storage.ListerForURI(fileURL)
+		if err == nil {
+			fd.SetLocation(dir)
+		} else {
+			fyne.LogError("File dialog error", err)
+		}
+		fd.Show()
+	})
 	pathContainer := fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, nil, nil, pathBrowseButton),
 		pathEntry,
