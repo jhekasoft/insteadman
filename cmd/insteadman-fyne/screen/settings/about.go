@@ -11,10 +11,6 @@ import (
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
 
-// type AboutScreen struct {
-// 	fyne.CanvasObject
-// }
-
 func NewAboutScreen() fyne.CanvasObject {
 	mainIcon := data.InsteadManLogo
 
