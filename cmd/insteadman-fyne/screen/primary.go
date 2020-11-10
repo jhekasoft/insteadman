@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screen/primary"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
@@ -17,7 +18,7 @@ type MainScreen struct {
 	MainContainer  *fyne.Container
 	SearchEntry    *widget.Entry
 	GamesContainer *widget.List
-	GameInfo       *GameInfoScreen
+	GameInfo       *primary.GameInfoScreen
 	Window         fyne.Window
 	Screen         fyne.CanvasObject
 	Games          []manager.Game
@@ -54,7 +55,7 @@ func NewMainScreen(
 		Manager:      m,
 		Configurator: c,
 		MainIcon:     mainIcon,
-		GameInfo:     NewGameInfoScreen(m, c, mainIcon, window),
+		GameInfo:     primary.NewGameInfoScreen(m, c, mainIcon, window),
 		Window:       window,
 	}
 

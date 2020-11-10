@@ -2,17 +2,16 @@ package screen
 
 import (
 	"fmt"
-	"net/url"
 	"path"
 
 	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/storage"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 
+	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screen/settings"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
@@ -236,25 +235,5 @@ func (scr *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
 }
 
 func (scr *SettingsScreen) makeAboutTab() fyne.CanvasObject {
-	mainIcon := scr.MainIcon
-
-	siteURL := "https://jhekasoft.github.io/insteadman/"
-	link, err := url.Parse(siteURL)
-	if err != nil {
-		fyne.LogError("Could not parse URL", err)
-	}
-
-	return fyne.NewContainerWithLayout(
-		layout.NewCenterLayout(),
-		widget.NewHBox(
-			fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(160, 160)), canvas.NewImageFromResource(mainIcon)),
-			widget.NewVBox(
-				widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
-				widget.NewLabel("Version: "+manager.Version),
-				widget.NewHyperlink(siteURL, link),
-				widget.NewLabel("License: MIT"),
-				widget.NewLabel("© 2015-2020 InsteadMan"),
-			),
-		),
-	)
+	return settings.NewAboutScreen()
 }
