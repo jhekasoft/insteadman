@@ -12,71 +12,73 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/data"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
 
 type GameInfoScreen struct {
-	Manager       *manager.Manager
-	Configurator  *configurator.Configurator
-	MainIcon      fyne.Resource
-	Title         *widget.Label
-	Desc          *widget.Label
-	Version       *widget.Label
-	Lang          *widget.Label
-	Repository    *widget.Label
-	Size          *widget.Label
-	Screen        fyne.CanvasObject
-	Container     *widget.SplitContainer
-	Image         *widget.Icon
-	Hyperlink     *widget.Hyperlink
-	InstallButton *widget.Button
-	RunButton     *widget.Button
-	DeleteButton  *widget.Button
-	Game          *manager.Game
-	UpdateF       func()
+	win    fyne.Window
+	m      *manager.Manager
+	c      *configurator.Configurator
+	Screen fyne.CanvasObject
+	game   *manager.Game
+
+	// Widgets
+	title         *widget.Label
+	desc          *widget.Label
+	version       *widget.Label
+	lang          *widget.Label
+	repository    *widget.Label
+	size          *widget.Label
+	container     *widget.SplitContainer
+	image         *widget.Icon
+	hyperlink     *widget.Hyperlink
+	installButton *widget.Button
+	runButton     *widget.Button
+	deleteButton  *widget.Button
 }
 
 func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
-	scr.Game = g
+	scr.game = g
 
-	scr.Title.SetText(g.Title)
-	scr.Desc.SetText(g.Description)
+	scr.title.SetText(g.Title)
+	scr.desc.SetText(g.Description)
 
 	// Labels
-	scr.Version.SetText(g.Version)
-	scr.Lang.SetText(strings.Join(g.Languages, ", "))
-	scr.Repository.SetText(g.RepositoryName)
+	scr.version.SetText(g.Version)
+	scr.lang.SetText(strings.Join(g.Languages, ", "))
+	scr.repository.SetText(g.RepositoryName)
 
 	// URL
 	if g.Descurl != "" {
-		scr.Hyperlink.SetURLFromString(g.Descurl)
-		scr.Hyperlink.Show()
+		scr.hyperlink.SetURLFromString(g.Descurl)
+		scr.hyperlink.Show()
 	}
 
-	scr.Size.SetText(g.HumanSize())
-	scr.Size.Show()
+	scr.size.SetText(g.HumanSize())
+	scr.size.Show()
 
 	// Buttons
 	// TODO: add Update button
 	if g.Installed {
-		scr.InstallButton.Hide()
-		scr.RunButton.Show()
-		scr.DeleteButton.Show()
+		scr.installButton.Hide()
+		scr.runButton.Show()
+		scr.deleteButton.Show()
 	} else {
-		scr.InstallButton.Show()
-		scr.RunButton.Hide()
-		scr.DeleteButton.Hide()
+		scr.installButton.Show()
+		scr.runButton.Hide()
+		scr.deleteButton.Hide()
 	}
 
-	var icon fyne.Resource = scr.MainIcon
+	var icon fyne.Resource = data.InsteadManLogo
 	var b []byte = nil
 
-	scr.Image.SetResource(icon)
+	scr.image.SetResource(icon)
 
-	fileName, e := scr.Manager.GetGameImage(g)
+	fileName, e := scr.m.GetGameImage(g)
 	if e == nil {
-		iconFile, e := os.Open(scr.Configurator.DataResourcePath(fileName))
+		iconFile, e := os.Open(scr.c.DataResourcePath(fileName))
 		if e == nil {
 			r := bufio.NewReader(iconFile)
 
@@ -88,7 +90,7 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 			fmt.Printf("Error: %v\n", e)
 		} else {
 			icon = fyne.NewStaticResource("game_"+g.Name, b)
-			scr.Image.SetResource(icon)
+			scr.image.SetResource(icon)
 		}
 	}
 
@@ -98,37 +100,33 @@ func (scr *GameInfoScreen) UpdateInfo(g *manager.Game) {
 }
 
 func NewGameInfoScreen(
+	win fyne.Window,
 	m *manager.Manager,
 	c *configurator.Configurator,
-	mainIcon fyne.Resource,
-	window fyne.Window) *GameInfoScreen {
-	scr := GameInfoScreen{
-		Manager:      m,
-		Configurator: c,
-		MainIcon:     mainIcon,
-	}
+	onRefresh func()) *GameInfoScreen {
+	scr := GameInfoScreen{win: win, m: m, c: c}
 
-	scr.Image = widget.NewIcon(mainIcon)
-	scr.Title = widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
-	scr.Desc = widget.NewLabel("Выберите игру слева в списке")
-	scr.Desc.Wrapping = fyne.TextWrapWord
-	scr.Size = widget.NewLabel("")
-	scr.Size.Hide()
+	scr.image = widget.NewIcon(data.InsteadManLogo)
+	scr.title = widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
+	scr.desc = widget.NewLabel("Выберите игру слева в списке")
+	scr.desc.Wrapping = fyne.TextWrapWord
+	scr.size = widget.NewLabel("")
+	scr.size.Hide()
 
 	descScroll := widget.NewVScrollContainer(
-		scr.Desc,
+		scr.desc,
 	)
 	// descScroll.SetMinSize(fyne.NewSize(0, 100))
 
-	scr.Hyperlink = widget.NewHyperlink("Website", nil)
-	scr.Hyperlink.Hide()
-	scr.InstallButton = widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), func() {
-		progDialog := dialog.NewProgress(scr.Game.Title, "Installing...", window)
+	scr.hyperlink = widget.NewHyperlink("Website", nil)
+	scr.hyperlink.Hide()
+	scr.installButton = widget.NewButtonWithIcon("Install", theme.ContentAddIcon(), func() {
+		progDialog := dialog.NewProgress(scr.game.Title, "Installing...", scr.win)
 		progDialog.Show()
-		err := scr.Manager.InstallGame(scr.Game, func(size uint64) {
-			percents := float64(size) / float64(scr.Game.Size)
+		err := scr.m.InstallGame(scr.game, func(size uint64) {
+			percents := float64(size) / float64(scr.game.Size)
 			progDialog.SetValue(percents)
-			if float64(size) >= float64(scr.Game.Size) {
+			if float64(size) >= float64(scr.game.Size) {
 				progDialog.SetValue(1)
 				progDialog.Hide()
 			}
@@ -136,63 +134,63 @@ func NewGameInfoScreen(
 
 		if err != nil {
 			progDialog.Hide()
-			dialog.ShowError(err, window)
+			dialog.ShowError(err, scr.win)
 			return
 		}
 
-		scr.Game.Installed = true
-		scr.UpdateInfo(scr.Game)
+		scr.game.Installed = true
+		scr.UpdateInfo(scr.game)
 
-		if scr.UpdateF != nil {
-			scr.UpdateF()
+		if onRefresh != nil {
+			onRefresh()
 		}
 	})
-	scr.InstallButton.Style = widget.PrimaryButton
-	scr.InstallButton.Hide()
-	scr.RunButton = widget.NewButtonWithIcon("Run", theme.MediaPlayIcon(), func() {
-		scr.Manager.RunGame(scr.Game)
+	scr.installButton.Style = widget.PrimaryButton
+	scr.installButton.Hide()
+	scr.runButton = widget.NewButtonWithIcon("Run", theme.MediaPlayIcon(), func() {
+		scr.m.RunGame(scr.game)
 	})
-	scr.RunButton.Style = widget.PrimaryButton
-	scr.RunButton.Hide()
-	scr.DeleteButton = widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
-		scr.Manager.RemoveGame(scr.Game)
+	scr.runButton.Style = widget.PrimaryButton
+	scr.runButton.Hide()
+	scr.deleteButton = widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
+		scr.m.RemoveGame(scr.game)
 
 		// TODO: Check error
-		scr.Game.Installed = false
-		scr.UpdateInfo(scr.Game)
-		if scr.UpdateF != nil {
-			scr.UpdateF()
+		scr.game.Installed = false
+		scr.UpdateInfo(scr.game)
+		if onRefresh != nil {
+			onRefresh()
 		}
 	})
-	scr.DeleteButton.Hide()
-	scr.Version = widget.NewLabel("")
-	scr.Lang = widget.NewLabel("")
-	scr.Repository = widget.NewLabel("")
-	scr.Repository.Wrapping = fyne.TextWrapWord
+	scr.deleteButton.Hide()
+	scr.version = widget.NewLabel("")
+	scr.lang = widget.NewLabel("")
+	scr.repository = widget.NewLabel("")
+	scr.repository.Wrapping = fyne.TextWrapWord
 	buttonsContainer := fyne.NewContainerWithLayout(
 		layout.NewHBoxLayout(),
-		scr.InstallButton,
-		scr.RunButton,
-		scr.DeleteButton,
-		scr.Hyperlink,
-		scr.Version,
-		scr.Lang,
-		scr.Size,
-		scr.Repository,
+		scr.installButton,
+		scr.runButton,
+		scr.deleteButton,
+		scr.hyperlink,
+		scr.version,
+		scr.lang,
+		scr.size,
+		scr.repository,
 	)
 
 	contentContainer := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(scr.Title, buttonsContainer, nil, nil),
+		layout.NewBorderLayout(scr.title, buttonsContainer, nil, nil),
 		descScroll,
-		scr.Title,
+		scr.title,
 		buttonsContainer,
 	)
 
-	scr.Container = widget.NewVSplitContainer(scr.Image, contentContainer)
+	scr.container = widget.NewVSplitContainer(scr.image, contentContainer)
 
 	scr.Screen = fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, nil, nil, nil),
-		scr.Container,
+		scr.container,
 	)
 
 	return &scr

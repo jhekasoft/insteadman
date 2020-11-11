@@ -12,64 +12,62 @@ import (
 )
 
 type MainScreen struct {
-	Manager        *manager.Manager
-	Configurator   *configurator.Configurator
-	MainIcon       fyne.Resource
-	MainContainer  *fyne.Container
-	SearchEntry    *widget.Entry
-	GamesContainer *widget.List
-	GameInfo       *primary.GameInfoScreen
-	Window         fyne.Window
-	Screen         fyne.CanvasObject
-	Games          []manager.Game
+	win    fyne.Window
+	m      *manager.Manager
+	c      *configurator.Configurator
+	Screen fyne.CanvasObject
+	games  []manager.Game
+
+	// Widgets
+	mainContainer  *fyne.Container
+	searchEntry    *widget.Entry
+	gamesContainer *widget.List
+	gameInfo       *primary.GameInfoScreen
 }
 
 func (scr *MainScreen) RefreshList() {
-	games, e := scr.Manager.GetSortedGamesByDateDesc()
+	games, e := scr.m.GetSortedGamesByDateDesc()
 	if e != nil {
-		dialog.ShowError(e, scr.Window)
+		dialog.ShowError(e, scr.win)
 		return
 	}
 
 	var keyword *string
-	if scr.SearchEntry.Text != "" {
-		keyword = &scr.SearchEntry.Text
+	if scr.searchEntry.Text != "" {
+		keyword = &scr.searchEntry.Text
 	}
 	games = manager.FilterGames(games, keyword, nil, nil, false)
-	scr.Games = games
+	scr.games = games
 
-	if scr.GamesContainer != nil {
-		scr.GamesContainer.Refresh()
+	if scr.gamesContainer != nil {
+		scr.gamesContainer.Refresh()
 	}
 }
 
 // NewMainScreen is constructor for main screen
 func NewMainScreen(
+	win fyne.Window,
 	m *manager.Manager,
 	c *configurator.Configurator,
-	mainIcon fyne.Resource,
-	window fyne.Window,
-	showSettings func(),
-	showAbout func()) *MainScreen {
+	onShowSettings func(),
+	onShowAbout func()) *MainScreen {
 	scr := MainScreen{
-		Manager:      m,
-		Configurator: c,
-		MainIcon:     mainIcon,
-		GameInfo:     primary.NewGameInfoScreen(m, c, mainIcon, window),
-		Window:       window,
+		m:   m,
+		c:   c,
+		win: win,
 	}
 
-	scr.GameInfo.UpdateF = scr.RefreshList
+	scr.gameInfo = primary.NewGameInfoScreen(win, m, c, scr.RefreshList)
 
-	scr.SearchEntry = widget.NewEntry()
-	scr.SearchEntry.SetPlaceHolder("Search")
-	scr.SearchEntry.OnChanged = func(s string) {
+	scr.searchEntry = widget.NewEntry()
+	scr.searchEntry.SetPlaceHolder("Search")
+	scr.searchEntry.OnChanged = func(s string) {
 		scr.RefreshList()
 	}
 
-	scr.GamesContainer = widget.NewList(
+	scr.gamesContainer = widget.NewList(
 		func() int {
-			return len(scr.Games)
+			return len(scr.games)
 		},
 		func() fyne.CanvasObject {
 			return fyne.NewContainerWithLayout(
@@ -81,50 +79,50 @@ func NewMainScreen(
 		},
 		func(index int, item fyne.CanvasObject) {
 			// Title
-			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(scr.Games[index].Title)
+			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(scr.games[index].Title)
 
 			// Icon
 			icon := item.(*fyne.Container).Objects[2].(*widget.Icon)
 			icon.Hide()
-			if scr.Games[index].Installed {
+			if scr.games[index].Installed {
 				icon.SetResource(theme.ConfirmIcon())
 				icon.Show()
 			}
 		},
 	)
 
-	scr.GamesContainer.OnSelected = func(index int) {
-		scr.GameInfo.UpdateInfo(&scr.Games[index])
+	scr.gamesContainer.OnSelected = func(index int) {
+		scr.gameInfo.UpdateInfo(&scr.games[index])
 	}
 
 	// TODO: move to the goroutine
-	scr.Manager.UpdateRepositories()
+	scr.m.UpdateRepositories()
 	scr.RefreshList()
 
-	scr.MainContainer = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(scr.SearchEntry, nil, nil, nil),
-		scr.SearchEntry,
-		scr.GamesContainer,
+	scr.mainContainer = fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(scr.searchEntry, nil, nil, nil),
+		scr.searchEntry,
+		scr.gamesContainer,
 	)
 
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ViewRefreshIcon(), func() {
-			loadingDialog := dialog.NewProgressInfinite("Refreshing", "Refreshing games...", window)
+			loadingDialog := dialog.NewProgressInfinite("Refreshing", "Refreshing games...", win)
 			loadingDialog.Show()
 
-			scr.Manager.UpdateRepositories()
+			scr.m.UpdateRepositories()
 			scr.RefreshList()
 
 			loadingDialog.Hide()
 		}),
 		widget.NewToolbarSpacer(),
-		widget.NewToolbarAction(theme.InfoIcon(), showAbout),
-		widget.NewToolbarAction(theme.SettingsIcon(), showSettings),
+		widget.NewToolbarAction(theme.InfoIcon(), onShowAbout),
+		widget.NewToolbarAction(theme.SettingsIcon(), onShowSettings),
 	)
 
 	contentContainer := widget.NewHSplitContainer(
-		scr.MainContainer,
-		scr.GameInfo.Screen,
+		scr.mainContainer,
+		scr.gameInfo.Screen,
 	)
 
 	scr.Screen = fyne.NewContainerWithLayout(

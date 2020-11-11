@@ -44,20 +44,19 @@ func main() {
 	w.ShowAndRun()
 }
 
-func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) fyne.Window {
+func newMainWin(app fyne.App, m *manager.Manager, c *configurator.Configurator) fyne.Window {
 	w := app.NewWindow("InsteadMan")
 	mainScreen := screen.NewMainScreen(
-		mn,
-		c,
-		data.InsteadManLogo,
 		w,
+		m,
+		c,
 		func() {
-			sw, settingsScreen := newSettingsWin(app, mn, c)
+			sw, settingsScreen := newSettingsWin(app, m, c)
 			settingsScreen.SetMainTab()
 			sw.Show()
 		},
 		func() {
-			sw, settingsScreen := newSettingsWin(app, mn, c)
+			sw, settingsScreen := newSettingsWin(app, m, c)
 			settingsScreen.SetAboutTab()
 			sw.Show()
 		},
@@ -69,9 +68,9 @@ func newMainWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator)
 	return w
 }
 
-func newSettingsWin(app fyne.App, mn *manager.Manager, c *configurator.Configurator) (fyne.Window, *screen.SettingsScreen) {
+func newSettingsWin(app fyne.App, m *manager.Manager, c *configurator.Configurator) (fyne.Window, *screen.SettingsScreen) {
 	w := app.NewWindow("Settings")
-	settingsScreen := screen.NewSettingsScreen(mn, c, data.InsteadManLogo, w)
+	settingsScreen := screen.NewSettingsScreen(w, m, c)
 	w.SetContent(settingsScreen.Screen)
 	w.CenterOnScreen()
 

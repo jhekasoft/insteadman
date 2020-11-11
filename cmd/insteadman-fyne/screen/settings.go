@@ -13,26 +13,21 @@ import (
 
 // SettingsScreen is structure for Settings screen
 type SettingsScreen struct {
-	Manager      *manager.Manager
-	Configurator *configurator.Configurator
-	MainIcon     fyne.Resource
-	Window       fyne.Window
-	Screen       fyne.CanvasObject
-	tabs         *widget.TabContainer
+	win    fyne.Window
+	m      *manager.Manager
+	c      *configurator.Configurator
+	Screen fyne.CanvasObject
+
+	// Widgets
+	tabs *widget.TabContainer
 }
 
 // NewSettingsScreen is constructor for Settings screen
 func NewSettingsScreen(
+	win fyne.Window,
 	m *manager.Manager,
-	c *configurator.Configurator,
-	mainIcon fyne.Resource,
-	window fyne.Window) *SettingsScreen {
-	scr := SettingsScreen{
-		Manager:      m,
-		Configurator: c,
-		MainIcon:     mainIcon,
-		Window:       window,
-	}
+	c *configurator.Configurator) *SettingsScreen {
+	scr := SettingsScreen{win: win, m: m, c: c}
 
 	scr.tabs = widget.NewTabContainer(
 		widget.NewTabItem("Main", scr.makeMainTab()),
@@ -42,8 +37,8 @@ func NewSettingsScreen(
 
 	okButton := widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
 		// Don't use Close() because it will crash app
-		scr.Window.Hide()
-		scr.Window = nil
+		scr.win.Hide()
+		scr.win = nil
 	})
 	okButton.Style = widget.PrimaryButton
 
@@ -69,11 +64,11 @@ func (scr *SettingsScreen) SetAboutTab() {
 }
 
 func (scr *SettingsScreen) makeMainTab() fyne.CanvasObject {
-	return settings.NewCommonScreen(scr.Window, scr.Manager, scr.Configurator)
+	return settings.NewCommonScreen(scr.win, scr.m, scr.c)
 }
 
 func (scr *SettingsScreen) makeRepositoriesTab() fyne.CanvasObject {
-	return settings.NewRepositoriesScreen(scr.Manager, scr.Configurator)
+	return settings.NewRepositoriesScreen(scr.m, scr.c)
 }
 
 func (scr *SettingsScreen) makeAboutTab() fyne.CanvasObject {
