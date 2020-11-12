@@ -64,6 +64,7 @@ func NewMainScreen(
 	scr.searchEntry.OnChanged = func(s string) {
 		scr.RefreshList()
 	}
+	searchEntryContainer := widget.NewHScrollContainer(scr.searchEntry)
 
 	scr.gamesContainer = widget.NewList(
 		func() int {
@@ -100,8 +101,8 @@ func NewMainScreen(
 	scr.RefreshList()
 
 	scr.mainContainer = fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(scr.searchEntry, nil, nil, nil),
-		scr.searchEntry,
+		layout.NewBorderLayout(searchEntryContainer, nil, nil, nil),
+		searchEntryContainer,
 		scr.gamesContainer,
 	)
 

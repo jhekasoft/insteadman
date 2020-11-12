@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/container"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
@@ -166,24 +167,26 @@ func NewGameInfoScreen(
 	scr.version = widget.NewLabel("")
 	scr.lang = widget.NewLabel("")
 	scr.repository = widget.NewLabel("")
-	scr.repository.Wrapping = fyne.TextWrapWord
-	buttonsContainer := fyne.NewContainerWithLayout(
-		layout.NewHBoxLayout(),
-		scr.installButton,
-		scr.runButton,
-		scr.deleteButton,
+	// scr.repository.Wrapping = fyne.TextWrapWord
+	bottomInfoScroll := widget.NewHScrollContainer(container.NewHBox(
 		scr.hyperlink,
 		scr.version,
 		scr.lang,
 		scr.size,
 		scr.repository,
+	))
+	buttonsContainer := container.NewHBox(scr.installButton, scr.runButton, scr.deleteButton)
+	bottomContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(nil, nil, buttonsContainer, nil),
+		buttonsContainer,
+		bottomInfoScroll,
 	)
 
 	contentContainer := fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(scr.title, buttonsContainer, nil, nil),
+		layout.NewBorderLayout(scr.title, bottomContainer, nil, nil),
 		descScroll,
 		scr.title,
-		buttonsContainer,
+		bottomContainer,
 	)
 
 	scr.container = widget.NewVSplitContainer(scr.image, contentContainer)

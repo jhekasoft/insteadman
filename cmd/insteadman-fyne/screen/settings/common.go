@@ -24,6 +24,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 	pathEntry := widget.NewEntry()
 	pathEntry.SetPlaceHolder("INSTEAD path")
 	pathEntry.SetText(m.Config.InterpreterCommand)
+	pathEntryContainer := widget.NewHScrollContainer(pathEntry)
 	pathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), func() {
 		// TODO: Move to function
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
@@ -56,7 +57,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 	})
 	pathContainer := fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, nil, nil, pathBrowseButton),
-		pathEntry,
+		pathEntryContainer,
 		pathBrowseButton,
 	)
 
@@ -97,7 +98,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 		}),
 	)
 
-	path := widget.NewVBox(
+	insteadPath := widget.NewVBox(
 		pathContainer,
 		pathButtons,
 		pathInfo,
@@ -106,10 +107,32 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 	gamesPathEntry := widget.NewEntry()
 	gamesPathEntry.SetPlaceHolder(m.Config.CalculatedGamesPath)
 	gamesPathEntry.SetText(m.Config.GamesPath)
-	gamesPathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), nil)
+	gamesPathEntryContainer := widget.NewHScrollContainer(gamesPathEntry)
+	gamesPathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), func() {
+		// TODO: Move to function
+		fd := dialog.NewFolderOpen(func(list fyne.ListableURI, err error) {
+			if err != nil {
+				dialog.ShowError(err, win)
+				return
+			}
+			if list == nil {
+				return
+			}
+
+			gamesPathEntry.SetText(list.String())
+		}, win)
+		fileURL := storage.NewFileURI(m.Config.CalculatedGamesPath)
+		dir, err := storage.ListerForURI(fileURL)
+		if err == nil {
+			fd.SetLocation(dir)
+		} else {
+			fyne.LogError("File dialog error", err)
+		}
+		fd.Show()
+	})
 	gamesPath := fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(nil, nil, nil, gamesPathBrowseButton),
-		gamesPathEntry,
+		gamesPathEntryContainer,
 		gamesPathBrowseButton,
 	)
 
@@ -121,7 +144,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 
 	form := &widget.Form{}
 	form.Append("Language", language)
-	form.Append("INSTEAD path", path)
+	form.Append("INSTEAD path", insteadPath)
 	form.Append("Games path", gamesPath)
 	form.Append("Config path", configPathEntry)
 	form.Append("Cache", clearCache)

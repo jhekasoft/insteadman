@@ -37,6 +37,8 @@ func main() {
 	w := newMainWin(app, mn, c)
 	w.SetMaster()
 
+	// log.Println(w.Canvas().Scale())
+
 	if mn.InterpreterCommand() == "" {
 		findInterpreter(mn, c, w)
 	}
@@ -46,10 +48,7 @@ func main() {
 
 func newMainWin(app fyne.App, m *manager.Manager, c *configurator.Configurator) fyne.Window {
 	w := app.NewWindow("InsteadMan")
-	mainScreen := screen.NewMainScreen(
-		w,
-		m,
-		c,
+	mainScreen := screen.NewMainScreen(w, m, c,
 		func() {
 			sw, settingsScreen := newSettingsWin(app, m, c)
 			settingsScreen.SetMainTab()
@@ -68,11 +67,13 @@ func newMainWin(app fyne.App, m *manager.Manager, c *configurator.Configurator) 
 	return w
 }
 
-func newSettingsWin(app fyne.App, m *manager.Manager, c *configurator.Configurator) (fyne.Window, *screen.SettingsScreen) {
+func newSettingsWin(app fyne.App, m *manager.Manager, c *configurator.Configurator) (
+	fyne.Window, *screen.SettingsScreen) {
 	w := app.NewWindow("Settings")
 	settingsScreen := screen.NewSettingsScreen(w, m, c)
 	w.SetContent(settingsScreen.Screen)
 	w.CenterOnScreen()
+	w.Resize(fyne.NewSize(600, 400))
 
 	return w, settingsScreen
 }
