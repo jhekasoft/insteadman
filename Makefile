@@ -7,10 +7,10 @@ all:
 	${MAKE} insteadman-fyne
 
 insteadman:
-	go build -ldflags "-s -w" -o insteadman ./cmd/insteadman
+	go build -ldflags "-s -w" -o ./build/insteadman ./cmd/insteadman
 
 insteadman-fyne:
-	go build -ldflags "-s -w" -o insteadman-fyne ./cmd/insteadman-fyne
+	go build -ldflags "-s -w" -o ./build/insteadman-fyne ./cmd/insteadman-fyne
 
 test:
 	go test ./core/...
@@ -28,14 +28,15 @@ insteadman-win:
 	docker run --rm -it \
 		-v "$(PWD)":/tmp/build \
 		x1unix/go-mingw:$(GO_VERSION) \
-		/bin/sh -c "cd /tmp/build && go build -ldflags \"-s -w\" -o insteadman.exe ./cmd/insteadman"
+		/bin/sh -c "cd /tmp/build && go build -ldflags \"-s -w\" -o ./build/insteadman.exe ./cmd/insteadman"
 
 insteadman-fyne-win:
 	@echo "==> Building App in MinGW container..." && \
 	docker run --rm -it \
 		-v "$(PWD)":/tmp/build \
 		x1unix/go-mingw:$(GO_VERSION) \
-		/bin/sh -c "cd /tmp/build && go build -ldflags \"-H=windowsgui -s -w\" -o insteadman-fyne.exe ./cmd/insteadman-fyne"
+		/bin/sh -c "cd /tmp/build && go build \
+		-ldflags \"-H=windowsgui -s -w\" -o ./build/insteadman-fyne.exe ./cmd/insteadman-fyne"
 
 insteadman-fyne-win-setup:
 	docker run --rm -i -v $(PWD)/build/windows:/work amake/innosetup setup.iss
