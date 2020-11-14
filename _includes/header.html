@@ -1,0 +1,46 @@
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ '/' | prepend: page.l | prepend: site.baseurl }}"><img src="{{ '/assets/img/logo/logo-24.png' | prepend: site.baseurl }}" alt="{{ site.title }}"></img></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                {% comment %}<li class="active"><a href="{{ '/' | prepend: page.l | prepend: site.baseurl }}">Home</a></li>{% endcomment %}
+                <li class="{% if page.id == 'about' %}active{% endif %}"><a href="{{ '/about' | prepend: page.l | prepend: site.baseurl }}">{{ site.t[page.lang].about }}</a></li>
+                <li class="{% if page.id == 'insteadman2' %}active{% endif %}"><a href="{{ '/insteadman2' | prepend: page.l | prepend: site.baseurl }}">InsteadMan 2</a></li>
+                <li class="{% if page.id == 'cli' %}active{% endif %}"><a href="{{ '/cli' | prepend: page.l | prepend: site.baseurl }}" title="{{ site.t[page.lang].consoleApplication }}">CLI</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ site.t[page.lang].other }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ site.t[page.lang].insteadSiteUrl }}">INSTEAD <span class="glyphicon glyphicon-link"></span></a></li>
+                        <li><a href="{{ site.discussionUrl }}">{{ site.t[page.lang].discussion }} <span class="glyphicon glyphicon-link"></span></a></li>
+                        <li><a href="{{ site.githubUrl }}">GitHub <span class="glyphicon glyphicon-link"></span></a></li>
+                        {% if page.lang == 'ru' %}
+                            <li class="{% if page.id == 'instead-manager-1' %}active{% endif %}"><a href="{{ '/instead-manager-1' | prepend: page.l | prepend: site.baseurl }}">Старая версия</a></li>
+                        {% endif %}
+                        {% comment %}
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Nav header</li>
+                            <li><a href="#">Separated link</a></li>
+                            <li><a href="#">One more separated link</a></li>
+                        {% endcomment %}
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="{% if page.lang == 'en' %}active{% endif %}"><a href="{{ '/en' | prepend: site.baseurl }}{% if page.id != '' %}/{{ page.id }}{% endif %}">en</a></li>
+                <li class="{% if page.lang == 'ru' %}active{% endif %}"><a href="{{ '/' | prepend: site.baseurl }}{% if page.id != '' %}{{ page.id }}{% endif %}">ru</a></li>
+                <li class="{% if page.lang == 'uk' %}active{% endif %}"><a href="{{ '/uk' | prepend: site.baseurl }}{% if page.id != '' %}/{{ page.id }}{% endif %}">ua</a></li>
+                <li>&nbsp;</li>
+            </ul>
+        </div>
+    </div>
+</nav>

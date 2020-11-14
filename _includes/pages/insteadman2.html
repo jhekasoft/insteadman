@@ -1,0 +1,59 @@
+<h1 class="media-heading main-heading">InsteadMan
+  <small>{{ site.t[page.lang].insteadmanSubtitle }}</small>
+  <small>v{{ site.projectVersion }} <a class="glyphicon glyphicon-info-sign release-info-icon" href="#"></a></small>
+</h1>
+
+<div class="panel panel-info release-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{ site.lastReleaseDate }} <button type="button" class="close release-info-close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h3>
+  </div>
+  <div class="panel-body">
+    {{ site.t[page.lang].releaseNotes }}
+    <a href="{{ site.releasesUrl }}">{{ site.t[page.lang].allReleases }} <span class="glyphicon glyphicon-link"></span></a>
+  </div>
+</div>
+
+<p><a href="#download"><img class="img-responsive center-block" src="{{ site.baseurl }}{{ '/assets/img/screenshot/insteadman-2-' }}{% if page.lang == 'ru' %}{{ 'ru' }}{% else %}{{ 'en' }}{% endif %}{{ '.png' }}" alt="InsteadMan"></a></p>
+
+<hr class="featurette-divider">
+
+<h2 id="download">{{ site.t[page.lang].installInsteadman }}</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <img src="{{ '/assets/img/logo/windows.png' | prepend: site.baseurl }}" alt="Windows" width="140" height="140">
+        <h2>Windows</h2>
+        <p>{{ site.t[page.lang].windowsDownloadText }}</p>
+        <p><a class="btn btn-default btn-download-windows"
+              href="{{ site.downloads.windows.url }}"
+              role="button">{{ site.t[page.lang].download }} &raquo;</a></p>
+        <p>{{ site.t[page.lang].windowsDownloadText2 | replace:'_downloadUrl_',site.downloads.windows.archiveUrl }}</p>
+    </div><!-- /.col-lg-4 -->
+    <div class="col-lg-4">
+        <img src="{{ '/assets/img/logo/macosx.png' | prepend: site.baseurl }}" alt="macOS" width="140" height="140">
+        <h2>macOS</h2>
+        <p>{{ site.t[page.lang].macosDownloadText }}</p>
+        <p><a class="btn btn-default btn-download-macosx"
+              href="{{ site.downloads.macos.url }}"
+              role="button">{{ site.t[page.lang].download }} &raquo;</a></p>
+    </div><!-- /.col-lg-4 -->
+    <div class="col-lg-4">
+        <img src="{{ '/assets/img/logo/gnulinux.png' | prepend: site.baseurl }}" alt="GNU/Linux" width="140" height="140">
+        <h2>GNU/Linux</h2>
+        <p>{{ site.t[page.lang].linuxDownloadText | replace:'_insteadUrl_',site.t[page.lang].insteadSiteUrl }}</p>
+        <p>
+            <a class="btn btn-default btn-download-gnulinux"
+               href="{{ site.downloads.linux.url }}"
+               role="button">64-bit &raquo;</a>
+            <a class="btn btn-default btn-download-gnulinux"
+               href="{{ site.downloads.linux.x86url }}"
+               role="button">32-bit &raquo;</a>
+        </p>
+    </div><!-- /.col-lg-4 -->
+</div><!-- /.row -->
+
+<p class="text-center"><a href="{{ site.releasesUrl }}">{{ site.t[page.lang].allReleases }} <span class="glyphicon glyphicon-link"></span></a></p>
+
+<hr class="featurette-divider">
+
+<h2>{{ site.t[page.lang].result }}</h2>
+<p>{{ site.t[page.lang].resultText }}</p>

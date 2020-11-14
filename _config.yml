@@ -1,0 +1,144 @@
+# Site settings
+title: InsteadMan
+email: jhekasoft@gmail.com
+description: InsteadMan is manager for INSTEAD games
+baseurl: "/insteadman" # the subpath of your site, e.g. /blog/
+url: "http://jhekasoft.github.io" # the base hostname & protocol for your site
+twitter_username: jhekasoft
+github_username:  jhekasoft
+githubUrl: https://github.com/jhekasoft/insteadman3
+discussionUrl: http://instead-games.ru/forum/index.php?p=/discussion/175/instead-manager
+releasesUrl: https://github.com/jhekasoft/insteadman2/releases
+projectVersion: 2.1.0
+lastReleaseDate: 2018-03-01
+betaReleasesUrl: https://github.com/jhekasoft/insteadman3/releases
+betaProjectVersion: 3.1.2
+betaLastReleaseDate: 2018-06-13
+homebrewUrl: https://brew.sh
+asset_version: 6
+
+downloads:
+  windows:
+    url: https://github.com/jhekasoft/insteadman2/releases/download/v2.1.0/insteadman-2.1.0.exe
+    archiveUrl: https://github.com/jhekasoft/insteadman2/releases/download/v2.1.0/InsteadMan-win-2.1.0-x86.zip
+    betaUrl: https://github.com/jhekasoft/insteadman3/releases/download/v3.1.2/insteadman-windows-setup-3.1.2.exe
+    betaArchiveUrl: https://github.com/jhekasoft/insteadman3/releases/download/v3.1.2/insteadman-gtk-windows-386-3.1.2.zip
+  macos:
+    url: https://github.com/jhekasoft/insteadman2/releases/download/v2.1.0/InsteadMan-2.1.0.dmg
+    betaUrl: https://github.com/jhekasoft/insteadman3/releases/download/v3.1.2/InsteadMan-3.1.2.dmg
+  linux:
+    url: https://github.com/jhekasoft/insteadman2/releases/download/v2.1.0/insteadman_2.1.0-x64.tar.gz
+    x86url: https://github.com/jhekasoft/insteadman2/releases/download/v2.1.0/insteadman_2.1.0-x86.tar.gz
+    betaUrl: https://github.com/jhekasoft/insteadman3/releases/download/v3.1.2/insteadman-gtk-linux-amd64-3.1.2.tar.gz
+
+t:
+  en:
+    description: InsteadMan. Play text adventure games for INSTEAD!
+    about: About
+    other: Other
+    discussion: Discussion
+    toUp: Up
+    insteadmanSubtitle: Play text adventures for INSTEAD!
+    installInsteadman: Install InsteadMan
+    windowsDownloadText: Presented by <strong>exe</strong>-installation file. Just install and play.
+    windowsDownloadText2: Also available <a href="_downloadUrl_">ZIP archive</a> (run <strong>insteadman.exe</strong>).
+    macosDownloadText: Presented by <strong>dmg</strong> image. Open and drag it to the <strong>Applications</strong> folder.
+    linuxDownloadText: Presented by archive with binaries. Please select proper archive for your OS. Then run <strong>./insteadman</strong>.<br>You should have installed <a href="_insteadUrl_">INSTEAD <span class="glyphicon glyphicon-link"></span></a>.
+    betaWindowsDownloadText2: Also available <a href="_downloadUrl_">ZIP archive</a> (run <strong>insteadman-gtk.exe</strong>).
+    betaMacosDownloadText: "Install using <a href=\"_brewUrl_\">Homebrew</a>:"
+    betaMacosDownloadText2: The dmg-package will be soon.
+    betaLinuxDownloadText: Presented by archive with binaries. Please select proper archive for your OS. Then run <strong>./insteadman-gtk</strong>.<br>You should have installed <a href="_insteadUrl_">INSTEAD <span class="glyphicon glyphicon-link"></span></a> and <a href="https://www.gtk.org/">GTK+ 3 <span class="glyphicon glyphicon-link"></span></a>.
+    download: Download
+    result: Result
+    resultText: You are able to install and play games easy!
+    siteSupport: Site support
+    insteadSiteUrl: http://instead-hub.github.io/en
+    releaseNotes: "<ul><li>fixed bug where a game would not install and run on Windows OS;</li><li>changed games sorting: URQ-games at the end;</li><li>fixed other small bugs.</li></ul>"
+    allReleases: All releases
+    betaReleaseNotes: "<ul><li>added i18n (translates) for Russian, Ukrainian</li><li>fixed INSTEAD -> Browse... button in the Settings</li><li>other small fixes</li></ul>"
+    consoleApplication: Console application
+    newVersion: New version
+    screenshots: Screenshots
+  ru:
+    description: InsteadMan. Играйте в текстовые приключенческие игры для INSTEAD!
+    about: О проекте
+    other: Другое
+    discussion: Обсуждение
+    toUp: Вверх
+    insteadmanSubtitle: Играйте в текстовые приключения для INSTEAD!
+    installInsteadman: Установите InsteadMan
+    windowsDownloadText: В виде <strong>exe</strong>-установщика. Просто установите и запускайте.
+    windowsDownloadText2: Также доступен просто <a href="_downloadUrl_">ZIP-архив</a> (запустите <strong>insteadman.exe</strong>).
+    macosDownloadText: В виде <strong>dmg</strong>-образа. Откройте и перетащите в папку с приложениями.
+    linuxDownloadText: В виде архива с бинарниками. Выберите архив для своей версии. Затем запустите <strong>./insteadman</strong>.<br>В системе должен быть установлен <a href="_insteadUrl_">INSTEAD <span class="glyphicon glyphicon-link"></span></a>.
+    betaWindowsDownloadText2: Также доступен просто <a href="_downloadUrl_">ZIP-архив</a> (запустите <strong>insteadman-gtk.exe</strong>).
+    betaMacosDownloadText: "Установить с помощью <a href=\"_brewUrl_\">Homebrew</a>:"
+    betaMacosDownloadText2: Также скоро будет dmg-пакет.
+    betaLinuxDownloadText: В виде архива с бинарниками. Выберите архив для своей версии. Затем запустите <strong>./insteadman-gtk</strong>.<br>В системе должен быть установлен <a href="_insteadUrl_">INSTEAD <span class="glyphicon glyphicon-link"></span></a> и <a href="https://www.gtk.org/">GTK+ 3 <span class="glyphicon glyphicon-link"></span></a>.
+    download: Загрузить
+    result: Итог
+    resultText: Вы сможете легко устанавливать и запускать игры!
+    siteSupport: Поддержка сайта
+    insteadSiteUrl: http://instead-hub.github.io
+    releaseNotes: "<ul><li>поправлен баг, когда нельзя было установить и запустить игру на Windows;</li><li>изменена сортировка игр: игры URQ в конце;</li><li>поправлены другие незначительные баги.</li></ul>"
+    betaReleaseNotes: "<ul><li>добавлены переводы для русского, украинского языков</li><li>исправлена кнопка INSTEAD -> Выбрать... в Настройках</li><li>другие небольшие исправления</li></ul>"
+    allReleases: Все релизы
+    consoleApplication: Консольное приложение
+    newVersion: Новая версия
+    screenshots: Скриншоты
+  uk:
+    description: InsteadMan. Грайте в текстові пригоди для INSTEAD!
+    about: Про проект
+    other: Інше
+    discussion: Обговорювання
+    toUp: Вгору
+    insteadmanSubtitle: Грайте у текстові пригоди для INSTEAD!
+    installInsteadman: Встановлюйте InsteadMan!
+    windowsDownloadText: У вигляді <strong>exe</strong>-встановлювача. Просто встановить та запускайте.
+    windowsDownloadText2: Також є просто <a href="_downloadUrl_">ZIP-архів</a> (запустить <strong>insteadman.exe</strong>).
+    macosDownloadText: У вигляді <strong>dmg</strong>-образа. Відкрийте та перетягнить до директорії з додатками.
+    linuxDownloadText: У вигляді архіва з бінарником. Оберить архів для свої версії. Потім виконайте <strong>./insteadman</strong>.<br>У системі має бути встановлен <a href="_insteadUrl_">INSTEAD <span class="glyphicon glyphicon-link"></span></a> додаток.
+    betaWindowsDownloadText2: Також є просто <a href="_downloadUrl_">ZIP-архів</a> (запустіть <strong>insteadman-gtk.exe</strong>).
+    betaMacosDownloadText: "Встонвити за допомогою <a href=\"_brewUrl_\">Homebrew</a>:"
+    betaMacosDownloadText2: Такой незабаром буде dmg-пакет.
+    betaLinuxDownloadText: У вигляді архіва з бінарниками. Оберить архів для своєї версії. Потім запустить <strong>./insteadman-gtk</strong>.<br>У системі повинен бути встановлен <a href="_insteadUrl_">INSTEAD <span class="glyphicon glyphicon-link"></span></a> та <a href="https://www.gtk.org/">GTK+ 3 <span class="glyphicon glyphicon-link"></span></a>.
+    download: Завантажити
+    result: Підсумок
+    resultText: Ви можете легко встановлювати та запускати ігри!
+    siteSupport: Підтримка сайта
+    insteadSiteUrl: http://instead-hub.github.io
+    releaseNotes: "<ul><li>поправлен баг, когда нельзя было установить и запустить игру на Windows;</li><li>изменена сортировка игр: игры URQ в конце;</li><li>поправлены другие незначительные баги.</li></ul>"
+    betaReleaseNotes: "<ul><li>додані переклади для російскої, української мови</li><li>виправлена кнопка INSTEAD -> Обрати... в Налаштуваннях</li><li>інші невеликі виправлення</li></ul>"
+    allReleases: Усі релізи
+    consoleApplication: Консольний додаток
+    newVersion: Нова версія
+    screenshots: Скріншоти
+
+# Build settings
+markdown: kramdown
+
+defaults:
+  -
+    scope:
+      path: ""
+    values:
+      layout: default
+      lang: ru
+      l: "" # lang for URL
+
+  -
+    scope:
+      path: en
+    values:
+      lang: en
+      l: /en
+
+  -
+    scope:
+      path: uk
+    values:
+      lang: uk
+      l: /uk
+
+plugins:
+  - jekyll-redirect-from

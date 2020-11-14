@@ -1,0 +1,60 @@
+<h1 class="media-heading main-heading">InsteadMan
+  <small>{{ site.t[page.lang].insteadmanSubtitle }}</small>
+  <small>v{{ site.betaProjectVersion }} <a class="glyphicon glyphicon-info-sign release-info-icon" href="#"></a></small>
+</h1>
+
+<div class="panel panel-info release-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{ site.betaLastReleaseDate }} <button type="button" class="close release-info-close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h3>
+  </div>
+  <div class="panel-body">
+    {{ site.t[page.lang].betaReleaseNotes }}
+    <a href="{{ site.betaReleasesUrl }}">{{ site.t[page.lang].allReleases }} <span class="glyphicon glyphicon-link"></span></a>
+  </div>
+</div>
+
+<p><a href="#download">
+    <img class="img-responsive center-block" src="{{ site.baseurl }}{{ '/assets/img/screenshot/gtk-3_1_0-macos-screenshot.png' }}" alt="InsteadMan 3">
+</a></p>
+
+<hr class="featurette-divider">
+
+<h2 id="download">{{ site.t[page.lang].installInsteadman }}</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <img src="{{ '/assets/img/logo/windows.png' | prepend: site.baseurl }}" alt="Windows" width="140" height="140">
+        <h2>Windows</h2>
+        <p>{{ site.t[page.lang].WindowsDownloadText }}</p>
+        <p><a class="btn btn-default btn-download-windows"
+              href="{{ site.downloads.windows.betaUrl }}"
+              role="button">{{ site.t[page.lang].download }} &raquo;</a></p>
+        <p>{{ site.t[page.lang].betaWindowsDownloadText2 | replace:'_downloadUrl_',site.downloads.windows.betaArchiveUrl }}</p>
+    </div><!-- /.col-lg-4 -->
+    <div class="col-lg-4">
+        <img src="{{ '/assets/img/logo/macosx.png' | prepend: site.baseurl }}" alt="macOS" width="140" height="140">
+        <h2>macOS</h2>
+        <p><a class="btn btn-default btn-download-macosx"
+              href="{{ site.downloads.macos.betaUrl }}"
+              role="button">{{ site.t[page.lang].download }} &raquo;</a></p>
+        <p>{{ site.t[page.lang].betaMacosDownloadText | replace:'_brewUrl_',site.homebrewUrl }}</p>
+        <code>brew install jhekasoft/insteadman/insteadman</code>
+    </div><!-- /.col-lg-4 -->
+    <div class="col-lg-4">
+        <img src="{{ '/assets/img/logo/gnulinux.png' | prepend: site.baseurl }}" alt="GNU/Linux" width="140" height="140">
+        <h2>GNU/Linux</h2>
+        <p>{{ site.t[page.lang].betaLinuxDownloadText | replace:'_insteadUrl_',site.t[page.lang].insteadSiteUrl }}</p>
+        <p>
+            <a class="btn btn-default btn-download-gnulinux"
+               href="{{ site.downloads.linux.betaUrl }}"
+               role="button">64-bit &raquo;</a>
+        </p>
+    </div><!-- /.col-lg-4 -->
+</div><!-- /.row -->
+
+<p class="text-center"><a href="{{ site.betaReleasesUrl }}">{{ site.t[page.lang].allReleases }} <span class="glyphicon glyphicon-link"></span></a></p>
+
+<hr class="featurette-divider">
+
+<h2>{{ site.t[page.lang].screenshots }}</h2>
+<img class="img-responsive center-block" src="{{ site.baseurl }}{{ '/assets/img/screenshot/gtk-3_0_4-gnulinux-dark-screenshot.png' }}" alt="InsteadMan 3">
+<img class="img-responsive center-block" src="{{ site.baseurl }}{{ '/assets/img/screenshot/gtk-3_0_3-windows-screenshot.png' }}" alt="InsteadMan 3">

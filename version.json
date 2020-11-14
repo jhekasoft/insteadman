@@ -1,0 +1,7 @@
+{
+  "last_version": "3.1.2",
+  "download_link": "http://jhekasoft.github.io/insteadman/#download",
+  "release_notes": "<p>There is a new lightweight version:</p><ul><li>added i18n (translates) for Russian, Ukrainian</li><li>fixed INSTEAD -> Browse... button in the Settings</li><li>other small fixes</li></ul>",
+  "release_notes_ru": "<p>Новая легковесная версия:</p><ul><li>добавлены переводы для русского, украинского языков</li><li>исправлена кнопка INSTEAD -> Выбрать... в Настройках</li><li>другие небольшие исправления</li></ul>",
+  "release_notes_uk": "<p>Нова легка версія:</p><ul><li>додані переклади для російскої, української мови</li><li>виправлена кнопка INSTEAD -> Обрати... в Налаштуваннях</li><li>інші невеликі виправлення</li></ul>"
+}
