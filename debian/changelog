@@ -1,0 +1,5 @@
+insteadman (3.1.2-1) focal; urgency=low
+
+  * Initial release (Closes: #9)
+
+ -- Anton Karmanov <a.karmanov@inventati.org>  Sun, 15 Nov 2020 21:50:10 +0500
