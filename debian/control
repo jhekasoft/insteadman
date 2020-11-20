@@ -1,5 +1,5 @@
 Source: insteadman
-Section: games
+Section: utils
 Priority: optional
 Maintainer: Anton Karmanov <a.karmanov@inventati.org>
 Build-Depends: debhelper(>= 10), golang, libgtk-3-dev
@@ -11,7 +11,7 @@ Rules-Requires-Root: no
 
 Package: insteadman-common
 Architecture: any
-Depends:
+Depends: ${misc:Depends}
 Description: Manager for the INSTEAD textual quests interpreter.
  Common shared files.
 
