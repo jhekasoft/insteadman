@@ -79,6 +79,11 @@ func NewMainScreen(
 			)
 		},
 		func(index int, item fyne.CanvasObject) {
+			// Check does game exist
+			if scr.games == nil || len(scr.games) < index+1 {
+				return
+			}
+
 			// Title
 			item.(*fyne.Container).Objects[0].(*widget.Label).SetText(scr.games[index].Title)
 
