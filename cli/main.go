@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/jhekasoft/insteadman3/core/configurator"
-	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
-	"github.com/jhekasoft/insteadman3/core/manager"
-	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/jhekasoft/insteadman/core/configurator"
+	"github.com/jhekasoft/insteadman/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman/core/manager"
+	"github.com/jhekasoft/insteadman/core/utils"
 )
 
 var version = "3"

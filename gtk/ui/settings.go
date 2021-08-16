@@ -6,11 +6,11 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/jhekasoft/insteadman3/core/configurator"
-	"github.com/jhekasoft/insteadman3/core/manager"
-	"github.com/jhekasoft/insteadman3/gtk/i18n"
-	"github.com/jhekasoft/insteadman3/gtk/osintegration"
-	gtkutils "github.com/jhekasoft/insteadman3/gtk/utils"
+	"github.com/jhekasoft/insteadman/core/configurator"
+	"github.com/jhekasoft/insteadman/core/manager"
+	"github.com/jhekasoft/insteadman/gtk/i18n"
+	"github.com/jhekasoft/insteadman/gtk/osintegration"
+	gtkutils "github.com/jhekasoft/insteadman/gtk/utils"
 )
 
 const (
@@ -328,7 +328,7 @@ func (h *SettingsWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 	go func() {
 		command := h.win.Manager.InterpreterFinder.Find()
 
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			if command != nil {
 				h.win.EntryInstead.SetText(*command)
 				h.win.LblInsteadInf.SetText(i18n.T("INSTEAD has detected!"))
@@ -340,10 +340,6 @@ func (h *SettingsWindowHandlers) insteadDetectClicked(s *gtk.Button) {
 
 			s.SetSensitive(true)
 		})
-
-		if e != nil {
-			log.Fatal("INSTEAD detect. IdleAdd() failed:", e)
-		}
 	}()
 }
 
@@ -354,7 +350,7 @@ func (h *SettingsWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 	go func() {
 		version, checkErr := h.win.Manager.InterpreterFinder.Check(h.win.Manager.InterpreterCommand())
 
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			var txt string
 			if checkErr != nil {
 				if h.win.Manager.IsBuiltinInterpreterCommand() {
@@ -371,10 +367,6 @@ func (h *SettingsWindowHandlers) insteadCheckClicked(s *gtk.Button) {
 			h.win.LblInsteadInf.Show()
 			s.SetSensitive(true)
 		})
-
-		if e != nil {
-			log.Fatal("INSTEAD check. IdleAdd() failed:", e)
-		}
 	}()
 }
 
@@ -384,7 +376,7 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 
 	go func() {
 		cacheErr := h.win.Manager.ClearCache()
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			if cacheErr != nil {
 				ShowErrorDlg(cacheErr.Error(), h.win.Window)
 			} else {
@@ -394,10 +386,6 @@ func (h *SettingsWindowHandlers) cacheClearClicked(s *gtk.Button) {
 			h.win.LblCacheInf.Show()
 			s.SetSensitive(true)
 		})
-
-		if e != nil {
-			log.Fatal("Cache clear. IdleAdd() failed:", e)
-		}
 	}()
 }
 func (h *SettingsWindowHandlers) languageChanged(s *gtk.ComboBox) {

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/jhekasoft/insteadman/core/utils"
 	"github.com/pyk/byten"
 )
 

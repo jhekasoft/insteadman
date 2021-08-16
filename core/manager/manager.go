@@ -14,9 +14,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/jhekasoft/insteadman3/core/configurator"
-	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
-	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/jhekasoft/insteadman/core/configurator"
+	"github.com/jhekasoft/insteadman/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman/core/utils"
 )
 
 const (

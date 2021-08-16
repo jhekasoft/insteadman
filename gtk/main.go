@@ -6,13 +6,13 @@ import (
 	"runtime"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/jhekasoft/insteadman3/core/configurator"
-	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
-	"github.com/jhekasoft/insteadman3/core/manager"
-	"github.com/jhekasoft/insteadman3/core/utils"
-	"github.com/jhekasoft/insteadman3/gtk/i18n"
-	"github.com/jhekasoft/insteadman3/gtk/osintegration"
-	"github.com/jhekasoft/insteadman3/gtk/ui"
+	"github.com/jhekasoft/insteadman/core/configurator"
+	"github.com/jhekasoft/insteadman/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman/core/manager"
+	"github.com/jhekasoft/insteadman/core/utils"
+	"github.com/jhekasoft/insteadman/gtk/i18n"
+	"github.com/jhekasoft/insteadman/gtk/osintegration"
+	"github.com/jhekasoft/insteadman/gtk/ui"
 )
 
 const (

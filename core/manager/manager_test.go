@@ -3,8 +3,8 @@ package manager
 import (
 	"testing"
 
-	"github.com/jhekasoft/insteadman3/core/configurator"
-	"github.com/jhekasoft/insteadman3/core/interpreterfinder"
+	"github.com/jhekasoft/insteadman/core/configurator"
+	"github.com/jhekasoft/insteadman/core/interpreterfinder"
 	"github.com/stretchr/testify/assert"
 )
 

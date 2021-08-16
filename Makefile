@@ -21,29 +21,29 @@ all:
 	${MAKE} insteadman-gtk
 
 insteadman-deps:
-	go get github.com/ghodss/yaml
-	go get github.com/pyk/byten
-	go get github.com/fatih/color
+	GO111MODULE=auto go get github.com/ghodss/yaml
+	GO111MODULE=auto go get github.com/pyk/byten
+	GO111MODULE=auto go get github.com/fatih/color
 
 insteadman-gtk-deps:
-	go get github.com/ghodss/yaml
-	go get github.com/pyk/byten
-	go get github.com/gotk3/gotk3/...
+	GO111MODULE=auto go get github.com/ghodss/yaml
+	GO111MODULE=auto go get github.com/pyk/byten
+	GO111MODULE=auto go get github.com/gotk3/gotk3/...
 
 	CGO_LDFLAGS=${CGO_LDFLAGS} \
 	CGO_CPPFLAGS=${CGO_CPPFLAGS} \
-	go get github.com/gosexy/gettext
+	GO111MODULE=auto go get github.com/gosexy/gettext
 
 insteadman:
 	${MAKE} insteadman-deps
-	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman ./cli
+	GO111MODULE=auto go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman ./cli
 
 insteadman-gtk:
 	${MAKE} insteadman-gtk-deps
 
 	CGO_LDFLAGS=${CGO_LDFLAGS} \
     CGO_CPPFLAGS=${CGO_CPPFLAGS} \
-	go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
+	GO111MODULE=auto go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
 
 install: all
 	install -d -m 0755 $(DESTDIR)$(PREFIX)/bin/
@@ -77,9 +77,9 @@ uninstall:
 	rm $(DESTDIR)$(PREFIX)/share/applications/insteadman.desktop
 
 deps-dev:
-	go get github.com/stretchr/testify/assert
-	go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
-	go get github.com/gosexy/gettext/go-xgettext
+	GO111MODULE=auto go get github.com/stretchr/testify/assert
+	GO111MODULE=auto go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+	GO111MODULE=auto go get github.com/gosexy/gettext/go-xgettext
 
 insteadman-cross: insteadman-deps
 	./cli-cross-build.sh ./cli insteadman ${VERSION}
@@ -159,16 +159,16 @@ gtk-compile-i18n:
 	msgfmt resources/locale/uk/LC_MESSAGES/insteadman.po -o resources/locale/uk/LC_MESSAGES/insteadman.mo
 
 test:
-	go test ./core/...
-	go test ./cli/...
+	GO111MODULE=auto go test ./core/...
+	GO111MODULE=auto go test ./cli/...
 
 gtk-test:
 	CGO_LDFLAGS=${CGO_LDFLAGS} \
     CGO_CPPFLAGS=${CGO_CPPFLAGS} \
-	go test ./gtk/...
+	GO111MODULE=auto go test ./gtk/...
 
 report:
-	go vet ./{core,cli}/...
+	GO111MODULE=auto go vet ./{core,cli}/...
 	gocyclo -over 15 .
 	golint ./...
 

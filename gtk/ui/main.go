@@ -10,12 +10,12 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/gotk3/gotk3/pango"
-	"github.com/jhekasoft/insteadman3/core/configurator"
-	"github.com/jhekasoft/insteadman3/core/manager"
-	"github.com/jhekasoft/insteadman3/core/utils"
-	"github.com/jhekasoft/insteadman3/gtk/i18n"
-	"github.com/jhekasoft/insteadman3/gtk/osintegration"
-	gtkutils "github.com/jhekasoft/insteadman3/gtk/utils"
+	"github.com/jhekasoft/insteadman/core/configurator"
+	"github.com/jhekasoft/insteadman/core/manager"
+	"github.com/jhekasoft/insteadman/core/utils"
+	"github.com/jhekasoft/insteadman/gtk/i18n"
+	"github.com/jhekasoft/insteadman/gtk/osintegration"
+	gtkutils "github.com/jhekasoft/insteadman/gtk/utils"
 )
 
 const (
@@ -488,16 +488,12 @@ func (win *MainWindow) updateGameImage(g *manager.Game) {
 	if e == nil && gameImagePath != "" {
 		win.PixBufGameImage, e = gdk.PixbufNewFromFileAtScale(gameImagePath, 210, 210, true) // todo: size to constants
 		if e == nil {
-			_, e := glib.IdleAdd(func() {
+			glib.IdleAdd(func() {
 				// Set image if there is current game (user hasn't changed selected game)
 				if win.CurGame != nil && g.Id == win.CurGame.Id {
 					win.ImgGame.SetFromPixbuf(win.PixBufGameImage)
 				}
 			})
-
-			if e != nil {
-				log.Fatal("Change game image. IdleAdd() failed:", e)
-			}
 		}
 	}
 
@@ -506,13 +502,9 @@ func (win *MainWindow) updateGameImage(g *manager.Game) {
 	}
 
 	if e != nil || gameImagePath == "" {
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			win.ImgGame.SetFromPixbuf(win.PixBufGameDefaultImage)
 		})
-
-		if e != nil {
-			log.Fatal("Change game image. IdleAdd() failed:", e)
-		}
 	}
 }
 
@@ -571,7 +563,7 @@ func (win *MainWindow) installGame(g *manager.Game, instBtn *gtk.Button) {
 			log.Print("Game has installed.")
 		}
 
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			if instErr != nil {
 				ShowErrorDlg(
 					fmt.Sprintf(i18n.T("Game hasn't installed (%s). Please check INSTEAD in the Settings."),
@@ -583,10 +575,6 @@ func (win *MainWindow) installGame(g *manager.Game, instBtn *gtk.Button) {
 				instBtn.SetSensitive(true)
 			}
 		})
-
-		if e != nil {
-			log.Fatal("Installing game. IdleAdd() failed:", e)
-		}
 	}()
 }
 
@@ -604,7 +592,7 @@ func (win *MainWindow) updateRepositories() {
 		}
 		log.Print("Repositories have updated.")
 
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			win.clearFilterValues()
 			win.refreshGames()
 			win.refreshFilterValues()
@@ -613,10 +601,6 @@ func (win *MainWindow) updateRepositories() {
 			win.SpinnerGames.Hide()
 			win.BtnUpdate.SetSensitive(true)
 		})
-
-		if e != nil {
-			log.Fatal("Updating repositories. IdleAdd() failed:", e)
-		}
 	}()
 }
 
@@ -748,14 +732,10 @@ func (h *MainWindowHandlers) removeGameClicked(s *gtk.Button) {
 		h.win.Manager.RemoveGame(rmGame)
 		log.Print("Game has removed.")
 
-		_, e := glib.IdleAdd(func() {
+		glib.IdleAdd(func() {
 			h.win.refreshSeveralGames([]manager.Game{*rmGame})
 			s.SetSensitive(true)
 		})
-
-		if e != nil {
-			log.Fatal("Removing game. IdleAdd() failed:", e)
-		}
 	}()
 }
 

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/ghodss/yaml"
-	"github.com/jhekasoft/insteadman3/core/utils"
+	"github.com/jhekasoft/insteadman/core/utils"
 )
 
 type InsteadmanConfig struct {

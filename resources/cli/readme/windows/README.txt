@@ -1,4 +1,4 @@
 Run insteadman binary in command line.
 
-More info: https://github.com/jhekasoft/insteadman3
+More info: https://github.com/jhekasoft/insteadman
 

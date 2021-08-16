@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/jhekasoft/insteadman3/gtk/i18n"
-	"github.com/jhekasoft/insteadman3/gtk/osintegration"
+	"github.com/jhekasoft/insteadman/gtk/i18n"
+	"github.com/jhekasoft/insteadman/gtk/osintegration"
 )
 
 func ShowErrorDlgFatal(txt string, parent *gtk.Window) {

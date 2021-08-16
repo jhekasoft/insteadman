@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jhekasoft/insteadman3/core/configurator"
+	"github.com/jhekasoft/insteadman/core/configurator"
 )
 
 // InterpreterFinder provides finding INSTEAD interpreter in the filesystem
