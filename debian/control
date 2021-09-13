@@ -1,0 +1,30 @@
+Source: insteadman
+Section: utils
+Priority: optional
+Maintainer: Anton Karmanov <a.karmanov@inventati.org>
+Build-Depends: debhelper(>= 10), golang, libgtk-3-dev
+Standards-Version: 4.5.0
+Homepage: https://jhekasoft.github.io/insteadman/
+Vcs-Browser: https://github.com/jhekasoft/insteadman
+Vcs-Git: https://github.com/jhekasoft/insteadman.git
+Rules-Requires-Root: no
+
+Package: insteadman-common
+Architecture: any
+Depends: ${misc:Depends}
+Description: Manager for the INSTEAD textual quests interpreter.
+ Common shared files.
+
+Package: insteadman
+Architecture: any
+Depends: instead, insteadman-common, ${shlibs:Depends}, ${misc:Depends}
+Description: Manager for the INSTEAD textual quests interpreter.
+ Utility helps to download and run games for the INSTEAD quests engine.
+ Version for terminal.
+
+Package: insteadman-gtk
+Architecture: any
+Depends: instead, insteadman-common, ${shlibs:Depends}, ${misc:Depends}
+Description: Manager for the INSTEAD textual quests interpreter.
+ Utility helps to download and run games for the INSTEAD quests engine.
+ GUI version.
