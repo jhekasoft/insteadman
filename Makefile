@@ -1,4 +1,4 @@
-VERSION=3.2.1
+VERSION=3.2.2
 DESTDIR=
 PREFIX=/usr
 GETTEXT_LANGS=ru uk
@@ -20,27 +20,10 @@ all:
 	${MAKE} insteadman
 	${MAKE} insteadman-gtk
 
-insteadman-deps:
-	GO111MODULE=auto go get github.com/ghodss/yaml
-	GO111MODULE=auto go get github.com/pyk/byten
-	GO111MODULE=auto go get github.com/fatih/color
-
-insteadman-gtk-deps:
-	GO111MODULE=auto go get github.com/ghodss/yaml
-	GO111MODULE=auto go get github.com/pyk/byten
-	GO111MODULE=auto go get github.com/gotk3/gotk3/...
-
-	CGO_LDFLAGS=${CGO_LDFLAGS} \
-	CGO_CPPFLAGS=${CGO_CPPFLAGS} \
-	GO111MODULE=auto go get github.com/gosexy/gettext
-
 insteadman:
-	${MAKE} insteadman-deps
 	GO111MODULE=auto go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman ./cli
 
 insteadman-gtk:
-	${MAKE} insteadman-gtk-deps
-
 	CGO_LDFLAGS=${CGO_LDFLAGS} \
     CGO_CPPFLAGS=${CGO_CPPFLAGS} \
 	GO111MODULE=auto go build -ldflags "-s -w -X main.version=${VERSION}" -o insteadman-gtk ./gtk
@@ -81,13 +64,13 @@ deps-dev:
 	GO111MODULE=auto go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
 	GO111MODULE=auto go get github.com/gosexy/gettext/go-xgettext
 
-insteadman-cross: insteadman-deps
+insteadman-cross:
 	./cli-cross-build.sh ./cli insteadman ${VERSION}
 
-gtk-linux64: insteadman-gtk-deps
+gtk-linux64:
 	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} linux amd64
 
-gtk-linux32: insteadman-gtk-deps
+gtk-linux32:
 	./gtk-package-build.sh ./gtk insteadman-gtk ${VERSION} linux 386
 
 gtk-linux2win-deps:
