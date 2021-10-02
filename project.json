@@ -1,0 +1,25 @@
+{
+ "name": "insteadman-wails",
+ "description": "Manager for INSTEAD games",
+ "author": {
+  "name": "Eugene Efremov",
+  "email": "jhekasoft@gmail.com"
+ },
+ "version": "4.0.0",
+ "binaryname": "insteadman-wails",
+ "frontend": {
+  "dir": "frontend",
+  "install": "npm install",
+  "build": "npm run build",
+  "bridge": "src",
+  "serve": "npm run serve"
+ },
+ "tags": "",
+ "WailsVersion": "",
+ "CrossCompile": false,
+ "Platform": "",
+ "Architecture": "",
+ "LdFlags": "",
+ "GoPath": "",
+ "UseFirebug": false
+}
