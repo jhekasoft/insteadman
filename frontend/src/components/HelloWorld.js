@@ -15,6 +15,7 @@ function HelloWorld() {
 
 	const handleCloseModal = () => {
 		setShowModal(false);
+		window.backend.games().then((games) => setGames(games))
 	};
 
 	return (
