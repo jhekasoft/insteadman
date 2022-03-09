@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"path"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/storage"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/storage"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
@@ -24,7 +25,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 	pathEntry := widget.NewEntry()
 	pathEntry.SetPlaceHolder("INSTEAD path")
 	pathEntry.SetText(m.Config.InterpreterCommand)
-	pathEntryContainer := widget.NewHScrollContainer(pathEntry)
+	pathEntryContainer := container.NewHScroll(pathEntry)
 	pathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), func() {
 		// TODO: Move to function
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
@@ -98,7 +99,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 		}),
 	)
 
-	insteadPath := widget.NewVBox(
+	insteadPath := container.NewVBox(
 		pathContainer,
 		pathButtons,
 		pathInfo,
@@ -107,7 +108,7 @@ func NewCommonScreen(win fyne.Window, m *manager.Manager, c *configurator.Config
 	gamesPathEntry := widget.NewEntry()
 	gamesPathEntry.SetPlaceHolder(m.Config.CalculatedGamesPath)
 	gamesPathEntry.SetText(m.Config.GamesPath)
-	gamesPathEntryContainer := widget.NewHScrollContainer(gamesPathEntry)
+	gamesPathEntryContainer := container.NewHScroll(gamesPathEntry)
 	gamesPathBrowseButton := widget.NewButtonWithIcon("", theme.FolderIcon(), func() {
 		// TODO: Move to function
 		fd := dialog.NewFolderOpen(func(list fyne.ListableURI, err error) {

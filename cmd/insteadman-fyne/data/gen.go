@@ -1,3 +1,4 @@
+//go:build ignore
 // +build ignore
 
 package main
@@ -8,7 +9,7 @@ import (
 	"path"
 	"runtime"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 func bundleFile(name string, filepath string, f *os.File) {

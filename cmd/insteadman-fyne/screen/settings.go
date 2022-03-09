@@ -1,10 +1,11 @@
 package screen
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 
 	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screen/settings"
 	"github.com/jhekasoft/insteadman3/core/configurator"
@@ -19,7 +20,7 @@ type SettingsScreen struct {
 	Screen fyne.CanvasObject
 
 	// Widgets
-	tabs *widget.TabContainer
+	tabs *container.AppTabs
 }
 
 // NewSettingsScreen is constructor for Settings screen
@@ -29,10 +30,10 @@ func NewSettingsScreen(
 	c *configurator.Configurator) *SettingsScreen {
 	scr := SettingsScreen{win: win, m: m, c: c}
 
-	scr.tabs = widget.NewTabContainer(
-		widget.NewTabItem("Main", scr.makeMainTab()),
-		widget.NewTabItem("Repositories", scr.makeRepositoriesTab()),
-		widget.NewTabItem("About", scr.makeAboutTab()),
+	scr.tabs = container.NewAppTabs(
+		container.NewTabItem("Main", scr.makeMainTab()),
+		container.NewTabItem("Repositories", scr.makeRepositoriesTab()),
+		container.NewTabItem("About", scr.makeAboutTab()),
 	)
 
 	okButton := widget.NewButtonWithIcon("OK", theme.ConfirmIcon(), func() {
@@ -40,9 +41,9 @@ func NewSettingsScreen(
 		scr.win.Hide()
 		scr.win = nil
 	})
-	okButton.Style = widget.PrimaryButton
+	okButton.Importance = widget.HighImportance
 
-	scr.Screen = fyne.NewContainerWithLayout(
+	scr.Screen = container.New(
 		layout.NewBorderLayout(nil, okButton, nil, nil),
 		scr.tabs,
 		okButton,

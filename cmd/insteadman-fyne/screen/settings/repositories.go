@@ -1,10 +1,11 @@
 package settings
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
@@ -12,7 +13,7 @@ import (
 func NewRepositoriesScreen(m *manager.Manager, c *configurator.Configurator) fyne.CanvasObject {
 	repositories := m.GetRepositories()
 
-	listHeader := widget.NewVBox(
+	listHeader := container.NewVBox(
 		fyne.NewContainerWithLayout(
 			layout.NewGridLayoutWithColumns(2),
 			widget.NewLabelWithStyle("Name", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),

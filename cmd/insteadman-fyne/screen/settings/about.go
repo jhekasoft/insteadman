@@ -3,10 +3,11 @@ package settings
 import (
 	"net/url"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/data"
 	"github.com/jhekasoft/insteadman3/core/manager"
 )
@@ -22,9 +23,9 @@ func NewAboutScreen() fyne.CanvasObject {
 
 	return fyne.NewContainerWithLayout(
 		layout.NewCenterLayout(),
-		widget.NewHBox(
-			fyne.NewContainerWithLayout(layout.NewFixedGridLayout(fyne.NewSize(160, 160)), canvas.NewImageFromResource(mainIcon)),
-			widget.NewVBox(
+		container.NewHBox(
+			container.New(layout.NewGridWrapLayout(fyne.NewSize(160, 160)), canvas.NewImageFromResource(mainIcon)),
+			container.NewVBox(
 				widget.NewLabelWithStyle("InsteadMan", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 				widget.NewLabel("Version: "+manager.Version),
 				widget.NewHyperlink(siteURL, link),

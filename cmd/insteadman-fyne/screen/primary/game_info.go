@@ -7,12 +7,12 @@ import (
 	"os"
 	"strings"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/data"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
@@ -32,7 +32,7 @@ type GameInfoScreen struct {
 	lang          *widget.Label
 	repository    *widget.Label
 	size          *widget.Label
-	container     *widget.SplitContainer
+	container     *container.Split
 	image         *widget.Icon
 	hyperlink     *widget.Hyperlink
 	installButton *widget.Button
@@ -114,7 +114,7 @@ func NewGameInfoScreen(
 	scr.size = widget.NewLabel("")
 	scr.size.Hide()
 
-	descScroll := widget.NewVScrollContainer(
+	descScroll := container.NewVScroll(
 		scr.desc,
 	)
 	// descScroll.SetMinSize(fyne.NewSize(0, 100))
@@ -146,12 +146,12 @@ func NewGameInfoScreen(
 			onRefresh()
 		}
 	})
-	scr.installButton.Style = widget.PrimaryButton
+	scr.installButton.Importance = widget.HighImportance
 	scr.installButton.Hide()
 	scr.runButton = widget.NewButtonWithIcon("Run", theme.MediaPlayIcon(), func() {
 		scr.m.RunGame(scr.game)
 	})
-	scr.runButton.Style = widget.PrimaryButton
+	scr.runButton.Importance = widget.HighImportance
 	scr.runButton.Hide()
 	scr.deleteButton = widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
 		scr.m.RemoveGame(scr.game)
@@ -168,7 +168,7 @@ func NewGameInfoScreen(
 	scr.lang = widget.NewLabel("")
 	scr.repository = widget.NewLabel("")
 	// scr.repository.Wrapping = fyne.TextWrapWord
-	bottomInfoScroll := widget.NewHScrollContainer(container.NewHBox(
+	bottomInfoScroll := container.NewHScroll(container.NewHBox(
 		scr.hyperlink,
 		scr.version,
 		scr.lang,
@@ -176,22 +176,22 @@ func NewGameInfoScreen(
 		scr.repository,
 	))
 	buttonsContainer := container.NewHBox(scr.installButton, scr.runButton, scr.deleteButton)
-	bottomContainer := fyne.NewContainerWithLayout(
+	bottomContainer := container.New(
 		layout.NewBorderLayout(nil, nil, buttonsContainer, nil),
 		buttonsContainer,
 		bottomInfoScroll,
 	)
 
-	contentContainer := fyne.NewContainerWithLayout(
+	contentContainer := container.New(
 		layout.NewBorderLayout(scr.title, bottomContainer, nil, nil),
 		descScroll,
 		scr.title,
 		bottomContainer,
 	)
 
-	scr.container = widget.NewVSplitContainer(scr.image, contentContainer)
+	scr.container = container.NewVSplit(scr.image, contentContainer)
 
-	scr.Screen = fyne.NewContainerWithLayout(
+	scr.Screen = container.New(
 		layout.NewBorderLayout(nil, nil, nil, nil),
 		scr.container,
 	)

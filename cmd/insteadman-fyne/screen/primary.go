@@ -1,11 +1,12 @@
 package screen
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"github.com/jhekasoft/insteadman3/cmd/insteadman-fyne/screen/primary"
 	"github.com/jhekasoft/insteadman3/core/configurator"
 	"github.com/jhekasoft/insteadman3/core/manager"
@@ -64,7 +65,7 @@ func NewMainScreen(
 	scr.searchEntry.OnChanged = func(s string) {
 		scr.RefreshList()
 	}
-	searchEntryContainer := widget.NewHScrollContainer(scr.searchEntry)
+	searchEntryContainer := container.NewHScroll(scr.searchEntry)
 
 	scr.gamesContainer = widget.NewList(
 		func() int {
@@ -126,7 +127,7 @@ func NewMainScreen(
 		widget.NewToolbarAction(theme.SettingsIcon(), onShowSettings),
 	)
 
-	contentContainer := widget.NewHSplitContainer(
+	contentContainer := container.NewHSplit(
 		scr.mainContainer,
 		scr.gameInfo.Screen,
 	)
